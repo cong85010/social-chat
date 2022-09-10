@@ -15,6 +15,7 @@ function MenuBar() {
 }
 
 export default MenuBar;
+
 const Wrapper = styled.nav`
  display: flex;
  justify-content: space-between;
