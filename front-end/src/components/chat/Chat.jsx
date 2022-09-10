@@ -1,6 +1,8 @@
 import styled from 'styled-components';
 import React from 'react';
 import MenuBar from '../menu/MenuBar';
+import MainChat from './chat-content/main-chat/MainChat';
+import AboutChat from './chat-content/about-chat/AboutChat';
 
 function Chat() {
  return (
@@ -8,7 +10,10 @@ function Chat() {
    <MenuInner>
     <MenuBar />
    </MenuInner>
-   <SlideNav>right</SlideNav>
+   <SlideNav>
+    <MainChat />
+    <AboutChat />
+   </SlideNav>
   </Wrapper>
  );
 }
@@ -35,10 +40,22 @@ const SlideNav = styled.nav`
  box-sizing: border-box;
  height: 100%;
  width: calc(100% - 408px);
- @media (min-width: 640px) {
+ display: flex;
+ flex-direction: row;
+ @media (max-width: 640px) {
   display: none;
  }
 
  @media (min-width: 800px) {
  }
 `;
+
+// MainChat = styled.div`
+//  height: 100%;
+//  width: calc(100% - 343px);
+// `;
+
+// AboutChat = styled.div`
+//  height: 100%;
+//  width: 343px;
+// `;

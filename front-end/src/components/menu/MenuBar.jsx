@@ -1,12 +1,15 @@
 import styled from 'styled-components';
 import React from 'react';
 import { border, primaryColor } from '~/utils/color';
+import MenuIcon from './MenuIcon';
 
 function MenuBar() {
  return (
   <Wrapper>
-   <StartWrapper></StartWrapper>
-   <EndWrapper></EndWrapper>
+   <StartWrapper>
+    <MenuIcon />
+   </StartWrapper>
+   <EndWrapper>right</EndWrapper>
   </Wrapper>
  );
 }

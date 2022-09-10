@@ -2,7 +2,11 @@ import styled from 'styled-components';
 import React from 'react';
 
 function MenuBar() {
- return <Wrapper></Wrapper>;
+ return (
+  <Wrapper>
+   <AvatarImg />
+  </Wrapper>
+ );
 }
 
 export default MenuBar;
