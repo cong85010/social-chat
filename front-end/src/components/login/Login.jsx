@@ -413,7 +413,7 @@ function Login() {
        </TabPanel>
 
        {/* Đăng kí */}
-       <TabPanel>
+       <TabPanel style={{ height: '' }}>
         <Form
          name="basic"
          labelCol={{ span: 8 }}
