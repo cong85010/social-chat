@@ -232,7 +232,6 @@ function Login() {
 
  const onFinish = (values) => {
   alert('Login success!!');
-  console.log('Success:', values);
   navigate('/messenger');
  };
 
