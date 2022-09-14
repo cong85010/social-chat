@@ -7,7 +7,7 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
-    "antd": "^4.23.0",
+    "antd": "^4.23.1",
     "babel-plugin-module-resolver": "^4.1.0",
     "customize-cra": "^1.0.0",
     "normalize.css": "^8.0.1",

@@ -2,11 +2,13 @@ import styled from 'styled-components';
 import React from 'react';
 import { border, primaryColor } from '~/utils/color';
 import MenuIcon from './MenuIcon';
+import AvatarImg from './content/AvatarImg';
 
 function MenuBar() {
  return (
   <Wrapper>
    <StartWrapper>
+    <AvatarImg />
     <MenuIcon />
    </StartWrapper>
    <EndWrapper>right</EndWrapper>
@@ -24,9 +26,10 @@ const Wrapper = styled.nav`
 `;
 
 const StartWrapper = styled.div`
+ padding-top: 32px;
  background-color: ${primaryColor};
  display: flex;
- justify-content: space-between;
+ justify-content: flex-start;
  flex-direction: column;
  align-items: center;
  width: 64px;
