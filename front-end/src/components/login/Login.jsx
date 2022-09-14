@@ -153,7 +153,6 @@ const BodyContentLeftImg = styled.div`
   width: 120px;
   margin-top: 40px;
  }
-
  .img-1 {
   position: absolute;
   top: 0;

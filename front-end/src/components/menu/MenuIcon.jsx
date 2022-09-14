@@ -58,6 +58,3 @@ const HeaderMenu = styled.div`
  width: 100%;
  height: 100%;
 `;
-Menu = styled.div`
- background-color: ${primaryColor};
-`;
