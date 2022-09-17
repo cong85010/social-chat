@@ -19,6 +19,9 @@ import {
     UsergroupAddOutlined,
 } from '@ant-design/icons';
 import AvatarItem from './content/AvatarItem';
+import { logout } from '~/redux/slices/UserSlice';
+import { useDispatch } from 'react-redux';
+import { Router, useNavigate, useRoutes } from 'react-router-dom';
 
 const bottomItems = [
     {
@@ -38,7 +41,8 @@ const bottomItems = [
 function MenuBar() {
     const [friend, setFriend] = useState([]);
     const [option, setOption] = useState('chat');
-
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
     // MenuIcon
     const renderItems2 = () => bottomItems.map((bottomItem, index) => <MenuIcon>{bottomItem.icon}</MenuIcon>);
 
@@ -126,6 +130,13 @@ function MenuBar() {
             </Tabs>
         );
     };
+
+    const handleLogout = () => {
+        dispatch(logout());
+
+        navigate('/login');
+    };
+
     return (
         <Wrapper>
             <StartWrapper>
@@ -139,6 +150,9 @@ function MenuBar() {
                     </MenuIcon>
                     <MenuIcon>
                         <CheckSquareOutlined onClick={() => setOption('check')} />
+                    </MenuIcon>
+                    <MenuIcon>
+                        <CheckSquareOutlined onClick={handleLogout} />
                     </MenuIcon>
                 </TopMenuICon>
                 <BottomMenuICon>{renderItems2()}</BottomMenuICon>
