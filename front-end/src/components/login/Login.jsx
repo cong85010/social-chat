@@ -516,5 +516,6 @@ const ForgetPass = styled.p`
     position: relative;
     top: -10px;
     margin: 0;
+    
 `;
 export default Login;
