@@ -2,13 +2,13 @@ import { Button, Checkbox, Divider, Form, Input, Menu, Space } from 'antd';
 import React from 'react';
 import { Header, Footer, Content } from 'antd/lib/layout/layout';
 import {
- InstagramOutlined,
- FacebookOutlined,
- YoutubeOutlined,
- TwitterOutlined,
- LinkedinOutlined,
- MailOutlined,
- PhoneOutlined,
+    InstagramOutlined,
+    FacebookOutlined,
+    YoutubeOutlined,
+    TwitterOutlined,
+    LinkedinOutlined,
+    MailOutlined,
+    PhoneOutlined,
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
@@ -228,31 +228,31 @@ const ForgetPass = styled.p`
 `;
 
 function Login() {
- const navigate = useNavigate();
+    const navigate = useNavigate();
 
- const onFinish = (values) => {
-  alert('Login success!!');
-  navigate('/messenger');
- };
+    const onFinish = (values) => {
+        alert('Login success!!');
+        navigate('/messenger');
+    };
 
- const onFinishFailed = (errorInfo) => {
-  alert('Fail!!');
-  console.log('Failed:', errorInfo);
- };
+    const onFinishFailed = (errorInfo) => {
+        alert('Fail!!');
+        console.log('Failed:', errorInfo);
+    };
 
- //  Footer
+    //  Footer
 
- Footer = styled.div`
+    Footer = styled.div`
   position: relative;
   bottom: 180px;
   text-align: center;
  `;
 
- const FooterTitleLink = styled.p`
+    const FooterTitleLink = styled.p`
   font-size: 16px;
  `;
 
- const FooterLinkSocials = styled.div`
+    const FooterLinkSocials = styled.div`
   .icon {
    font-size: 1.4rem;
    margin: 0 10px;
@@ -263,232 +263,232 @@ function Login() {
   }
  `;
 
- return (
-  <Container>
-   <Image src={background} alt="Hình nền Zalo"></Image>
-   <Header>
-    <ImgTitle className="header__title">
-     <img
-      src="https://image.bnews.vn/MediaUpload/Org/2022/08/05/1200x600wa-20220805120828.png"
-      alt=""
-      className="header__title-img"
-     />
-     <img src="https://stc-zaloid.zdn.vn/zaloid/client/images/zlogo.png" alt="" srcset="" className="title__web" />
-    </ImgTitle>
-    <StyledContact>
-     <span className="contact numPhone">
-      <PhoneOutlined />
-      +84 1234 567 891
-     </span>
-     <span className="contact mail">
-      <MailOutlined />
-      zalo@gmail.com
-     </span>
-    </StyledContact>
-   </Header>
-   <Content>
-    <BodyContentLeft>
-     <BodyContentLeftTitle>Tán gẫu với bạn bè & Kết nối với cả cộng đồng</BodyContentLeftTitle>
-     <BodyContentLeftImg>
-      <img
-       className="body__img-detail img-1"
-       src="https://img.freepik.com/vector-premium/videollamadas-chateando-amigos_23-2148508013.jpg"
-       alt=""
-       srcset=""
-      />
-      <img
-       className="body__img-detail img-2"
-       src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfVIH3e9H3RyXGU0DgO8l2KlF2NXOLA-tEsgmsF34tSB8z0bHSJijYQIDTNE2x7n7GeUc&usqp=CAU"
-       alt=""
-       srcset=""
-      />
-      <img
-       className="body__img-detail img-3"
-       src="https://thumbs.dreamstime.com/b/video-call-group-chat-to-family-friends-computer-video-call-group-chat-to-family-friends-computer-vector-cartoon-196979760.jpg"
-       alt=""
-       srcset=""
-      />
-      <img
-       className="body__img-detail img-4"
-       src="https://thumbs.dreamstime.com/b/computer-display-web-camera-cartoon-people-conference-video-call-technology-internet-chat-image-webinar-meeting-192326674.jpg"
-       alt=""
-       srcset=""
-      />
-      <img
-       className="body__img-detail img-5"
-       src="https://media.istockphoto.com/vectors/virtual-group-meeting-being-held-via-video-conference-from-home-using-vector-id1277210356?k=20&m=1277210356&s=612x612&w=0&h=puqzG1bdLxt2kWmN264TYuNMhB6zyWsG0T2Vhi68-pM="
-       alt=""
-       srcset=""
-      />
-      <img
-       className="body__img-detail img-6"
-       src="https://i0.wp.com/adahma.org/wp-content/uploads/2020/10/video-llamadas-amigos_23-2148504068.jpg?fit=626%2C417&ssl=1g"
-       alt=""
-       srcset=""
-      />
-      <img
-       className="body__img-detail img-7"
-       src="https://static.vecteezy.com/system/resources/previews/005/608/321/non_2x/video-call-concept-video-call-with-your-loved-ones-man-holding-tablet-while-talking-face-to-face-on-screen-flat-style-cartoon-illustration-vector.jpg"
-       alt=""
-       srcset=""
-      />
-     </BodyContentLeftImg>
-    </BodyContentLeft>
-    <BodyContentRight>
-     <BodyContentRightForm>
-      <Tabs>
-       <TabList
-        style={{
-         listStyleType: 'none',
-         fontSize: '1.8rem',
-         fontWeight: '600',
-         position: 'relative',
-         display: 'flex',
-         justifyContent: 'space-between',
-        }}
-       >
-        <Tab style={{ display: 'inline-block', color: text, cursor: 'pointer' }}>ĐĂNG NHẬP</Tab>
-        <PseudoClass></PseudoClass>
-        <Tab style={{ display: 'inline-block', color: text, cursor: 'pointer' }}>ĐĂNG KÝ</Tab>
-       </TabList>
+    return (
+        <Container>
+            <Image src={background} alt="Hình nền Zalo"></Image>
+            <Header>
+                <ImgTitle className="header__title">
+                    <img
+                        src="https://image.bnews.vn/MediaUpload/Org/2022/08/05/1200x600wa-20220805120828.png"
+                        alt=""
+                        className="header__title-img"
+                    />
+                    <img src="https://stc-zaloid.zdn.vn/zaloid/client/images/zlogo.png" alt="" srcset="" className="title__web" />
+                </ImgTitle>
+                <StyledContact>
+                    <span className="contact numPhone">
+                        <PhoneOutlined />
+                        +84 1234 567 891
+                    </span>
+                    <span className="contact mail">
+                        <MailOutlined />
+                        zalo@gmail.com
+                    </span>
+                </StyledContact>
+            </Header>
+            <Content>
+                <BodyContentLeft>
+                    <BodyContentLeftTitle>Tán gẫu với bạn bè & Kết nối với cả cộng đồng</BodyContentLeftTitle>
+                    <BodyContentLeftImg>
+                        <img
+                            className="body__img-detail img-1"
+                            src="https://img.freepik.com/vector-premium/videollamadas-chateando-amigos_23-2148508013.jpg"
+                            alt=""
+                            srcset=""
+                        />
+                        <img
+                            className="body__img-detail img-2"
+                            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfVIH3e9H3RyXGU0DgO8l2KlF2NXOLA-tEsgmsF34tSB8z0bHSJijYQIDTNE2x7n7GeUc&usqp=CAU"
+                            alt=""
+                            srcset=""
+                        />
+                        <img
+                            className="body__img-detail img-3"
+                            src="https://thumbs.dreamstime.com/b/video-call-group-chat-to-family-friends-computer-video-call-group-chat-to-family-friends-computer-vector-cartoon-196979760.jpg"
+                            alt=""
+                            srcset=""
+                        />
+                        <img
+                            className="body__img-detail img-4"
+                            src="https://thumbs.dreamstime.com/b/computer-display-web-camera-cartoon-people-conference-video-call-technology-internet-chat-image-webinar-meeting-192326674.jpg"
+                            alt=""
+                            srcset=""
+                        />
+                        <img
+                            className="body__img-detail img-5"
+                            src="https://media.istockphoto.com/vectors/virtual-group-meeting-being-held-via-video-conference-from-home-using-vector-id1277210356?k=20&m=1277210356&s=612x612&w=0&h=puqzG1bdLxt2kWmN264TYuNMhB6zyWsG0T2Vhi68-pM="
+                            alt=""
+                            srcset=""
+                        />
+                        <img
+                            className="body__img-detail img-6"
+                            src="https://i0.wp.com/adahma.org/wp-content/uploads/2020/10/video-llamadas-amigos_23-2148504068.jpg?fit=626%2C417&ssl=1g"
+                            alt=""
+                            srcset=""
+                        />
+                        <img
+                            className="body__img-detail img-7"
+                            src="https://static.vecteezy.com/system/resources/previews/005/608/321/non_2x/video-call-concept-video-call-with-your-loved-ones-man-holding-tablet-while-talking-face-to-face-on-screen-flat-style-cartoon-illustration-vector.jpg"
+                            alt=""
+                            srcset=""
+                        />
+                    </BodyContentLeftImg>
+                </BodyContentLeft>
+                <BodyContentRight>
+                    <BodyContentRightForm>
+                        <Tabs>
+                            <TabList
+                                style={{
+                                    listStyleType: 'none',
+                                    fontSize: '1.8rem',
+                                    fontWeight: '600',
+                                    position: 'relative',
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                }}
+                            >
+                                <Tab style={{ display: 'inline-block', color: text, cursor: 'pointer' }}>ĐĂNG NHẬP</Tab>
+                                <PseudoClass></PseudoClass>
+                                <Tab style={{ display: 'inline-block', color: text, cursor: 'pointer' }}>ĐĂNG KÝ</Tab>
+                            </TabList>
 
-       {/* Đăng nhập */}
-       <TabPanel>
-        <Form
-         name="basic"
-         labelCol={{ span: 8 }}
-         wrapperCol={{ span: 16 }}
-         initialValues={{ remember: false }}
-         onFinish={onFinish}
-         onFinishFailed={onFinishFailed}
-         autoComplete="off"
-        >
-         <Form.Item
-          label="Tên đăng nhập"
-          name="username"
-          rules={[{ required: true, message: 'Vui lòng nhập tài khoản của bạn!' }]}
-         >
-          <Input />
-         </Form.Item>
+                            {/* Đăng nhập */}
+                            <TabPanel>
+                                <Form
+                                    name="basic"
+                                    labelCol={{ span: 8 }}
+                                    wrapperCol={{ span: 16 }}
+                                    initialValues={{ remember: false }}
+                                    onFinish={onFinish}
+                                    onFinishFailed={onFinishFailed}
+                                    autoComplete="off"
+                                >
+                                    <Form.Item
+                                        label="Tên đăng nhập"
+                                        name="username"
+                                        rules={[{ required: true, message: 'Vui lòng nhập tài khoản của bạn!' }]}
+                                    >
+                                        <Input />
+                                    </Form.Item>
 
-         <Form.Item
-          label="Mật khẩu"
-          name="password"
-          rules={[{ required: true, message: 'Vui lòng nhập mật khẩu của bạn!' }]}
-         >
-          <Input.Password></Input.Password>
-         </Form.Item>
+                                    <Form.Item
+                                        label="Mật khẩu"
+                                        name="password"
+                                        rules={[{ required: true, message: 'Vui lòng nhập mật khẩu của bạn!' }]}
+                                    >
+                                        <Input.Password></Input.Password>
+                                    </Form.Item>
 
-         <ForgetPass className="forget">
-          <a href="">Quên mật khẩu?</a>
-         </ForgetPass>
+                                    <ForgetPass className="forget">
+                                        <a href="">Quên mật khẩu?</a>
+                                    </ForgetPass>
 
-         <Form.Item
-          style={{ textAlign: 'right' }}
-          name="remember"
-          valuePropName="checked"
-          wrapperCol={{ offset: 8, span: 16 }}
-          className="remember"
-         >
-          <Checkbox>Nhớ tài khoản</Checkbox>
-         </Form.Item>
+                                    <Form.Item
+                                        style={{ textAlign: 'right' }}
+                                        name="remember"
+                                        valuePropName="checked"
+                                        wrapperCol={{ offset: 8, span: 16 }}
+                                        className="remember"
+                                    >
+                                        <Checkbox>Nhớ tài khoản</Checkbox>
+                                    </Form.Item>
 
-         <Button
-          style={{
-           width: '200px',
-           height: '50px',
-           fontSize: '22px',
-           fontWeight: 600,
-           position: 'relative',
-           left: '38px',
-          }}
-          type="primary"
-          className="btn-login"
-          htmlType="submit"
-         >
-          ĐĂNG NHẬP
-         </Button>
-        </Form>
-       </TabPanel>
+                                    <Button
+                                        style={{
+                                            width: '200px',
+                                            height: '50px',
+                                            fontSize: '22px',
+                                            fontWeight: 600,
+                                            position: 'relative',
+                                            left: '38px',
+                                        }}
+                                        type="primary"
+                                        className="btn-login"
+                                        htmlType="submit"
+                                    >
+                                        ĐĂNG NHẬP
+                                    </Button>
+                                </Form>
+                            </TabPanel>
 
-       {/* Đăng kí */}
-       <TabPanel style={{ height: '' }}>
-        <Form
-         name="basic"
-         labelCol={{ span: 8 }}
-         wrapperCol={{ span: 16 }}
-         initialValues={{ remember: false }}
-         onFinish={onFinish}
-         onFinishFailed={onFinishFailed}
-         autoComplete="off"
-        >
-         <Form.Item
-          label="Tên đăng nhập"
-          name="username"
-          rules={[{ required: true, message: 'Vui lòng nhập tài khoản của bạn!' }]}
-         >
-          <Input />
-         </Form.Item>
+                            {/* Đăng kí */}
+                            <TabPanel style={{ height: '' }}>
+                                <Form
+                                    name="basic"
+                                    labelCol={{ span: 8 }}
+                                    wrapperCol={{ span: 16 }}
+                                    initialValues={{ remember: false }}
+                                    onFinish={onFinish}
+                                    onFinishFailed={onFinishFailed}
+                                    autoComplete="off"
+                                >
+                                    <Form.Item
+                                        label="Tên đăng nhập"
+                                        name="username"
+                                        rules={[{ required: true, message: 'Vui lòng nhập tài khoản của bạn!' }]}
+                                    >
+                                        <Input />
+                                    </Form.Item>
 
-         <Form.Item
-          label="Mật khẩu"
-          name="password"
-          rules={[{ required: true, message: 'Vui lòng nhập mật khẩu của bạn!' }]}
-         >
-          <Input.Password></Input.Password>
-         </Form.Item>
+                                    <Form.Item
+                                        label="Mật khẩu"
+                                        name="password"
+                                        rules={[{ required: true, message: 'Vui lòng nhập mật khẩu của bạn!' }]}
+                                    >
+                                        <Input.Password></Input.Password>
+                                    </Form.Item>
 
-         <Form.Item
-          label="Xác nhận mật khẩu"
-          name="password"
-          rules={[{ required: true, message: 'Vui lòng nhập mật khẩu của bạn!' }]}
-         >
-          <Input.Password></Input.Password>
-         </Form.Item>
+                                    <Form.Item
+                                        label="Xác nhận mật khẩu"
+                                        name="password"
+                                        rules={[{ required: true, message: 'Vui lòng nhập mật khẩu của bạn!' }]}
+                                    >
+                                        <Input.Password></Input.Password>
+                                    </Form.Item>
 
-         <Button
-          style={{
-           width: '200px',
-           height: '50px',
-           fontSize: '22px',
-           fontWeight: 600,
-           position: 'relative',
-           left: '38px',
-          }}
-          type="primary"
-          className="btn-login"
-          htmlType="submit"
-         >
-          ĐĂNG KÝ
-         </Button>
-        </Form>
-       </TabPanel>
-      </Tabs>
-     </BodyContentRightForm>
-    </BodyContentRight>
-   </Content>
-   <Footer>
-    <FooterTitleLink>Dùng tài khoản Zalo để truy cập các ứng dụng mạng xã hội khác</FooterTitleLink>
-    <FooterLinkSocials>
-     <a href="">
-      <InstagramOutlined className="icon" />
-     </a>
-     <a href="">
-      <FacebookOutlined className="icon" />
-     </a>
-     <a href="">
-      <YoutubeOutlined className="icon" />
-     </a>
-     <a href="">
-      <TwitterOutlined className="icon" />
-     </a>
-     <a href="">
-      <LinkedinOutlined className="icon" />
-     </a>
-    </FooterLinkSocials>
-   </Footer>
-  </Container>
- );
+                                    <Button
+                                        style={{
+                                            width: '200px',
+                                            height: '50px',
+                                            fontSize: '22px',
+                                            fontWeight: 600,
+                                            position: 'relative',
+                                            left: '38px',
+                                        }}
+                                        type="primary"
+                                        className="btn-login"
+                                        htmlType="submit"
+                                    >
+                                        ĐĂNG KÝ
+                                    </Button>
+                                </Form>
+                            </TabPanel>
+                        </Tabs>
+                    </BodyContentRightForm>
+                </BodyContentRight>
+            </Content>
+            <Footer>
+                <FooterTitleLink>Dùng tài khoản Zalo để truy cập các ứng dụng mạng xã hội khác</FooterTitleLink>
+                <FooterLinkSocials>
+                    <a href="">
+                        <InstagramOutlined className="icon" />
+                    </a>
+                    <a href="">
+                        <FacebookOutlined className="icon" />
+                    </a>
+                    <a href="">
+                        <YoutubeOutlined className="icon" />
+                    </a>
+                    <a href="">
+                        <TwitterOutlined className="icon" />
+                    </a>
+                    <a href="">
+                        <LinkedinOutlined className="icon" />
+                    </a>
+                </FooterLinkSocials>
+            </Footer>
+        </Container>
+    );
 }
 
 export default Login;
