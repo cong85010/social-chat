@@ -6,7 +6,7 @@ import { EditOutlined, TeamOutlined, BellOutlined, PushpinOutlined } from '@ant-
 function AboutChat() {
  return (
   <Wrapper>
-   <HeaderAbout>THÔNG TIN CHUNG</HeaderAbout>
+   <HeaderAbout>Thông Tin</HeaderAbout>
 
    <InfoComponent>
     <ImgComponent>
