@@ -194,7 +194,7 @@ const BodyContentLeftImg = styled.div`
   position: absolute;
   left: 580px;
   top: 200px;
-  animation: ${FadeInUp} 0.6s ease-in both;
+  animation: ${FadeInUp} 0.6s ease-in both; 
  }
 `;
 
