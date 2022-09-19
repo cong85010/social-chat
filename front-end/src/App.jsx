@@ -1,20 +1,42 @@
 import './App.css';
 import 'antd/dist/antd.min.css';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Login from '~/components/login/Login';
 import Chat from '~/components/chat/Chat';
+import { message } from 'antd';
+import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
+
+const PrivateRoute = ({ children }) => {
+    const { isSuccess } = useSelector((state) => state.user);
+    if (isSuccess) return children;
+
+    return <Navigate to="/login" />;
+};
 
 function App() {
- return (
-  <div className="App">
-   <Routes>
-    <Route path="/">
-     <Route index element={<Login />} />
-     <Route path="messenger" element={<Chat />} />
-    </Route>
-   </Routes>
-  </div>
- );
+    message.config({
+        top: 100,
+        duration: 2,
+        maxCount: 3,
+    });
+    return (
+        <div className="App">
+            <Routes>
+                <Route
+                    exact
+                    path="/"
+                    element={
+                        <PrivateRoute>
+                            <Chat />
+                        </PrivateRoute>
+                    }
+                />
+
+                <Route path="/login" element={<Login />} />
+            </Routes>
+        </div>
+    );
 }
 
 export default App;

@@ -1,4 +1,4 @@
-import { Button, Checkbox, Divider, Form, Input, Menu, message, Modal, Space } from 'antd';
+import { Button, Checkbox, DatePicker, Divider, Form, Input, Menu, message, Modal, Radio, Space } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { Header, Footer, Content } from 'antd/lib/layout/layout';
 import {
@@ -18,6 +18,7 @@ import { keyframes } from 'styled-components';
 import { TabList, Tab, Tabs, TabPanel } from 'react-tabs';
 import { useDispatch, useSelector } from 'react-redux';
 import { SignInUser, SignUpUser } from '~/redux/slices/UserSlice';
+
 function Login() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -48,7 +49,7 @@ function Login() {
     useEffect(() => {
         if (isSuccess) {
             navigate('/');
-            message.success(messages); 
+            message.success(messages);
         }
         if (isError) {
             message.error(messages);
@@ -189,8 +190,8 @@ function Login() {
                                 <TabPanel>
                                     <Form
                                         name="basic"
-                                        labelCol={{ span: 10 }}
-                                        wrapperCol={{ span: 14 }}
+                                        labelCol={{ span: 8 }}
+                                        wrapperCol={{ span: 16 }}
                                         initialValues={{ remember: false }}
                                         onFinish={onSignUp}
                                         onFinishFailed={onFinishFailed}
@@ -198,27 +199,13 @@ function Login() {
                                     >
                                         <Form.Item
                                             label="Số điện thoại"
-                                            name="numberphone"
+                                            name="number"
                                             rules={[{ required: true, message: 'Vui lòng nhập số điện thoại của bạn!' }]}
+
                                         >
-                                        <Input />
+                                            <Input />
                                         </Form.Item>
 
-                                        <Form.Item
-                                            label="Mật khẩu"
-                                            name="password"
-                                            rules={[{ required: true, message: 'Vui lòng nhập mật khẩu của bạn!' }]}
-                                        >
-                                            <Input.Password></Input.Password>
-                                        </Form.Item>
-
-                                        <Form.Item
-                                            label="Xác nhận mật khẩu"
-                                            name="password"
-                                            rules={[{ required: true, message: 'Vui lòng nhập mật khẩu của bạn!' }]}
-                                        >
-                                            <Input.Password></Input.Password>
-                                        </Form.Item>
                                         <StyledTextRes>Bằng việc đăng kí, bạn đã đồng ý với Zalo về <br /><a href="">Điều khoản dịch vụ</a> & <a href="">Chính sách bảo mật</a></StyledTextRes>
                                         <StyledButton
 
@@ -235,16 +222,55 @@ function Login() {
                             <StyledModal open={isOpen} onOk={handleOkModal} onCancel={handleCancelModal}>
                                 <StyledInforPerson>Thông tin tài khoản</StyledInforPerson>
                                 <Divider></Divider>
-                                <Form
+                                <StyledForm
                                     name="basic"
-                                    labelCol={{ span: 8 }}
-                                    wrapperCol={{ span: 16 }}
+                                    labelCol={{ span: 10 }}
+                                    wrapperCol={{ span: 14 }}
                                     initialValues={{ remember: false }}
                                     onFinish={onFinish}
                                     onFinishFailed={onFinishFailed}
                                     autoComplete="off">
-                                    <Form.Item></Form.Item>
-                                </Form>
+                                    <Form.Item
+                                        label="Tên hiển thị"
+                                        name="username"
+                                        rules={[{ required: true, message: 'Vui lòng nhập mật khẩu của bạn!' }]}
+                                    >
+                                        <Input />
+                                    </Form.Item>
+
+                                    <Form.Item
+                                        label="Giới tính"
+                                        name="gioitinh"
+                                        rules={[{ required: false, message: 'Vui lòng nhập giới tính của bạn!' }]}
+                                    >
+                                        <Radio.Group>
+                                            <Radio value="Nam">Nam</Radio>
+                                            <Radio value="Nữ">Nữ</Radio>
+                                        </Radio.Group>
+                                    </Form.Item>
+                                    <Form.Item
+                                        label="Ngày sinh"
+                                        name="ngaysinh"
+                                        rules={[{ required: true, message: 'Vui lòng nhập ngày sinh của bạn!' }]}
+                                    >
+                                        <DatePicker placeholder='YYYY-MM-DD' />
+                                    </Form.Item>
+                                    <Form.Item
+                                        label="Mật khẩu"
+                                        name="password"
+                                        rules={[{ required: true, message: 'Vui lòng nhập mật khẩu của bạn!' }]}
+                                    >
+                                        <Input.Password></Input.Password>
+                                    </Form.Item>
+
+                                    <Form.Item
+                                        label="Xác nhận mật khẩu"
+                                        name="password"
+                                        rules={[{ required: true, message: 'Vui lòng nhập mật khẩu của bạn!' }]}
+                                    >
+                                        <Input.Password></Input.Password>
+                                    </Form.Item>
+                                </StyledForm>
                             </StyledModal>
                         </BodyContentRightForm>
                     </BodyContentRight>
@@ -319,6 +345,7 @@ const LeftToRight = keyframes`
 const StyledSection = styled.div`
     position: relative;
     font-size: 62.5%;
+    
 `;
 
 // Header va container
@@ -381,7 +408,7 @@ const StyledContent = styled(Content)`
     display: flex;
     justify-content: space-between;
     width: 100%;
-    padding:130px 150px 354px;
+    padding:180px 150px 304px;
     background-image: url(${background});
     background-position: center;
     background-repeat: no-repeat;
@@ -518,7 +545,7 @@ const StyledButton = styled(Button)`
 //  Footer
 const StyledFooter = styled(Footer)`
     position: absolute;
-    top: 820px;
+    top: 900px;
     left: 50%;
     transform: translateX(-50%);
     background-color: transparent;
@@ -539,9 +566,20 @@ const FooterLinkSocials = styled.div`
 // modal
 const StyledModal = styled(Modal)`
     position: relative;
+    button{
+        font-size: 16px;
+        line-height: 16px;
+        font-weight: 600;
+    }
 `
 const StyledInforPerson = styled.div`
-    font-size: 18px;
-    font-weight: 400;
+    font-size: 20px;
+    font-weight: 700;
+`
+
+const StyledForm = styled(Form)`
+    label{
+        font-size: 18px;
+    }
 `
 export default Login;
