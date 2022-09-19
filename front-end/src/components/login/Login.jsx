@@ -151,7 +151,7 @@ function Login() {
                                     >
                                         <Form.Item
                                             label="Tên đăng nhập"
-                                            name="username"
+                                            name="number"
                                             rules={[{ required: true, message: 'Vui lòng nhập số điện thoại của bạn!' }]}
                                         >
                                             <Input />

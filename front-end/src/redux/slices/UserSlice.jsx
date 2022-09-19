@@ -23,7 +23,7 @@ export const SignUpUser = createAsyncThunk('user/signup', async ({ user }, thunk
         console.log(error);
         return thunkAPI.rejectWithValue({
             status: 401,
-            message: 'Tài khoản hoặc mật khẩu không đúng',
+            message: 'Đăng ký thất bại rồi',
         });
     }
 });
