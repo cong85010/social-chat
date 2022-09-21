@@ -16,7 +16,7 @@ const PrivateRoute = ({ children }) => {
 
 function App() {
     message.config({
-        top: 100,
+        top: 50,
         duration: 2,
         maxCount: 3,
     });
