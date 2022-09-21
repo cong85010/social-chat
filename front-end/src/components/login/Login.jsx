@@ -48,9 +48,8 @@ function Login() {
     }, [isLoading, isSuccess, isError, message]);
 
     return (
-        <Container>
-            <Image src={background} alt="Hình nền Zalo"></Image>
-            <Header>
+        <Container style={{ backgroundImage: `url(${background})` }}>
+            <Navbar>
                 <ImgTitle className="header__title">
                     <img
                         src="https://image.bnews.vn/MediaUpload/Org/2022/08/05/1200x600wa-20220805120828.png"
@@ -74,8 +73,8 @@ function Login() {
                         zalo@gmail.com
                     </span>
                 </StyledContact>
-            </Header>
-            <Content>
+            </Navbar>
+            <ContentBody>
                 <BodyContentLeft>
                     <BodyContentLeftTitle>Tán gẫu với bạn bè & Kết nối với cả cộng đồng</BodyContentLeftTitle>
                     <BodyContentLeftImg>
@@ -153,13 +152,16 @@ function Login() {
                                     autoComplete="off"
                                 >
                                     <Form.Item
-                                        label="Tên đăng nhập"
-                                        name="username"
-                                        rules={[{ required: true, message: 'Vui lòng nhập tài khoản của bạn!' }]}
+                                        label="Số điện thoại"
+                                        name="phoneNumber"
+                                        rules={[{
+                                            required: true,
+                                            pattern: /^0[0-9]{9}$/,
+                                            message: 'Vui lòng nhập số điện thoại của bạn!',
+                                        },]}
                                     >
                                         <Input />
                                     </Form.Item>
-
                                     <Form.Item
                                         label="Mật khẩu"
                                         name="password"
@@ -167,21 +169,9 @@ function Login() {
                                     >
                                         <Input.Password></Input.Password>
                                     </Form.Item>
-
                                     <ForgetPass className="forget">
                                         <a href="">Quên mật khẩu?</a>
                                     </ForgetPass>
-
-                                    <Form.Item
-                                        style={{ textAlign: 'right' }}
-                                        name="remember"
-                                        valuePropName="checked"
-                                        wrapperCol={{ offset: 8, span: 16 }}
-                                        className="remember"
-                                    >
-                                        <Checkbox>Nhớ tài khoản</Checkbox>
-                                    </Form.Item>
-
                                     <Button
                                         style={{
                                             width: '200px',
@@ -213,16 +203,16 @@ function Login() {
                                     autoComplete="off"
                                 >
                                     <Form.Item
-                                        label="Tên đăng ký"
-                                        name="username"
-                                        rules={[{ required: true, message: 'Vui lòng nhập tài khoản của bạn!' }]}
+                                        label="Tên"
+                                        name="name"
+                                        rules={[{ required: true, message: 'Vui lòng nhập tên của bạn!' }]}
                                     >
                                         <Input />
                                     </Form.Item>
                                     <Form.Item
-                                        label="Email"
-                                        name="email"
-                                        rules={[{ required: true, message: 'Vui lòng nhập email của bạn!' }]}
+                                        label="Số điện thoại"
+                                        name="phoneNumber"
+                                        rules={[{ required: true, pattern: /^0[0-9]{9}$/, message: 'Vui lòng nhập số điện thoại của bạn!' }]}
                                     >
                                         <Input />
                                     </Form.Item>
@@ -235,9 +225,24 @@ function Login() {
                                     </Form.Item>
 
                                     <Form.Item
-                                        label="Xác nhận mật khẩu"
-                                        name="password"
-                                        rules={[{ required: true, message: 'Vui lòng nhập mật khẩu của bạn!' }]}
+                                        label="Xác nhận"
+                                        name="cofirmPassword"
+                                        dependencies={['password']}
+                                        hasFeedback
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Vui lòng nhập mật khẩu xác nhận của bạn!',
+                                            },
+                                            ({ getFieldValue }) => ({
+                                                validator(_, value) {
+                                                    if (!value || getFieldValue('password') === value) {
+                                                        return Promise.resolve();
+                                                    }
+                                                    return Promise.reject(new Error('Chưa khớp'));
+                                                },
+                                            }),
+                                        ]}
                                     >
                                         <Input.Password></Input.Password>
                                     </Form.Item>
@@ -262,8 +267,8 @@ function Login() {
                         </Tabs>
                     </BodyContentRightForm>
                 </BodyContentRight>
-            </Content>
-            <Footer>
+            </ContentBody>
+            <FooterContainer>
                 <FooterTitleLink>Dùng tài khoản Zalo để truy cập các ứng dụng mạng xã hội khác</FooterTitleLink>
                 <FooterLinkSocials>
                     <a href="">
@@ -282,16 +287,18 @@ function Login() {
                         <LinkedinOutlined className="icon" />
                     </a>
                 </FooterLinkSocials>
-            </Footer>
+            </FooterContainer>
         </Container>
     );
 }
 //  Footer
 
-Footer = styled.div`
-    position: relative;
-    bottom: 180px;
-    text-align: center;
+const FooterContainer = styled.div`
+    width: 100%;
+    position: absolute;
+    bottom: 20px;
+    display: flex;
+    justify-content: center;
 `;
 
 const FooterTitleLink = styled.p`
@@ -358,17 +365,11 @@ const LeftToRight = keyframes`
 const Container = styled.div`
     font-size: 62.5%;
     position: relative;
-    height: 980px;
+    height: 100vh;
 `;
 
-const Image = styled.img`
-    width: 100%;
-    background-size: cover;
-    background-repeat: repeat;
-    background-position: top center;
-`;
 
-Header = styled.div`
+const Navbar = styled.div`
     background-color: #f8f8f8;
     display: flex;
     justify-content: space-between;
@@ -376,7 +377,7 @@ Header = styled.div`
     top: 0;
     left: 0;
     right: 0;
-    z-index: 1;
+    z-index: 10;
     box-shadow: 0 0 1px #00000052;
     height: 64px;
     line-height: 64px;
@@ -416,17 +417,21 @@ const StyledContact = styled.div`
     }
 `;
 // Body
-Content = styled.div`
-    position: absolute;
-    top: 40px;
-    display: flex;
-    justify-content: space-between;
+const ContentBody = styled.div`
+    position: relative;
     width: 100%;
-    padding: 150px 150px 0;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 `;
 
 const BodyContentLeft = styled.div`
-    width: 470px;
+    width: 70%;
+    position: absolute;
+    left: 200px;
+    top: 40%;
+    transform: translateY(-50%);
 `;
 
 const BodyContentLeftTitle = styled.p`
@@ -439,11 +444,13 @@ const BodyContentLeftTitle = styled.p`
 const BodyContentLeftImg = styled.div`
     width: 750px;
     display: block;
-    position: relative;
+    position: absolute;
     .body__img-detail {
         border-radius: 50%;
         width: 120px;
+        height: 120px;
         margin-top: 40px;
+        object-fit: cover;
     }
     .img-1 {
         position: absolute;
@@ -492,12 +499,17 @@ const BodyContentLeftImg = styled.div`
 const BodyContentRight = styled.div``;
 
 const BodyContentRightForm = styled.div`
-    width: 450px;
+    width: 30%;
     background-color: #f8f8f8;
     border-radius: 6px;
     padding: 20px 40px 20px 0;
-    box-shadow: 0 0 1px #727272;
-`;
+    box-shadow: -1px 4px 8px #888888;
+    position: absolute;
+    top: 50%;
+    right: 100px;
+    transform: translateY(-50%);
+    z-index: 2;
+    `;
 
 const PseudoClass = styled.p`
     content: '';
