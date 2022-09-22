@@ -106,12 +106,6 @@ function Login() {
                                 srcset=""
                             />
                             <img
-                                className="body__img-detail img-4"
-                                src="https://thumbs.dreamstime.com/b/computer-display-web-camera-cartoon-people-conference-video-call-technology-internet-chat-image-webinar-meeting-192326674.jpg"
-                                alt=""
-                                srcset=""
-                            />
-                            <img
                                 className="body__img-detail img-5"
                                 src="https://media.istockphoto.com/vectors/virtual-group-meeting-being-held-via-video-conference-from-home-using-vector-id1277210356?k=20&m=1277210356&s=612x612&w=0&h=puqzG1bdLxt2kWmN264TYuNMhB6zyWsG0T2Vhi68-pM="
                                 alt=""
@@ -142,7 +136,7 @@ function Login() {
                                 <TabPanel>
                                     <Form
                                         name="basic"
-                                        labelCol={{ span: 8 }}
+                                        labelCol={{ span: 10 }}
                                         wrapperCol={{ span: 16 }}
                                         initialValues={{ remember: false }}
                                         onFinish={onFinish}
@@ -151,8 +145,8 @@ function Login() {
                                     >
                                         <Form.Item
                                             label="Tên đăng nhập"
-                                            name="number"
-                                            rules={[{ required: true, message: 'Vui lòng nhập số điện thoại của bạn!' }]}
+                                            name="phoneNumber"
+                                            rules={[{ required: true, pattern: /^0[0-9]{9}$/, message: 'Vui lòng nhập số điện thoại của bạn!' }]}
                                         >
                                             <Input />
                                         </Form.Item>
@@ -198,9 +192,10 @@ function Login() {
                                         autoComplete="off"
                                     >
                                         <Form.Item
+
                                             label="Số điện thoại"
-                                            name="number"
-                                            rules={[{ required: true, message: 'Vui lòng nhập số điện thoại của bạn!' }]}
+                                            name="phoneNumber"
+                                            rules={[{ required: true, pattern: /^0[0-9]{9}$/, message: 'Vui lòng nhập số điện thoại của bạn!' }]}
                                         >
                                             <Input />
                                         </Form.Item>
@@ -264,8 +259,23 @@ function Login() {
 
                                     <Form.Item
                                         label="Xác nhận mật khẩu"
-                                        name="password"
-                                        rules={[{ required: true, message: 'Vui lòng nhập mật khẩu của bạn!' }]}
+                                        name="cofirmPassword"
+                                        dependencies={['password']}
+                                        hasFeedback
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Vui lòng nhập mật khẩu xác nhận của bạn!',
+                                            },
+                                            ({ getFieldValue }) => ({
+                                                validator(_, value) {
+                                                    if (!value || getFieldValue('password') === value) {
+                                                        return Promise.resolve();
+                                                    }
+                                                    return Promise.reject(new Error('Chưa khớp'));
+                                                },
+                                            }),
+                                        ]}
                                     >
                                         <Input.Password></Input.Password>
                                     </Form.Item>
@@ -403,7 +413,7 @@ const StyledContact = styled.div`
 // Body
 const StyledContent = styled(Content)`
     position: absolute;
-    top: 64px;
+    top: 130px;
     display: flex;
     justify-content: space-between;
     width: 100%;

@@ -1,6 +1,6 @@
+import { URL } from '~/utils/constant';
 const { createSlice, createAsyncThunk } = require('@reduxjs/toolkit');
 const { default: axios } = require('axios');
-const { URL } = require('~/utils/color');
 
 export const SignInUser = createAsyncThunk('user/signin', async ({ user }, thunkAPI) => {
     try {
