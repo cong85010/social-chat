@@ -31,7 +31,7 @@ function Login() {
         dispatch(SignUpUser({ user: values }));
     };
     const onFinishFailed = (errorInfo) => {
-        alert('Fail!!');
+        alert('Fail dang ki!!');
         console.log('Failed:', errorInfo);
     };
 
@@ -187,8 +187,7 @@ function Login() {
                                         labelCol={{ span: 8 }}
                                         wrapperCol={{ span: 16 }}
                                         initialValues={{ remember: false }}
-                                        onFinish={onSignUp}
-                                        onFinishFailed={onFinishFailed}
+
                                         autoComplete="off"
                                     >
                                         <Form.Item
@@ -213,7 +212,12 @@ function Login() {
                                     </Form>
                                 </TabPanel>
                             </Tabs>
-                            <StyledModal open={isOpen} onOk={handleOkModal} onCancel={handleCancelModal}>
+                            <StyledModal open={isOpen} onOk={handleOkModal} onCancel={handleCancelModal} footer={[
+                                <Button key="back" style={{ fontWeight: 700 }} onClick={handleCancelModal}>Hủy</Button>,
+                                <Button onFinish={onSignUp}
+                                    onFinishFailed={onFinishFailed} key="submit" style={{ fontWeight: 700 }} onClick={handleOkModal} type="primary">Đồng ý</Button>
+
+                            ]}>
                                 <StyledInforPerson>Thông tin tài khoản</StyledInforPerson>
                                 <Divider></Divider>
                                 <StyledForm
@@ -221,12 +225,11 @@ function Login() {
                                     labelCol={{ span: 10 }}
                                     wrapperCol={{ span: 14 }}
                                     initialValues={{ remember: false }}
-                                    onFinish={onFinish}
-                                    onFinishFailed={onFinishFailed}
+
                                     autoComplete="off">
                                     <Form.Item
                                         label="Tên hiển thị"
-                                        name="username"
+                                        name="name"
                                         rules={[{ required: true, message: 'Vui lòng nhập mật khẩu của bạn!' }]}
                                     >
                                         <Input />
@@ -413,7 +416,7 @@ const StyledContact = styled.div`
 // Body
 const StyledContent = styled(Content)`
     position: absolute;
-    top: 130px;
+    top: 64px;
     display: flex;
     justify-content: space-between;
     width: 100%;
@@ -422,7 +425,6 @@ const StyledContent = styled(Content)`
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-    
 `;
 const BodyContentLeft = styled.div`
     width: 834px;
@@ -554,7 +556,7 @@ const StyledButton = styled(Button)`
 //  Footer
 const StyledFooter = styled(Footer)`
     position: absolute;
-    top: 900px;
+    top: 800px;
     left: 50%;
     transform: translateX(-50%);
     background-color: transparent;
