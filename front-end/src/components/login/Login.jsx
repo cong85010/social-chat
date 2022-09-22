@@ -201,7 +201,6 @@ function Login() {
                                             label="Số điện thoại"
                                             name="number"
                                             rules={[{ required: true, message: 'Vui lòng nhập số điện thoại của bạn!' }]}
-
                                         >
                                             <Input />
                                         </Form.Item>
