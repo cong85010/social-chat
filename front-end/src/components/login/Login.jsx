@@ -56,20 +56,19 @@ function Login() {
         }
     }, [isLoading, isSuccess, isError, message]);
     return (
-        <StyledSection>
-            <StyledContainer>
+        <StyledContainer>
                 <StyledHeader>
-                    <ImgTitle className="header__title">
-                        <img
+                    <ImgTitle>
+                        <StyledImg
                             src="https://image.bnews.vn/MediaUpload/Org/2022/08/05/1200x600wa-20220805120828.png"
                             alt=""
-                            className="header__title-img"
+                            style={{left: '0'}}
                         />
-                        <img
+                        <StyledImg
                             src="https://stc-zaloid.zdn.vn/zaloid/client/images/zlogo.png"
                             alt=""
                             srcset=""
-                            className="title__web"
+                            style={{right: '-40px'}}
                         />
                     </ImgTitle>
                     <StyledContact>
@@ -308,7 +307,6 @@ function Login() {
                     </FooterLinkSocials>
                 </StyledFooter>
             </StyledContainer>
-        </StyledSection>
 
     );
 }
@@ -362,12 +360,9 @@ const StyledSection = styled.div`
 
 // Header va container
 const StyledContainer = styled.div`
-    position: absolute;
-    height: 100%;
+    /* position: relative; */
+    height: 1024px;
     width: 100%;
-    top: 0;
-    left: 0;
-    
 `;
 
 const StyledHeader = styled(Header)`
@@ -380,31 +375,27 @@ const StyledHeader = styled(Header)`
     right: 0;
     z-index: 1;
     box-shadow: 0 0 1px #00000052;
-    
+    height: 64px;
 `;
 const ImgTitle = styled.div`
-    position: relative;
+    position: absolute;
     width: 140px;
-    display: flex;
-    justify-content: space-between;
-    .title__web {
-        position: absolute;
-        width: 100px;
-        top: 50%;
-        transform: translateY(-50%);
-        right: -42px;
-    }
-    .header__title-img {
-        position: absolute;
-        width: 100px;
-        top: 50%;
-        transform: translateY(-50%);
-    }
+    height: 64px;
+    padding: 0 50px;
 `;
+
+const StyledImg = styled.img`
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100px;
+`
 const StyledContact = styled.div`
+    position: absolute;
     display: flex;
     justify-content: space-between;
     width: 400px;
+    right: 70px;
     .contact {
         font-size: 20px;
         font-weight: 600;
@@ -415,31 +406,40 @@ const StyledContact = styled.div`
 `;
 // Body
 const StyledContent = styled(Content)`
-    position: absolute;
+    position: relative;
     top: 64px;
-    display: flex;
-    justify-content: space-between;
+    /* min-width: 820px;
+    min-height: 1000px; */
     width: 100%;
-    padding:180px 150px 304px;
+    height: 100%;
     background-image: url(${background});
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
+    display: flex;
+    justify-content: space-between;
+    padding-top: 80px;
 `;
 const BodyContentLeft = styled.div`
-    width: 834px;
-    height: 500px;
+    width: 50%;
+    max-height: 400px;
+    display: block;
 `;
 const BodyContentLeftTitle = styled.p`
-    font-size: 2.6rem;
+    position: absolute;
+    padding-left: 80px;
+    font-size: 2.2rem;
     font-weight: 800;
     text-align: left;
     color: ${text};
 `;
 const BodyContentLeftImg = styled.div`
-    width: 750px;
-    display: block;
-    position: relative;
+    width: 600px;
+    height: 350px;
+    position: absolute;
+    padding-left: 80px;
+    left: 150px;
+    top: 200px;
     .body__img-detail {
         border-radius: 50%;
         width: 120px;
@@ -488,13 +488,20 @@ const BodyContentLeftImg = styled.div`
         animation: ${FadeInUp} 0.6s ease-in both;
     }
 `;
-const BodyContentRight = styled.div``;
+const BodyContentRight = styled.div`
+    width: 50%;
+    display: block;
+    max-height: 400px;
+
+`;
 const BodyContentRightForm = styled.div`
     width: 450px;
     background-color: #f8f8f8;
     border-radius: 6px;
     padding: 20px 40px;
     box-shadow: 0 0 1px #727272;
+    position: relative;
+    right: -200px;
     label{
         font-size: 16px;
     }
@@ -556,7 +563,7 @@ const StyledButton = styled(Button)`
 //  Footer
 const StyledFooter = styled(Footer)`
     position: absolute;
-    top: 800px;
+    top: 600px;
     left: 50%;
     transform: translateX(-50%);
     background-color: transparent;
