@@ -1,17 +1,22 @@
 import React from 'react';
-import { border } from '~/utils/color';
+import { border, borderInfor } from '~/utils/color';
 import styled from 'styled-components';
 import { Header, Content } from 'antd/lib/layout/layout';
-import { EditOutlined, BellOutlined, UsergroupAddOutlined, PushpinOutlined, SettingOutlined, PlusOutlined } from '@ant-design/icons';
+import { EditOutlined, BellOutlined, UsergroupAddOutlined, PushpinOutlined, SettingOutlined, PlusOutlined, CaretRightOutlined } from '@ant-design/icons';
 import { useState } from 'react';
 import Modal from 'antd/lib/modal/Modal';
-import { Button, Divider, Form, Menu, Radio, Upload } from 'antd';
+import { Button, Collapse, Divider, Form, Menu, Radio, Upload } from 'antd';
 import Input from 'antd/lib/input/Input';
 import MenuItem from 'antd/lib/menu/MenuItem';
+
 
 function AboutChat() {
     const [isOpen1, setIsOpen1] = useState(false);
     const [isOpen2, setIsOpen2] = useState(false);
+    const [isOpenInfor, setIsOpenInFor] = useState(false);
+    const [isOpenRename, setIsOpenRename] = useState(false);
+    const { Panel } = Collapse;
+
 
     const handleShowModalTurnOffMess = () => {
         setIsOpen1(true)
@@ -37,7 +42,29 @@ function AboutChat() {
         setIsOpen2(false)
     }
 
+    const handleShowModalInfor = () => {
+        setIsOpenInFor(true)
+    }
 
+    const handleOKModalInfor = () => {
+        setIsOpenInFor(false)
+    }
+
+    const handleCancelModalInfor = () => {
+        setIsOpenInFor(false)
+    }
+
+    const handleShowModalRename = () => {
+        setIsOpenRename(true)
+    }
+
+    const handleOKModalRename = () => {
+        setIsOpenRename(false)
+    }
+
+    const handleCancelModalRename = () => {
+        setIsOpenRename(false)
+    }
 
 
     return (<StyledSection>
@@ -45,10 +72,10 @@ function AboutChat() {
             <h3>Thông tin hội thoại</h3>
         </StyledHeader>
         <StyledContent>
-            <StyledAvatar></StyledAvatar>
+            <StyledAvatar onClick={handleShowModalInfor}></StyledAvatar>
             <StyledNameEdit>
                 <StyledName>Your Name</StyledName>
-                <EditOutlined className='icon-edit' />
+                <EditOutlined className='icon-edit' onClick={handleShowModalRename} />
             </StyledNameEdit>
             <StyledFunction>
                 <StyledFunctionIcon>
@@ -87,6 +114,26 @@ function AboutChat() {
                 </StyledFunctionIconInGroup> */}
 
             </StyledFunction>
+            <StyledCollapse
+                bordered={false}
+                defaultActiveKey={['0']}
+                expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />}
+                className="site-collapse-custom-collapse"
+            >
+                <StyledBorder style={{ width: '100%', position: 'relative', backgroundColor: '#fffcfc00', top: 0 }}></StyledBorder>
+                <Panel header="Ảnh/Video" key="1" className="site-collapse-custom-panel">
+                    <StyledButton key="submit" style={{ top: '-10px', left: '12px' }} >Xem tất cả</StyledButton>
+                </Panel>
+                <StyledBorder style={{ width: '100%', position: 'relative', backgroundColor: '#fffcfc00', top: 0 }}></StyledBorder>
+                <Panel header="File" key="2" className="site-collapse-custom-panel">
+                    <StyledButton key="submit" style={{ top: '-10px', left: '12px' }} >Xem tất cả</StyledButton>
+                </Panel>
+                <StyledBorder style={{ width: '100%', position: 'relative', backgroundColor: '#fffcfc00', top: 0 }}></StyledBorder>
+
+                <Panel header="Link" key="3" className="site-collapse-custom-panel">
+                    <StyledButton key="submit" style={{ top: '-10px', left: '12px' }} >Xem tất cả</StyledButton>
+                </Panel>
+            </StyledCollapse>
         </StyledContent>
         <StyledFunction>
         </StyledFunction>
@@ -139,12 +186,32 @@ function AboutChat() {
                         <Menu>
                             <StyledRadioGroup>
                                 <StyledRadio value="option1">
-                                    <StyledMenuitem styled={{height: '46px'}}>
+                                    <StyledMenuitem style={{ backgroundColor: 'transparent', color: '#333', fontWeight: '500' }}>
                                         <StyledAvatar style={{ width: '44px', height: '44px', marginRight: '8px' }}></StyledAvatar>Nguyen Van A
                                     </StyledMenuitem>
                                 </StyledRadio>
                                 <StyledRadio value="option2">
-                                    <StyledMenuitem>
+                                    <StyledMenuitem style={{ backgroundColor: 'transparent', color: '#333', fontWeight: '500' }}>
+                                        <StyledAvatar style={{ width: '44px', height: '44px', marginRight: '8px' }}></StyledAvatar>Nguyen Van A
+                                    </StyledMenuitem>
+                                </StyledRadio>
+                                <StyledRadio value="option3">
+                                    <StyledMenuitem style={{ backgroundColor: 'transparent', color: '#333', fontWeight: '500' }}>
+                                        <StyledAvatar style={{ width: '44px', height: '44px', marginRight: '8px' }}></StyledAvatar>Nguyen Van A
+                                    </StyledMenuitem>
+                                </StyledRadio>
+                                <StyledRadio value="option4">
+                                    <StyledMenuitem style={{ backgroundColor: 'transparent', color: '#333', fontWeight: '500' }}>
+                                        <StyledAvatar style={{ width: '44px', height: '44px', marginRight: '8px' }}></StyledAvatar>Nguyen Van A
+                                    </StyledMenuitem>
+                                </StyledRadio>
+                                <StyledRadio value="option5">
+                                    <StyledMenuitem style={{ backgroundColor: 'transparent', color: '#333', fontWeight: '500' }}>
+                                        <StyledAvatar style={{ width: '44px', height: '44px', marginRight: '8px' }}></StyledAvatar>Nguyen Van A
+                                    </StyledMenuitem>
+                                </StyledRadio>
+                                <StyledRadio value="option6">
+                                    <StyledMenuitem style={{ backgroundColor: 'transparent', color: '#333', fontWeight: '500' }}>
                                         <StyledAvatar style={{ width: '44px', height: '44px', marginRight: '8px' }}></StyledAvatar>Nguyen Van A
                                     </StyledMenuitem>
                                 </StyledRadio>
@@ -153,6 +220,65 @@ function AboutChat() {
 
                     </Form.Item>
                 </StyledListRecentlyChat>
+            </StyledForm>
+        </StyledModal>
+        <StyledModal title="Thông tin tài khoản" open={isOpenInfor} onCancel={handleCancelModalInfor} onOk={handleOKModalInfor}
+            footer={[
+                <Button key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalInfor}>Hủy</Button>,
+                <Button key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalInfor} type="primary">Đồng ý</Button>
+
+            ]}>
+            <StyledForm name="basic" labelCol={{ span: 8 }} wrapperCol={{ span: 18 }} initialValues={{ remember: false }}
+                // onFinish={onFinish} onFinishFailed={onFinishFailed} 
+                autoComplete="off">
+                <Form.Item>
+                    <StyledAvatarNen></StyledAvatarNen>
+                    <StyledAvatar style={{ position: 'relative', top: '-64px', left: '56%', border: '3px solid white', width: '80px', height: '80px' }}></StyledAvatar>
+                </Form.Item>
+                <Form.Item>
+                    <StyledNameEdit style={{ position: 'absolute', top: '-76px', left: '50%' }}>
+                        <StyledName>Your Name</StyledName>
+                        <EditOutlined className='icon-edit' onClick={handleShowModalRename} />
+                    </StyledNameEdit>
+                </Form.Item>
+                <Form.Item>
+                    <StyledButton key="back" style={{ left: '38px' }}>Nhắn tin</StyledButton>,
+                    <StyledButton key="submit" style={{ left: '80px' }} >Gọi điện</StyledButton>
+                </Form.Item>
+                <StyledBorder></StyledBorder>
+                <Form.Item>
+                    <StyledContainInfor>
+                        <StyledText style={{ top: '-30px' }}><h3>Thông tin cá nhân</h3></StyledText>
+                        <StyledDetailInfor>
+                            <StyledText>Số điện thoại</StyledText>
+                            <StyledText>0123456789</StyledText>
+                        </StyledDetailInfor>
+                        <StyledDetailInfor>
+                            <StyledText>Giới tính</StyledText>
+                            <StyledText>Nữ</StyledText>
+                        </StyledDetailInfor>
+                        <StyledDetailInfor>
+                            <StyledText>Ngày sinh</StyledText>
+                            <StyledText>2001/09/08</StyledText>
+                        </StyledDetailInfor>
+                    </StyledContainInfor>
+                </Form.Item>
+            </StyledForm>
+        </StyledModal>
+        <StyledModal title="Đặt tên gợi nhớ" open={isOpenRename} onCancel={handleCancelModalRename} onOk={handleOKModalRename}
+            footer={[
+                <Button key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalRename}>Hủy</Button>,
+                <Button key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalRename} type="primary">Đồng ý</Button>
+
+            ]}>
+            <StyledForm name="basic" labelCol={{ span: 8 }} wrapperCol={{ span: 24 }} initialValues={{ remember: false }}
+                // onFinish={onFinish} onFinishFailed={onFinishFailed} 
+                autoComplete="off">
+                <Form.Item>
+                    <StyledAvatar style={{ position: 'relative', left: '42%' }}></StyledAvatar>
+                    <StyledText style={{ display: 'flex', justifyContent: 'center', margin: '6px 0', fontSize: '16px', fontWeight: 500 }}>Hãy đặt một cái tên dễ nhớ</StyledText>
+                    <Input />
+                </Form.Item>
             </StyledForm>
         </StyledModal>
 
@@ -192,6 +318,7 @@ const StyledAvatar = styled.img`
     width: 64px;
     height: 64px;
     border-radius: 50%;
+    cursor: pointer;
 `
 
 const StyledNameEdit = styled.div`
@@ -263,9 +390,10 @@ const StyledForm = styled(Form)`
     }
 `
 const StyledText = styled.p`
-    font-size: 14px;
-    display: inline-block;
+    font-size: 16px;
     margin: 0;
+    display: inline;
+    margin: 4px 0;
 `
 
 const StyledRadioGroup = styled(Radio.Group)`
@@ -274,18 +402,74 @@ const StyledRadioGroup = styled(Radio.Group)`
     
 `
 const StyledRadio = styled(Radio)`
-    margin-top: 10px;
-`
-const StyledListRecentlyChat = styled.div`
-    ::-webkit-scrollbar{
-        width: 10px;
-    }
-`
-const StyledMenuitem = styled(Menu.Item)`
-    .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected{
+    margin-top: 4px;
+    &.ant-menu-item-selected{
         background-color: transparent;
     }
-    .ant-menu-item.ant-menu-item-active.AboutChat__StyledMenuitem-sc-170bdvy-17{
-        height: 50px !important;
+`
+const StyledListRecentlyChat = styled.div`
+    max-height: 26vh;
+    overflow-y: auto;
+`
+const StyledMenuitem = styled(MenuItem)`
+    .ant-menu-item-active{
+        display: none;
+    }
+`
+const StyledAvatarNen = styled.img`
+    background-image: url('https://info-imgs.vgcloud.vn/2022/01/03/13/gap-go-con-meo-hai-mat-ky-la-noi-tieng-khap-mang-xa-hoi.jpg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    width: 520px;
+    height: 200px;
+    cursor: pointer;
+    padding: 0;
+    position: relative;
+    top: -24px;
+    left: -24px;
+`
+const StyledButton = styled(Button)`
+    font-weight: 700;
+    width:175px;
+    top:-60px;
+    background-color: ${borderInfor};
+    border-radius: 4px;
+`
+const StyledBorder = styled.div`
+    border-bottom: 8px solid ${borderInfor};
+    width: 520px;
+    position: absolute;
+    bottom: 264px;
+    left: 0;
+`
+const StyledDetailInfor = styled.div`
+    display: flex;
+    justify-content: space-between;
+`
+
+const StyledContainInfor = styled.div`
+    position: relative;
+    top: -30px;
+`
+
+const StyledCollapse = styled(Collapse)`
+    width: 100%;
+    .ant-collapse-content-box,
+    .ant-collapse-header{
+        background-color: #fff;
+    }
+
+    .ant-collapse-content-box{
+        padding: 0;
+    }
+
+    [data-theme='compact'] .site-collapse-custom-collapse .site-collapse-custom-panel,
+    .site-collapse-custom-collapse .site-collapse-custom-panel {
+    margin-bottom: 24px;
+    overflow: hidden;
+    background: #f7f7f7;
+    border: 0px;
+    border-radius: 2px;
     }
 `
