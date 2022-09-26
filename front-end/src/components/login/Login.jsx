@@ -254,6 +254,30 @@ function Login() {
                                     >
                                         <DatePicker placeholder='YYYY-MM-DD' />
                                     </Form.Item>
+
+                                    <Form.Item
+<<<<<<< HEAD
+                                        label="Giới tính"
+                                        name="gioitinh"
+                                        rules={[{ required: false, message: 'Vui lòng nhập giới tính của bạn!' }]}
+=======
+                                        label="Số điện thoại"
+                                        name="phoneNumber"
+                                        rules={[{ required: true, pattern: /^0[0-9]{9}$/, message: 'Vui lòng nhập số điện thoại của bạn!' }]}
+>>>>>>> 457e4cd283158a13561289d0d566a0fcf4be8b54
+                                    >
+                                        <Radio.Group>
+                                            <Radio value="Nam">Nam</Radio>
+                                            <Radio value="Nữ">Nữ</Radio>
+                                        </Radio.Group>
+                                    </Form.Item>
+                                    <Form.Item
+                                        label="Ngày sinh"
+                                        name="ngaysinh"
+                                        rules={[{ required: true, message: 'Vui lòng nhập ngày sinh của bạn!' }]}
+                                    >
+                                        <DatePicker placeholder='YYYY-MM-DD' />
+                                    </Form.Item>
                                     <Form.Item
                                         label="Mật khẩu"
                                         name="password"
@@ -263,9 +287,24 @@ function Login() {
                                     </Form.Item>
 
                                     <Form.Item
-                                        label="Xác nhận mật khẩu"
-                                        name="password"
-                                        rules={[{ required: true, message: 'Vui lòng nhập mật khẩu của bạn!' }]}
+                                        label="Xác nhận"
+                                        name="cofirmPassword"
+                                        dependencies={['password']}
+                                        hasFeedback
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Vui lòng nhập mật khẩu xác nhận của bạn!',
+                                            },
+                                            ({ getFieldValue }) => ({
+                                                validator(_, value) {
+                                                    if (!value || getFieldValue('password') === value) {
+                                                        return Promise.resolve();
+                                                    }
+                                                    return Promise.reject(new Error('Chưa khớp'));
+                                                },
+                                            }),
+                                        ]}
                                     >
                                         <Input.Password></Input.Password>
                                     </Form.Item>
@@ -365,7 +404,7 @@ const StyledHeader = styled(Header)`
     top: 0;
     left: 0;
     right: 0;
-    z-index: 1;
+    z-index: 10;
     box-shadow: 0 0 1px #00000052;
     
 `;
@@ -427,11 +466,13 @@ const BodyContentLeftTitle = styled.p`
 const BodyContentLeftImg = styled.div`
     width: 750px;
     display: block;
-    position: relative;
+    position: absolute;
     .body__img-detail {
         border-radius: 50%;
         width: 120px;
+        height: 120px;
         margin-top: 40px;
+        object-fit: cover;
     }
     .img-1 {
         position: absolute;
@@ -478,7 +519,7 @@ const BodyContentLeftImg = styled.div`
 `;
 const BodyContentRight = styled.div``;
 const BodyContentRightForm = styled.div`
-    width: 450px;
+    width: 30%;
     background-color: #f8f8f8;
     border-radius: 6px;
     padding: 20px 40px;

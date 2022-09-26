@@ -1,6 +1,7 @@
+import { URL } from '~/utils/constant';
+
 const { createSlice, createAsyncThunk } = require('@reduxjs/toolkit');
 const { default: axios } = require('axios');
-const { URL } = require('~/utils/color');
 
 export const SignInUser = createAsyncThunk('user/signin', async ({ user }, thunkAPI) => {
     try {
@@ -23,7 +24,7 @@ export const SignUpUser = createAsyncThunk('user/signup', async ({ user }, thunk
         console.log(error);
         return thunkAPI.rejectWithValue({
             status: 401,
-            message: 'Tài khoản hoặc mật khẩu không đúng',
+            message: 'Đăng ký thất bại',
         });
     }
 });
