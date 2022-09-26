@@ -256,15 +256,9 @@ function Login() {
                                     </Form.Item>
 
                                     <Form.Item
-<<<<<<< HEAD
                                         label="Giới tính"
                                         name="gioitinh"
                                         rules={[{ required: false, message: 'Vui lòng nhập giới tính của bạn!' }]}
-=======
-                                        label="Số điện thoại"
-                                        name="phoneNumber"
-                                        rules={[{ required: true, pattern: /^0[0-9]{9}$/, message: 'Vui lòng nhập số điện thoại của bạn!' }]}
->>>>>>> 457e4cd283158a13561289d0d566a0fcf4be8b54
                                     >
                                         <Radio.Group>
                                             <Radio value="Nam">Nam</Radio>
