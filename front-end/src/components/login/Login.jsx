@@ -513,7 +513,7 @@ const BodyContentLeftImg = styled.div`
 `;
 const BodyContentRight = styled.div``;
 const BodyContentRightForm = styled.div`
-    width: 30%;
+    width: 100%;
     background-color: #f8f8f8;
     border-radius: 6px;
     padding: 20px 40px;
