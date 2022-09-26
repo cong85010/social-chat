@@ -454,6 +454,7 @@ const StyledContainInfor = styled.div`
 `
 
 const StyledCollapse = styled(Collapse)`
+    margin-top: 20px;
     width: 100%;
     .ant-collapse-content-box,
     .ant-collapse-header{
