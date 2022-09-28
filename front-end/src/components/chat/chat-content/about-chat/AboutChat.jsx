@@ -4,47 +4,47 @@ import { bgColor, border } from '~/utils/color';
 import { EditOutlined, TeamOutlined, BellOutlined, PushpinOutlined } from '@ant-design/icons';
 
 function AboutChat() {
- return (
-  <Wrapper>
-   <HeaderAbout>Thông Tin</HeaderAbout>
+    return (
+        <Wrapper>
+            <HeaderAbout>Thông Tin</HeaderAbout>
 
-   <InfoComponent>
-    <ImgComponent>
-     <Avatar src="https://icdn.dantri.com.vn/thumb_w/640/2017/12-1510967806439.jpg" />
-    </ImgComponent>
+            <InfoComponent>
+                <ImgComponent>
+                    <Avatar src="https://icdn.dantri.com.vn/thumb_w/640/2017/12-1510967806439.jpg" />
+                </ImgComponent>
 
-    <NameComponent>
-     <Name>Your Name</Name>
-     <EditNameBtn>
-      <EditOutlined />
-     </EditNameBtn>
-    </NameComponent>
+                <NameComponent>
+                    <Name>Your Name</Name>
+                    <EditNameBtn>
+                        <EditOutlined />
+                    </EditNameBtn>
+                </NameComponent>
 
-    <OptComponent>
-     <BoxOpt>
-      <OptButton>
-       <BellOutlined />
-      </OptButton>
-     </BoxOpt>
-     <BoxOpt>
-      <OptButton>
-       <PushpinOutlined />
-      </OptButton>
-     </BoxOpt>
-     <BoxOpt>
-      <OptButton>
-       <TeamOutlined />
-      </OptButton>
-     </BoxOpt>
-     <BoxOpt>Tắt thông báo</BoxOpt>
-     <BoxOpt>Bỏ ghim hội thoại</BoxOpt>
-     <BoxOpt>Tạo nhóm trò chuyện</BoxOpt>
-    </OptComponent>
-   </InfoComponent>
+                <OptComponent>
+                    <BoxOpt>
+                        <OptButton>
+                            <BellOutlined />
+                        </OptButton>
+                    </BoxOpt>
+                    <BoxOpt>
+                        <OptButton>
+                            <PushpinOutlined />
+                        </OptButton>
+                    </BoxOpt>
+                    <BoxOpt>
+                        <OptButton>
+                            <TeamOutlined />
+                        </OptButton>
+                    </BoxOpt>
+                    <BoxOpt>Tắt thông báo</BoxOpt>
+                    <BoxOpt>Bỏ ghim hội thoại</BoxOpt>
+                    <BoxOpt>Tạo nhóm trò chuyện</BoxOpt>
+                </OptComponent>
+            </InfoComponent>
 
-   <ReminderBtn></ReminderBtn>
-  </Wrapper>
- );
+            <ReminderBtn></ReminderBtn>
+        </Wrapper>
+    );
 }
 
 export default AboutChat;

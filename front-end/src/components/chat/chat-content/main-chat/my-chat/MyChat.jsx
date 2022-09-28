@@ -59,16 +59,18 @@ const Wrapper = styled.div`
     display: flex;
     flex: 1;
     justify-content: flex-start;
-    align-items: flex-start;
+    align-items: flex-end;
     flex-direction: row-reverse;
     padding: 5px 16px 7px 16px;
     width: 100%;
+    margin-bottom:20px;
 `;
 
 const ItemContent = styled.div`
     display: flex;
     width: 40px;
     height: 40px;
+    margin-bottom: 4px;
 `;
 
 const MessageContainer = styled.div`
@@ -84,8 +86,9 @@ const MessageContent = styled.div`
 `;
 const MessageItem = styled.div`
     display: flex;
-    align-items: flex-start;
+    align-items: flex-end;
     flex-direction: column;
+    margin-right: 10px;
 `;
 const MessageText = styled.div`
     min-width: 32px;

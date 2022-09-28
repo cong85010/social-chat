@@ -32,7 +32,7 @@ function MainChat({ option, setOption, selectedUser, userID }) {
     };
 
     // Change With MainChatfull
-    useEffect(() => {}, []);
+    useEffect(() => { }, []);
 
     // Input
     useEffect(() => {
@@ -103,12 +103,13 @@ function MainChat({ option, setOption, selectedUser, userID }) {
             </IconInput>
             <FooterChat>
                 <InputMessage>
-                    <TextArea
+                    <StyledTextArea
                         id="chat_input"
                         placeholder="Nhập nội dung"
                         autoSize
                         value={value}
                         onChange={(e) => setValue(e.target.value)}
+
                     />
                 </InputMessage>
                 <IconMessage>
@@ -173,7 +174,25 @@ const BodyChat = styled.div`
     width: 100%;
     height: calc(100% - 169px);
     background-color: ${bodyChat};
+    overflow-y: scroll;
+    &::-webkit-scrollbar {
+        position: relative;
+        width: 6px;
+        background-color: #ffff;
+    }
+    &::-webkit-scrollbar-track {
+        position: absolute;
+    }
+    &::-webkit-scrollbar-thumb {
+        position: absolute;
+        background-color: ${border};
+    }
 `;
+const StyledTextArea = styled(TextArea)`
+    &.ant-input:focus{
+       box-shadow: none;
+    }
+`
 /* Icon Chat */
 const IconInput = styled.div`
     display: flex;
@@ -200,7 +219,7 @@ const InputMessage = styled.div`
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    width: 70%;
+    width: 91%;
     textarea.ant-input {
         font-size: 15px;
         font-weight: 400;
