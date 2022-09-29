@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import React, { useEffect, useRef, useState } from 'react';
 import BackToUp from '@uiw/react-back-to-top';
-
 import { border, primaryColor, bgborder, textTitle } from '~/utils/color';
 import MenuIcon from './MenuIcon';
 import AvatarImg from './content/AvatarImg';
@@ -22,12 +21,16 @@ import {
 } from '@ant-design/icons';
 import AvatarItem from './content/AvatarItem';
 import AvatarItemNoHours from './content/AvatarItemNoHours';
+import AvatarItemListAddFriend from './content/AvatarItemListAddFriend';
+import AvatarItemListGroup from './content/AvatarItemListGroup';
 import { logout } from '~/redux/slices/UserSlice';
 import { useDispatch } from 'react-redux';
 import { Router, useNavigate, useRoutes } from 'react-router-dom';
 
 function MenuBar() {
     const [friend, setFriend] = useState(false);
+    const [listAdd, setListAdd] = useState(false);
+    const [listGroup, setListGroup] = useState(false);
     const [option, setOption] = useState('chat');
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -53,6 +56,26 @@ function MenuBar() {
     }
     const handleShowModalCancelAddFriend = () => {
         setFriend(false)
+    }
+
+    const handleShowModalListAdd= () => {
+        setListAdd(true)
+    }
+    const handleShowModalOKListAdd= () => {
+        setListAdd(false)
+    }
+    const handleShowModalCancelListAdd= () => {
+        setListAdd(false)
+    }
+
+    const handleShowModalListGroup= () => {
+        setListGroup(true)
+    }
+    const handleShowModalOKListGroup= () => {
+        setListGroup(false)
+    }
+    const handleShowModalCancelListGroup= () => {
+        setListGroup(false)
     }
 
     //  Search
@@ -118,11 +141,24 @@ function MenuBar() {
 
     const usersFind = [
         {
-            _id: '2',
+            _id: '3',
             name: 'Lê Tuấn',
             content: 'Hi Chau!!',
             avatar: 'https://s120-ava-talk.zadn.vn/c/f/3/5/20/120/e83b009221d944ac707d41f4da3e138e.jpg',
-        }
+        },
+        {
+            _id: '1',
+            name: 'Minh Châu',
+            content: 'Hi Tuan!!',
+            avatar: 'https://s120-ava-talk.zadn.vn/4/8/3/5/51/120/3a1cf7ea2e80a0262202104db962090e.jpg',
+        },
+
+        {
+            _id: '2',
+            name: 'Duy Khang',
+            content: 'Hi Chau!!',
+            avatar: 'https://s120-ava-talk.zadn.vn/b/f/3/a/3/120/4ae7bbb88211e3fdd33873839ba6a1d8.jpg',
+        },
     ];
 
     useEffect(() => { }, []);
@@ -157,6 +193,17 @@ function MenuBar() {
         );
     };
 
+    const tabAddFriend = () => {
+        return (
+            <h1>tabAddFriend</h1>
+        );
+    };
+    const tabGroup = () => {
+        return (
+            <h1>tabGroup</h1>
+        );
+    };
+
     const tabContact = () => {
         return (
             <StyledFriendGroup>
@@ -166,16 +213,16 @@ function MenuBar() {
                     </HeaderIcon>
                     <h3>Thêm bạn bè bằng số điện thoại</h3>
                 </StyledGroup>
-                <StyledGroup>
+                <StyledGroup onClick={handleShowModalListAdd}>
                     <StyledList>
                         <StyleImg src='https://chat.zalo.me/assets/NewFr@2x.820483766abed8ab03205b8e4a8b105b.png'></StyleImg>
                         <StyledText>Danh sách kết bạn</StyledText>
                     </StyledList>
                 </StyledGroup>
-                <StyledGroup>
+                <StyledGroup onClick={handleShowModalListGroup}>
                     <StyledList>
                         <StyleImg src='https://chat.zalo.me/assets/group@2x.2d184edd797db8782baa0d5c7a786ba0.png'></StyleImg>
-                        <StyledText>Danh sách kết bạn</StyledText>
+                        <StyledText>Danh sách nhóm</StyledText>
                     </StyledList>
                 </StyledGroup>
                 <StyledGroup style={{ height: '48px', lineHeight: '48px', paddingLeft: '10px', borderTop: '1px solid #e5e7eb' }}>
@@ -197,8 +244,10 @@ function MenuBar() {
                         />
                     ))}
                 </StyledGroup>
+                
             </StyledFriendGroup>
         );
+        
     };
 
     const bottomItems = [
@@ -244,8 +293,8 @@ function MenuBar() {
                     <Space direction="horizontal">
                         <Search placeholder="Tìm Kiếm" allowClear onSearch={onSearch} />
                     </Space>
-                    <HeaderIcon>
-                        <UserAddOutlined />
+                    <HeaderIcon >
+                        <UserAddOutlined onClick={handleShowModalAddFriend}/>
                     </HeaderIcon>
                     <HeaderIcon>
                         <UsergroupAddOutlined />
@@ -254,6 +303,7 @@ function MenuBar() {
                 {option === 'chat' ? <TabMenuItem>{tabMenu()}</TabMenuItem> : null}
                 {option === 'contact' ? <TabMenuItem>{tabContact()}</TabMenuItem> : null}
             </EndWrapper>
+            {/* Modal Add friend */}
             <StyledModal title="Đặt tên gợi nhớ" open={friend} onCancel={handleShowModalCancelAddFriend} onOk={handleShowModalOKAddFriend}
                 footer={[
                     <Button key="back" style={{ fontWeight: 700 }} onClick={handleShowModalCancelAddFriend}>Hủy</Button>,
@@ -281,6 +331,43 @@ function MenuBar() {
                             name = {user.name}
                             avatar = {user.avatar}
                         ></AvatarItemNoHours>
+                    ))}
+                </StyledResultAddFriend>
+            </StyledModal>
+
+            {/* Modal show dsach loi moi ket ban */}
+            <StyledModal title="Danh sách kết bạn" open={listAdd} onCancel={handleShowModalCancelListAdd} onOk={handleShowModalOKListAdd}
+                footer={[
+                    <Button key="back" style={{ fontWeight: 700 }} onClick={handleShowModalCancelListAdd}>Hủy</Button>,
+                    <Button key="submit" style={{ fontWeight: 700 }} type="primary" onClick={handleShowModalOKListAdd}>Đồng ý</Button>
+                ]}>
+                
+                <StyledResultAddFriend>
+                    {usersFind.map((user, index) => (
+                        <AvatarItemListAddFriend
+                            key={index}
+                            index = {user._id}
+                            name = {user.name}
+                            avatar = {user.avatar}
+                        ></AvatarItemListAddFriend>
+                    ))}
+                </StyledResultAddFriend>
+            </StyledModal>
+
+            <StyledModal title="Danh sách nhóm" open={listGroup} onCancel={handleShowModalCancelListGroup} onOk={handleShowModalOKListGroup}
+                footer={[
+                    <Button key="back" style={{ fontWeight: 700 }} onClick={handleShowModalCancelListGroup}>Hủy</Button>,
+                    <Button key="submit" style={{ fontWeight: 700 }} type="primary" onClick={handleShowModalOKListGroup}>Đồng ý</Button>
+                ]}>
+                
+                <StyledResultAddFriend>
+                    {usersFind.map((user, index) => (
+                        <AvatarItemListGroup
+                            key={index}
+                            index = {user._id}
+                            name = {user.name}
+                            avatar = {user.avatar}
+                        ></AvatarItemListGroup>
                     ))}
                 </StyledResultAddFriend>
             </StyledModal>
