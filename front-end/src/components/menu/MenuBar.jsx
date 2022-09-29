@@ -100,10 +100,10 @@ function MenuBar() {
         },
 
         {
-            _id: '2',
-            name: 'Duy Khang',
+            _id: '4',
+            name: 'Cloud của tôi',
             content: 'Hi Chau!!',
-            avatar: 'https://s120-ava-talk.zadn.vn/b/f/3/a/3/120/4ae7bbb88211e3fdd33873839ba6a1d8.jpg',
+            avatar: 'https://res-zalo.zadn.vn/upload/media/2021/6/4/2_1622800570007_369788.jpg',
         },
 
         {
