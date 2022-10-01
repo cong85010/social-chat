@@ -31,6 +31,7 @@ function MenuBar() {
     const [friend, setFriend] = useState(false);
     const [listAdd, setListAdd] = useState(false);
     const [listGroup, setListGroup] = useState(false);
+    const [logOut, setLogOut] = useState(false);
     const [option, setOption] = useState('chat');
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -76,6 +77,16 @@ function MenuBar() {
     }
     const handleShowModalCancelListGroup= () => {
         setListGroup(false)
+    }
+
+    const handleShowModalLogOut = () => {
+        setLogOut(true)
+    }
+    const handleShowModalOKLogOut = () => {
+        setLogOut(false)
+    }
+    const handleShowModalCancelLogOut = () => {
+        setLogOut(false)
     }
 
     //  Search
@@ -193,17 +204,6 @@ function MenuBar() {
         );
     };
 
-    const tabAddFriend = () => {
-        return (
-            <h1>tabAddFriend</h1>
-        );
-    };
-    const tabGroup = () => {
-        return (
-            <h1>tabGroup</h1>
-        );
-    };
-
     const tabContact = () => {
         return (
             <StyledFriendGroup>
@@ -255,13 +255,13 @@ function MenuBar() {
             title: 'message',
             icon: <CloudOutlined />,
         },
+        // {
+        //     title: 'message',
+        //     icon: <OneToOneOutlined />,
+        // },
         {
             title: 'message',
-            icon: <OneToOneOutlined />,
-        },
-        {
-            title: 'message',
-            icon: <LogoutOutlined onClick={handleLogout} />,
+            icon: <LogoutOutlined onClick={handleShowModalLogOut} />,
         },
     ];
     // MenuIcon
@@ -279,9 +279,9 @@ function MenuBar() {
                     <MenuIcon>
                         <ContactsOutlined onClick={() => setOption('contact')} />
                     </MenuIcon>
-                    <MenuIcon>
+                    {/* <MenuIcon>
                         <CheckSquareOutlined onClick={() => setOption('check')} />
-                    </MenuIcon>
+                    </MenuIcon> */}
                     {/* <MenuIcon>
                         <LogoutOutlined onClick={handleLogout} />
                     </MenuIcon> */}
@@ -302,6 +302,7 @@ function MenuBar() {
                 </HeaderSearch>
                 {option === 'chat' ? <TabMenuItem>{tabMenu()}</TabMenuItem> : null}
                 {option === 'contact' ? <TabMenuItem>{tabContact()}</TabMenuItem> : null}
+
             </EndWrapper>
             {/* Modal Add friend */}
             <StyledModal title="Đặt tên gợi nhớ" open={friend} onCancel={handleShowModalCancelAddFriend} onOk={handleShowModalOKAddFriend}
@@ -370,6 +371,15 @@ function MenuBar() {
                         ></AvatarItemListGroup>
                     ))}
                 </StyledResultAddFriend>
+            </StyledModal>
+
+            <StyledModal title="Xác nhận" open={logOut} onCancel={handleShowModalCancelLogOut} onOk={handleShowModalOKLogOut}
+                footer={[
+                    <Button key="back" style={{ fontWeight: 700 }} onClick={handleShowModalCancelLogOut}>Hủy</Button>,
+                    <Button key="submit" style={{ fontWeight: 700 }} type="primary" onClick={handleShowModalOKLogOut}>Đồng ý</Button>
+                ]}>
+                
+                <StyledText>Bạn có muốn thoát ứng dụng không ?</StyledText>
             </StyledModal>
         </Wrapper>
     );
