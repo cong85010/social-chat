@@ -4,7 +4,16 @@ import { Avatar } from 'antd';
 import { textAbout, itemHover, border, textTitle } from '../../../utils/color';
 import { ItemContent, ContentName, ContentAbout } from '../../../utils/Layout';
 
-function AvatarItem({ name, content, avatar, curentUser }) {
+function AvatarItem({ name, listMember, avatar, type, userIdCurrent }) {
+
+    const getNameConversation = () => {
+        if (type) {
+            return name;
+        } else {
+            return listMember.find(m => m.id !== userIdCurrent).name;
+        }
+    }
+
     return (
         <Wrapper>
             <ItemContent>
@@ -12,8 +21,8 @@ function AvatarItem({ name, content, avatar, curentUser }) {
             </ItemContent>
             <Content>
                 <TitleContent>
-                    <ContentName>{name}</ContentName>
-                    <ContentAbout>{content}</ContentAbout>
+                    <ContentName>{getNameConversation()}</ContentName>
+                    <ContentAbout>{ }</ContentAbout>
                 </TitleContent>
                 <MoreContent>
                     <AboutTime>1</AboutTime>

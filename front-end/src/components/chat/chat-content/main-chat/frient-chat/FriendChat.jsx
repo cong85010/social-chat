@@ -1,31 +1,12 @@
 import styled from 'styled-components';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Avatar } from 'antd';
 import { bgColor } from '~/utils/color';
+import { useDispatch, useSelector } from 'react-redux';
+import { getConversationAllByToken } from '~/redux/slices/ConversationSlice';
 
 function FriendChat({ avatar, message, status }) {
-    const messages = [
-        {
-            _id: 1,
-            content: 'This is messages!',
-            time: '12:15',
-        },
-        {
-            _id: 1,
-            content: 'This is messages from Chau!',
-            time: '12:15',
-        },
-        {
-            _id: 1,
-            content: 'This is messages!',
-            time: '12:15',
-        },
-        {
-            _id: 1,
-            content: 'This is messages!',
-            time: '12:15',
-        },
-    ];
+
     return (
         <Wrapper>
             <ItemContent>
@@ -39,12 +20,10 @@ function FriendChat({ avatar, message, status }) {
             <MessageContainer>
                 <MessageContent>
                     <MessageItem>
-                        {messages.map((message, index) => (
-                            <MessageText>
-                                {message.content}
-                                {/* <ContentAbout>{message.time}</ContentAbout> */}
-                            </MessageText>
-                        ))}
+                        <MessageText>
+                            {message.content[0]}
+                            {/* <ContentAbout>{message.time}</ContentAbout> */}
+                        </MessageText>
                     </MessageItem>
                 </MessageContent>
             </MessageContainer>
