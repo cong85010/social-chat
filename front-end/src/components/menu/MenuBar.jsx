@@ -20,8 +20,9 @@ import {
 } from '@ant-design/icons';
 import AvatarItem from './content/AvatarItem';
 import { logout } from '~/redux/slices/UserSlice';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Router, useNavigate, useRoutes } from 'react-router-dom';
+import { getConversationAllByToken } from '~/redux/slices/ConversationSlice';
 
 const bottomItems = [
     {
@@ -43,8 +44,14 @@ function MenuBar() {
     const [option, setOption] = useState('chat');
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const { userId, accessToken } = useSelector(state => state.user.user)
+    const { conversations } = useSelector(state => state.conversation)
     // MenuIcon
     const renderItems2 = () => bottomItems.map((bottomItem, index) => <MenuIcon>{bottomItem.icon}</MenuIcon>);
+
+    useEffect(() => {
+        dispatch(getConversationAllByToken(accessToken))
+    }, [])
 
     //  Search
     const { Search } = Input;
@@ -107,20 +114,17 @@ function MenuBar() {
         },
     ];
 
-    useEffect(() => {}, []);
-
     //  Tab Menu
     const tabMenu = () => {
         return (
             <Tabs defaultActiveKey="1">
                 <Tabs.TabPane tab="Tất cả" key="1">
-                    {users.map((user, index) => (
+                    {conversations.map((conversation, index) => (
                         <AvatarItem
                             key={index}
-                            index={user._id}
-                            name={user.name}
-                            content={user.content}
-                            avatar={user.avatar}
+                            index={conversation.id}
+                            userIdCurrent={userId}
+                            {...conversation}
                         />
                     ))}
                 </Tabs.TabPane>
