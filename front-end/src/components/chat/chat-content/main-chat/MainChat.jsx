@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import React, { useEffect, useState, useRef } from 'react';
-import { Avatar, Button, Input } from 'antd';
+import { Avatar, Button, Input, message } from 'antd';
 import { ItemContent, ContentName, HeaderIcon, ContentAbout, IconItemInput } from '~/utils/Layout';
 import {
     FileExclamationOutlined,
@@ -17,22 +17,25 @@ import { bodyChat, border, primaryColor } from '~/utils/color';
 import TextArea from 'antd/lib/input/TextArea';
 import MyChat from './my-chat/MyChat';
 import FriendChat from './frient-chat/FriendChat';
+import SockJS from 'sockjs-client';
+import Stomp from 'stompjs';
+import { URL } from '~/utils/constant';
+import { useSelector } from 'react-redux';
+
 
 function MainChat({ option, setOption, selectedUser, userID }) {
-    const [chat, setChat] = useState([]);
+    const [messages, setMessages] = useState([]);
     // Click change layout
     const [collapsed, setCollapsed] = useState(false);
-    const [value, setValue] = useState('');
 
-    const text_input = useRef();
-    const chat_body = useRef();
+    //use your link here
+    var sock = new SockJS(`${URL}/ws`);
+    let stompClient = Stomp.over(sock);
+    const { user } = useSelector(state => state.user)
 
     const toggleCollapsed = () => {
         setCollapsed(!collapsed);
     };
-
-    // Change With MainChatfull
-    useEffect(() => { }, []);
 
     // Input
     useEffect(() => {
@@ -46,13 +49,37 @@ function MainChat({ option, setOption, selectedUser, userID }) {
     }, []);
 
     const sendChat = () => {
-        const message = document.getElementById('chat_input').value;
-        document.getElementById('chat_input').value = '';
-        setChat((prev) => []);
-        if (userID) {
-        } else {
-        }
+
+        const input = document.getElementById('chat_input')
+        var chatMessage = {
+            conversationId: '6337c0eb80109d0a23f4980a',
+            content: [input.value],
+            type: 0,
+            accessToken: user.accessToken
+        };
+
+        stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(chatMessage));
     };
+
+    useEffect(() => {
+        sock.onopen = function () {
+            console.log('open');
+        }
+        stompClient.connect({}, function (frame) {
+            console.log('Connected - ha: ' + frame);
+            stompClient.subscribe(`/user/${user.id}/chat`, function (chat) {
+                console.log(chat);
+                const mes = JSON.parse(chat.body)
+                console.log(mes);
+                console.log(messages);
+                console.log([...messages, mes]);
+                setMessages(pre => { return [...pre, mes] })
+                //you can execute any function here
+            });
+        });
+    }, [])
+
+    console.log(messages);
     return (
         <Wrapper>
             <HeaderWrapper>
@@ -90,8 +117,12 @@ function MainChat({ option, setOption, selectedUser, userID }) {
             </HeaderWrapper>
             {/* Body Chat */}
             <BodyChat>
-                <FriendChat />
-                <MyChat />
+                {
+                    messages?.map(message =>
+                        message.senderId === user.id ?
+                            <MyChat message={message} /> : <FriendChat message={message} />
+                    )
+                }
             </BodyChat>
             <IconInput>
                 <IconItemInput>
@@ -103,13 +134,13 @@ function MainChat({ option, setOption, selectedUser, userID }) {
             </IconInput>
             <FooterChat>
                 <InputMessage>
-                    <StyledTextArea
+                    <Input
                         id="chat_input"
                         placeholder="Nhập nội dung"
-                        autoSize
-                        value={value}
-                        onChange={(e) => setValue(e.target.value)}
-
+                    // autoSize
+                    // value={value}
+                    // onChange={(e) => setValue(e.target.value)}
+                    // onBlur={(e) => setMessage(e.target.value)}
                     />
                 </InputMessage>
                 <IconMessage>

@@ -5,28 +5,7 @@ import { bgColor, border, myMessage } from '~/utils/color';
 import { ContentAbout } from '~/utils/Layout';
 
 function MyChat({ avatar, message, status }) {
-    const messages = [
-        {
-            _id: 1,
-            content: 'This is messages!',
-            time: '12:15',
-        },
-        {
-            _id: 1,
-            content: 'This is messages from Chau!',
-            time: '12:15',
-        },
-        {
-            _id: 1,
-            content: 'This is messages!',
-            time: '12:15',
-        },
-        {
-            _id: 1,
-            content: 'This is messages!',
-            time: '12:15',
-        },
-    ];
+
     return (
         <Wrapper>
             <ItemContent>
@@ -40,12 +19,10 @@ function MyChat({ avatar, message, status }) {
             <MessageContainer>
                 <MessageContent>
                     <MessageItem>
-                        {messages.map((message, index) => (
-                            <MessageText>
-                                {message.content}
-                                {/* <ContentAbout>{message.time}</ContentAbout> */}
-                            </MessageText>
-                        ))}
+                        <MessageText>
+                            {message.content[0]}
+                            {/* <ContentAbout>{message.time}</ContentAbout> */}
+                        </MessageText>
                     </MessageItem>
                 </MessageContent>
             </MessageContainer>
@@ -57,7 +34,6 @@ export default MyChat;
 
 const Wrapper = styled.div`
     display: flex;
-    flex: 1;
     justify-content: flex-start;
     align-items: flex-end;
     flex-direction: row-reverse;

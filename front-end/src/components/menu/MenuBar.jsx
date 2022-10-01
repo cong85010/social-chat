@@ -24,8 +24,9 @@ import AvatarItemNoHours from './content/AvatarItemNoHours';
 import AvatarItemListAddFriend from './content/AvatarItemListAddFriend';
 import AvatarItemListGroup from './content/AvatarItemListGroup';
 import { logout } from '~/redux/slices/UserSlice';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Router, useNavigate, useRoutes } from 'react-router-dom';
+import { getConversationAllByToken } from '~/redux/slices/ConversationSlice';
 
 function MenuBar() {
     const [friend, setFriend] = useState(false);
@@ -34,6 +35,10 @@ function MenuBar() {
     const [option, setOption] = useState('chat');
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const { userId, accessToken } = useSelector(state => state.user.user)
+    const { conversations } = useSelector(state => state.conversation)
+    // MenuIcon
+    const renderItems2 = () => bottomItems.map((bottomItem, index) => <MenuIcon>{bottomItem.icon}</MenuIcon>);
 
     const handleLogout = () => {
         dispatch(logout());
@@ -58,25 +63,29 @@ function MenuBar() {
         setFriend(false)
     }
 
-    const handleShowModalListAdd= () => {
+    const handleShowModalListAdd = () => {
         setListAdd(true)
     }
-    const handleShowModalOKListAdd= () => {
+    const handleShowModalOKListAdd = () => {
         setListAdd(false)
     }
-    const handleShowModalCancelListAdd= () => {
+    const handleShowModalCancelListAdd = () => {
         setListAdd(false)
     }
 
-    const handleShowModalListGroup= () => {
+    const handleShowModalListGroup = () => {
         setListGroup(true)
     }
-    const handleShowModalOKListGroup= () => {
+    const handleShowModalOKListGroup = () => {
         setListGroup(false)
     }
-    const handleShowModalCancelListGroup= () => {
+    const handleShowModalCancelListGroup = () => {
         setListGroup(false)
     }
+
+    useEffect(() => {
+        dispatch(getConversationAllByToken(accessToken))
+    }, [])
 
     //  Search
     const { Search } = Input;
@@ -168,13 +177,12 @@ function MenuBar() {
         return (
             <Tabs defaultActiveKey="1">
                 <Tabs.TabPane tab="Tất cả" key="1">
-                    {users.map((user, index) => (
+                    {conversations.map((conversation, index) => (
                         <AvatarItem
                             key={index}
-                            index={user._id}
-                            name={user.name}
-                            content={user.content}
-                            avatar={user.avatar}
+                            index={conversation.id}
+                            userIdCurrent={userId}
+                            {...conversation}
                         />
                     ))}
                 </Tabs.TabPane>
@@ -244,10 +252,10 @@ function MenuBar() {
                         />
                     ))}
                 </StyledGroup>
-                
+
             </StyledFriendGroup>
         );
-        
+
     };
 
     const bottomItems = [
@@ -264,9 +272,6 @@ function MenuBar() {
             icon: <LogoutOutlined onClick={handleLogout} />,
         },
     ];
-    // MenuIcon
-    const renderItems2 = () => bottomItems.map((bottomItem, index) => <MenuIcon>{bottomItem.icon}</MenuIcon>);
-
 
     return (
         <Wrapper>
@@ -294,7 +299,7 @@ function MenuBar() {
                         <Search placeholder="Tìm Kiếm" allowClear onSearch={onSearch} />
                     </Space>
                     <HeaderIcon >
-                        <UserAddOutlined onClick={handleShowModalAddFriend}/>
+                        <UserAddOutlined onClick={handleShowModalAddFriend} />
                     </HeaderIcon>
                     <HeaderIcon>
                         <UsergroupAddOutlined />
@@ -318,7 +323,7 @@ function MenuBar() {
                     onFinishFailed={onFinishFailed}
                     autoComplete="off"
                 >
-                    <Form.Item style={{marginBottom:'8px'}}>
+                    <Form.Item style={{ marginBottom: '8px' }}>
                         <Input placeholder='Nhập số điện thoại cần tìm' />
                     </Form.Item>
                 </StyledForm>
@@ -327,9 +332,9 @@ function MenuBar() {
                     {usersFind.map((user, index) => (
                         <AvatarItemNoHours
                             key={index}
-                            index = {user._id}
-                            name = {user.name}
-                            avatar = {user.avatar}
+                            index={user._id}
+                            name={user.name}
+                            avatar={user.avatar}
                         ></AvatarItemNoHours>
                     ))}
                 </StyledResultAddFriend>
@@ -341,14 +346,14 @@ function MenuBar() {
                     <Button key="back" style={{ fontWeight: 700 }} onClick={handleShowModalCancelListAdd}>Hủy</Button>,
                     <Button key="submit" style={{ fontWeight: 700 }} type="primary" onClick={handleShowModalOKListAdd}>Đồng ý</Button>
                 ]}>
-                
+
                 <StyledResultAddFriend>
                     {usersFind.map((user, index) => (
                         <AvatarItemListAddFriend
                             key={index}
-                            index = {user._id}
-                            name = {user.name}
-                            avatar = {user.avatar}
+                            index={user._id}
+                            name={user.name}
+                            avatar={user.avatar}
                         ></AvatarItemListAddFriend>
                     ))}
                 </StyledResultAddFriend>
@@ -359,14 +364,14 @@ function MenuBar() {
                     <Button key="back" style={{ fontWeight: 700 }} onClick={handleShowModalCancelListGroup}>Hủy</Button>,
                     <Button key="submit" style={{ fontWeight: 700 }} type="primary" onClick={handleShowModalOKListGroup}>Đồng ý</Button>
                 ]}>
-                
+
                 <StyledResultAddFriend>
                     {usersFind.map((user, index) => (
                         <AvatarItemListGroup
                             key={index}
-                            index = {user._id}
-                            name = {user.name}
-                            avatar = {user.avatar}
+                            index={user._id}
+                            name={user.name}
+                            avatar={user.avatar}
                         ></AvatarItemListGroup>
                     ))}
                 </StyledResultAddFriend>
