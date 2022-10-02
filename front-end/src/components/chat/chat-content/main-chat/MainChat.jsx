@@ -258,6 +258,10 @@ const InputMessage = styled.div`
         &:focus {
         }
     }
+    #chat_input{
+        border-color: transparent;
+        box-shadow: none;
+    }
 `;
 const IconMessage = styled.div`
     display: flex;
