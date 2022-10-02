@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import 'react-chat-elements/dist/main.css';
 
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';

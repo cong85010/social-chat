@@ -3,8 +3,22 @@ import React, { useState } from 'react';
 import { Avatar, Button } from 'antd';
 import { textAbout, itemHover, border, textTitle } from '../../../utils/color';
 import { ItemContent, ContentName, ContentAbout } from '../../../utils/Layout';
+import axios from 'axios';
+import { getToken } from '~/utils/function';
+import { URL } from '~/utils/constant';
 
-function AvatarItemNoHours({ name, content, avatar, curentUser }) {
+function AvatarItemListAddFriend({ name, content, avatar, idFriend }) {
+    const updateStatus = async () => {
+        await axios.post(`${URL}/api/friend-request/update-status`, {
+            id: idFriend,
+            status: 1,
+        }, {
+            headers: {
+                Authorization: `Bearer ${getToken()}`,
+                Accept: 'application/json',
+            },
+        })
+    }
     return (
         <Wrapper>
             <ItemContent>
@@ -17,14 +31,14 @@ function AvatarItemNoHours({ name, content, avatar, curentUser }) {
                 </TitleContent>
                 <MoreContent>
                     <Button >Bỏ qua</Button>
-                    <Button type='primary'>Đồng ý</Button>
+                    <Button type='primary' onClick={updateStatus}>Đồng ý</Button>
                 </MoreContent>
             </Content>
         </Wrapper>
     );
 }
 
-export default AvatarItemNoHours;
+export default AvatarItemListAddFriend;
 const Wrapper = styled.div`
     display: flex;
     justify-content: flex-start;

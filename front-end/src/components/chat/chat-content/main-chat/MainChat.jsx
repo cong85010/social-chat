@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import React, { useEffect, useState, useRef } from 'react';
-import { Avatar, Button, Input, message } from 'antd';
+import { Avatar, Button, Form, Input, message } from 'antd';
 import { ItemContent, ContentName, HeaderIcon, ContentAbout, IconItemInput } from '~/utils/Layout';
 import {
     FileExclamationOutlined,
@@ -11,6 +11,7 @@ import {
     SmileOutlined,
     UserAddOutlined,
     UsergroupAddOutlined,
+    UserOutlined,
     VideoCameraOutlined,
 } from '@ant-design/icons';
 import { bodyChat, border, primaryColor } from '~/utils/color';
@@ -19,14 +20,19 @@ import MyChat from './my-chat/MyChat';
 import FriendChat from './frient-chat/FriendChat';
 import SockJS from 'sockjs-client';
 import Stomp from 'stompjs';
-import { URL } from '~/utils/constant';
-import { useSelector } from 'react-redux';
+import { AvatarDefault, URL } from '~/utils/constant';
+import { useSelector, useDispatch } from 'react-redux';
+import { updateContentChat } from '~/redux/slices/ChatSlice';
+import { updateSortConversations } from '~/redux/slices/ConversationSlice';
 
 
 function MainChat({ option, setOption, selectedUser, userID }) {
-    const [messages, setMessages] = useState([]);
     // Click change layout
     const [collapsed, setCollapsed] = useState(false);
+
+    const { userChat } = useSelector(state => state.userChat)
+    const { chat } = useSelector(state => state.chat)
+    const dispatch = useDispatch()
 
     //use your link here
     var sock = new SockJS(`${URL}/ws`);
@@ -49,16 +55,17 @@ function MainChat({ option, setOption, selectedUser, userID }) {
     }, []);
 
     const sendChat = () => {
-
+        console.log(userChat);
         const input = document.getElementById('chat_input')
         var chatMessage = {
-            conversationId: '6337c0eb80109d0a23f4980a',
+            conversationId: userChat.id,
             content: [input.value],
             type: 0,
             accessToken: user.accessToken
         };
-
+        input.value = ""
         stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(chatMessage));
+        dispatch(updateSortConversations(userChat.id))
     };
 
     useEffect(() => {
@@ -66,33 +73,27 @@ function MainChat({ option, setOption, selectedUser, userID }) {
             console.log('open');
         }
         stompClient.connect({}, function (frame) {
-            console.log('Connected - ha: ' + frame);
             stompClient.subscribe(`/user/${user.id}/chat`, function (chat) {
-                console.log(chat);
-                const mes = JSON.parse(chat.body)
-                console.log(mes);
-                console.log(messages);
-                console.log([...messages, mes]);
-                setMessages(pre => { return [...pre, mes] })
-                //you can execute any function here
+                const message = JSON.parse(chat.body)
+                dispatch(updateContentChat(message))
             });
         });
     }, [])
 
-    console.log(messages);
+    // console.log(messages);
     return (
         <Wrapper>
             <HeaderWrapper>
                 <ItemContent>
                     <Avatar
                         size={48}
-                        src="https://s120-ava-talk.zadn.vn/4/8/3/5/51/120/3a1cf7ea2e80a0262202104db962090e.jpg"
+                        src={userChat.avatar || AvatarDefault}
                     />
                 </ItemContent>
                 <ContentHeaderChat>
                     <UserContent>
-                        <ContentName>Minh Châu</ContentName>
-                        <ContentAbout>Vừa truy cập</ContentAbout>
+                        <ContentName>{userChat.name}</ContentName>
+                        <ContentAbout>{userChat.timeConnect}</ContentAbout>
                     </UserContent>
 
                     <IconContent>
@@ -118,7 +119,7 @@ function MainChat({ option, setOption, selectedUser, userID }) {
             {/* Body Chat */}
             <BodyChat>
                 {
-                    messages?.map(message =>
+                    chat.content?.map(message =>
                         message.senderId === user.id ?
                             <MyChat message={message} /> : <FriendChat message={message} />
                     )
@@ -133,14 +134,12 @@ function MainChat({ option, setOption, selectedUser, userID }) {
                 </IconItemInput>
             </IconInput>
             <FooterChat>
+                {/* <Form> */}
                 <InputMessage>
                     <Input
                         id="chat_input"
                         placeholder="Nhập nội dung"
-                    // autoSize
-                    // value={value}
-                    // onChange={(e) => setValue(e.target.value)}
-                    // onBlur={(e) => setMessage(e.target.value)}
+                        autoSize
                     />
                 </InputMessage>
                 <IconMessage>
@@ -151,6 +150,7 @@ function MainChat({ option, setOption, selectedUser, userID }) {
                         Gửi
                     </Button>
                 </IconMessage>
+                {/* </Form> */}
             </FooterChat>
         </Wrapper>
     );

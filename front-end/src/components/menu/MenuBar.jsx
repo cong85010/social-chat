@@ -27,6 +27,10 @@ import { logout } from '~/redux/slices/UserSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { Router, useNavigate, useRoutes } from 'react-router-dom';
 import { getConversationAllByToken } from '~/redux/slices/ConversationSlice';
+import { saveUserChat } from '~/redux/slices/UserChatSlice';
+import axios from 'axios';
+import { getHeaders, URL } from '~/utils/constant';
+import { getToken } from '~/utils/function';
 
 function MenuBar() {
     const [friend, setFriend] = useState(false);
@@ -37,6 +41,12 @@ function MenuBar() {
     const navigate = useNavigate();
     const { userId, accessToken } = useSelector(state => state.user.user)
     const { conversations } = useSelector(state => state.conversation)
+    const { userChat } = useSelector(state => state.userChat)
+
+    const [findFriend, setFindFriend] = useState();
+    const [friendInvited, setFriendInvited] = useState();
+    const [isLoading, setIsLoading] = useState(false);
+
     // MenuIcon
     const renderItems2 = () => bottomItems.map((bottomItem, index) => <MenuIcon>{bottomItem.icon}</MenuIcon>);
 
@@ -45,8 +55,45 @@ function MenuBar() {
         navigate('/login');
     };
 
-    const onFinish = () => {
-        console.log('Success:');
+    const onFinishFindFriend = async (value) => {
+        try {
+            setIsLoading(true)
+            const { data } = await axios.get(`${URL}/api/user/phone-number/${value.phone}`, {
+                headers: {
+                    Authorization: `Bearer ${getToken()}`,
+                    Accept: 'application/json',
+                },
+            })
+            setFindFriend(data)
+        } catch (error) {
+
+            setFindFriend({
+                code: 404,
+                message: "Không tìm thấy !!!"
+            })
+        }
+        setIsLoading(false)
+    };
+
+    const getFriendInvited = async (value) => {
+        try {
+            setIsLoading(true)
+            const { data } = await axios.get(`${URL}/api/friend-request/get-friend-request`, {
+                headers: {
+                    Authorization: `Bearer ${getToken()}`,
+                    Accept: 'application/json',
+                },
+            })
+
+            setFriendInvited(data)
+        } catch (error) {
+
+            setFindFriend({
+                code: 404,
+                message: "Không có lời mời nào"
+            })
+        }
+        setIsLoading(false)
     };
 
     const onFinishFailed = () => {
@@ -65,6 +112,7 @@ function MenuBar() {
 
     const handleShowModalListAdd = () => {
         setListAdd(true)
+        getFriendInvited()
     }
     const handleShowModalOKListAdd = () => {
         setListAdd(false)
@@ -87,6 +135,12 @@ function MenuBar() {
         dispatch(getConversationAllByToken(accessToken))
     }, [])
 
+    useEffect(() => {
+        if (conversations.length) {
+            if (!userChat)
+                dispatch(saveUserChat(conversations[0]))
+        }
+    }, [conversations])
     //  Search
     const { Search } = Input;
     const suffix = (
@@ -147,30 +201,6 @@ function MenuBar() {
             avatar: 'https://s120-ava-talk.zadn.vn/4/8/3/5/51/120/3a1cf7ea2e80a0262202104db962090e.jpg',
         },
     ];
-
-    const usersFind = [
-        {
-            _id: '3',
-            name: 'Lê Tuấn',
-            content: 'Hi Chau!!',
-            avatar: 'https://s120-ava-talk.zadn.vn/c/f/3/5/20/120/e83b009221d944ac707d41f4da3e138e.jpg',
-        },
-        {
-            _id: '1',
-            name: 'Minh Châu',
-            content: 'Hi Tuan!!',
-            avatar: 'https://s120-ava-talk.zadn.vn/4/8/3/5/51/120/3a1cf7ea2e80a0262202104db962090e.jpg',
-        },
-
-        {
-            _id: '2',
-            name: 'Duy Khang',
-            content: 'Hi Chau!!',
-            avatar: 'https://s120-ava-talk.zadn.vn/b/f/3/a/3/120/4ae7bbb88211e3fdd33873839ba6a1d8.jpg',
-        },
-    ];
-
-    useEffect(() => { }, []);
 
     //  Tab Menu
     const tabMenu = () => {
@@ -309,34 +339,39 @@ function MenuBar() {
                 {option === 'contact' ? <TabMenuItem>{tabContact()}</TabMenuItem> : null}
             </EndWrapper>
             {/* Modal Add friend */}
-            <StyledModal title="Đặt tên gợi nhớ" open={friend} onCancel={handleShowModalCancelAddFriend} onOk={handleShowModalOKAddFriend}
+            <StyledModal title="Tìm bạn bè" open={friend} onCancel={handleShowModalCancelAddFriend} onOk={handleShowModalOKAddFriend}
                 footer={[
                     <Button key="back" style={{ fontWeight: 700 }} onClick={handleShowModalCancelAddFriend}>Hủy</Button>,
-                    <Button key="submit" style={{ fontWeight: 700 }} type="primary" onClick={handleShowModalOKAddFriend}>Tìm kiếm</Button>
+                    // <Button key="submit" style={{ fontWeight: 700 }} type="primary" htmlType='submit' >Tìm kiếm</Button>
                 ]}>
                 <StyledForm
                     name="basic"
                     labelCol={{ span: 5 }}
                     wrapperCol={{ span: 24 }}
                     initialValues={{ remember: true }}
-                    onFinish={onFinish}
+                    onFinish={onFinishFindFriend}
                     onFinishFailed={onFinishFailed}
                     autoComplete="off"
                 >
-                    <Form.Item style={{ marginBottom: '8px' }}>
+                    <Form.Item name='phone' style={{ marginBottom: '8px' }}
+                        rules={[
+                            {
+                                required: true,
+                                pattern: /^0[0-9]{9}$/,
+                                message: 'Vui lòng nhập số điện thoại của bạn!',
+                            },
+                        ]}>
                         <Input placeholder='Nhập số điện thoại cần tìm' />
                     </Form.Item>
                 </StyledForm>
                 <StyledResultAddFriend>
                     <StyledText>Kết quả tìm kiếm</StyledText>
-                    {usersFind.map((user, index) => (
-                        <AvatarItemNoHours
-                            key={index}
-                            index={user._id}
-                            name={user.name}
-                            avatar={user.avatar}
-                        ></AvatarItemNoHours>
-                    ))}
+                    {
+                        findFriend?.code === 200 ?
+                            <AvatarItemNoHours
+                                {...findFriend?.data}
+                            ></AvatarItemNoHours> : findFriend?.message
+                    }
                 </StyledResultAddFriend>
             </StyledModal>
 
@@ -348,14 +383,14 @@ function MenuBar() {
                 ]}>
 
                 <StyledResultAddFriend>
-                    {usersFind.map((user, index) => (
+                    {friendInvited?.code === 200 ? friendInvited.data?.map((user, index) => (
                         <AvatarItemListAddFriend
                             key={index}
                             index={user._id}
-                            name={user.name}
-                            avatar={user.avatar}
+                            idFriend={user.id}
+                            {...user.fromUser}
                         ></AvatarItemListAddFriend>
-                    ))}
+                    )) : friendInvited?.message}
                 </StyledResultAddFriend>
             </StyledModal>
 
@@ -366,17 +401,17 @@ function MenuBar() {
                 ]}>
 
                 <StyledResultAddFriend>
-                    {usersFind.map((user, index) => (
+                    {/* {usersFind.map((user, index) => (
                         <AvatarItemListGroup
                             key={index}
                             index={user._id}
                             name={user.name}
                             avatar={user.avatar}
                         ></AvatarItemListGroup>
-                    ))}
+                    ))} */}
                 </StyledResultAddFriend>
             </StyledModal>
-        </Wrapper>
+        </Wrapper >
     );
 }
 
@@ -436,90 +471,11 @@ const HeaderSearch = styled.div`
     }
 `;
 const TabMenuItem = styled.div`
-    display: flex;
     width: 100%;
-    height: calc(100% - 64px);
-    overflow-y: scroll;
-    &::-webkit-scrollbar{
-        position: relative;
-        width: 6px;
-        background-color: #fff;
-    }
-    &::-webkit-scrollbar-track {
-        position: absolute;
-    }
-    &::-webkit-scrollbar-thumb {
-        position: absolute;
-        background-color: ${border};
-    }
 
-    .ant-tabs-tab{
-        margin-left: 20px;
-    }
-
-    .ant-tabs-nav-list {
-        margin-left: 5px;
-        width: 100%;
-    }
-    .ant-tabs-content-holder {
-        height: calc(100% - 62px);
-        width: 100%;
-    }
-    .ant-tabs-content.ant-tabs-content-top {
-        height: 100%;
-        width: 100%;
-    }
-    .ant-tabs.ant-tabs-top {
-        height: 100%;
-        width: 100%;
-        display: flex;
-        flex: 1;
-        justify-content: center;
-        align-items: center;
-        .ant-tabs-nav {
-            width: 100%;
-            flex: 1;
-            height: 62px;
-            margin-bottom: 0;
-        }
-        div#rc-tabs-1-panel-1 {
-            overflow-y: scroll;
-            flex: 1;
-            height: 100%;
-            position: relative;
-
-            &::-webkit-scrollbar {
-                position: relative;
-                width: 6px;
-                background-color: #ffff;
-            }
-            & ::-webkit-scrollbar-track {
-                position: absolute;
-            }
-            &::-webkit-scrollbar-thumb {
-                position: absolute;
-                background-color: ${border};
-            }
-        }
-        div#rc-tabs-1-panel-2 {
-            overflow-y: scroll;
-            flex: 1;
-            height: 100%;
-            position: relative;
-
-            &::-webkit-scrollbar {
-                position: relative;
-                width: 6px;
-                background-color: #ffff;
-            }
-            & ::-webkit-scrollbar-track {
-                position: absolute;
-            }
-            &::-webkit-scrollbar-thumb {
-                position: absolute;
-                background-color: ${border};
-            }
-        }
+    .ant-tabs-nav {
+        padding: 0 15px;
+        margin: 0;
     }
 `;
 // Search

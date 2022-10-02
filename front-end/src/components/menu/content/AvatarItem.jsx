@@ -3,51 +3,52 @@ import React, { useState } from 'react';
 import { Avatar } from 'antd';
 import { textAbout, itemHover, border, textTitle } from '../../../utils/color';
 import { ItemContent, ContentName, ContentAbout } from '../../../utils/Layout';
+import { useDispatch } from 'react-redux';
+import { getChatByConversationID } from '~/redux/slices/ChatSlice';
+import { saveUserChat } from '~/redux/slices/UserChatSlice';
+import { ChatItem } from 'react-chat-elements';
+import { AvatarDefault } from '~/utils/constant';
+import moment from 'moment';
 
-function AvatarItem({ name, listMember, avatar, type, userIdCurrent }) {
+function AvatarItem({ name, listMember = [], avatar, type, userIdCurrent, id, lastMessage }) {
 
+    const dispatch = useDispatch()
     const getNameConversation = () => {
         if (type) {
             return name;
-        } else {
-            return listMember.find(m => m.id !== userIdCurrent).name;
         }
+        if (listMember.length)
+            return listMember.find(m => m.id !== userIdCurrent)?.name;
+        else return "Chưa xác định"
+    }
+
+    const handleChangeChat = () => {
+        dispatch(getChatByConversationID(id))
+        dispatch(saveUserChat({
+            userChat: {
+                id,
+                name: getNameConversation(),
+                listMember,
+                avatar,
+                type
+            }
+        }))
     }
 
     return (
-        <Wrapper>
-            <ItemContent>
-                <Avatar size={48} src={avatar} />
-            </ItemContent>
-            <Content>
-                <TitleContent>
-                    <ContentName>{getNameConversation()}</ContentName>
-                    <ContentAbout>{ }</ContentAbout>
-                </TitleContent>
-                <MoreContent>
-                    <AboutTime>1</AboutTime>
-                    giờ
-                </MoreContent>
-            </Content>
-        </Wrapper>
+        <ChatItem
+            avatar={avatar || AvatarDefault}
+            alt={avatar}
+            title={getNameConversation()}
+            subtitle={lastMessage?.content[0]}
+            date={new Date(lastMessage?.timeSend)}
+            unread={0}
+            onClick={handleChangeChat}
+        />
     );
 }
 
 export default AvatarItem;
-const Wrapper = styled.div`
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    width: 100%;
-    padding: 0 16px;
-    height: 72px;
-    &:hover {
-        cursor: pointer;
-        transition: 0.5s ease;
-        background-color: ${itemHover};
-    }
-`;
-
 const Content = styled.div`
     width: 100%;
     height: 100%;

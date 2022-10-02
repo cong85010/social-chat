@@ -1,19 +1,34 @@
 import styled from 'styled-components';
 import React, { useState } from 'react';
-import { Avatar } from 'antd';
+import { Avatar, message } from 'antd';
 import { textAbout, itemHover, border, textTitle } from '../../../utils/color';
 import { ItemContent, ContentName, ContentAbout } from '../../../utils/Layout';
+import { AvatarDefault, URL } from '~/utils/constant';
+import { UserAddOutlined } from '@ant-design/icons';
+import axios from 'axios';
+import { getToken } from '~/utils/function';
 
-function AvatarItemNoHours({ name, content, avatar, curentUser }) {
+function AvatarItemNoHours({ name, content, avatar, curentUser, id }) {
+
+    const handleAddFriend = async () => {
+        const data = await axios.post(`${URL}/api/friend-request/send-to-user/${id}`, {}, {
+            headers: {
+                Authorization: `Bearer ${getToken()}`,
+                Accept: 'application/json',
+            },
+        }).catch(err => message.error(err?.response?.data?.messageError))
+        if (data.code === 200)
+            message.success("Gửi lời mời thành công")
+    }
     return (
         <Wrapper>
             <ItemContent>
-                <Avatar size={48} src={avatar} />
+                <Avatar size={48} src={avatar || AvatarDefault} />
             </ItemContent>
             <Content>
                 <TitleContent>
                     <ContentName>{name}</ContentName>
-                    <ContentAbout>{content}</ContentAbout>
+                    <ContentAbout style={{ justifyContent: 'flex-end' }}><UserAddOutlined style={{ fontSize: 30 }} onClick={handleAddFriend} /> </ContentAbout>
                 </TitleContent>
             </Content>
         </Wrapper>
@@ -36,16 +51,15 @@ const Wrapper = styled.div`
 `;
 
 const Content = styled.div`
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    flex-direction: row;
-`;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        flex-direction: row;
+    `;
 const TitleContent = styled.div`
-    width: 80%;
+    width: 100%;
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between;
     align-items: center;
-    flex-direction: column;
 `;

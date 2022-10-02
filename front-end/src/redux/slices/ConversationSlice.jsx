@@ -33,7 +33,13 @@ const ConversationSlice = createSlice({
     name: 'conversation',
     initialState,
     reducers: {
+        updateSortConversations: (state, { payload }) => {
+            const newConversation = state.conversations.find(x => x.id === payload)
 
+            const conversations = state.conversations.filter(x => x.id != payload)
+
+            state.conversations = [newConversation].concat(conversations)
+        }
     },
     extraReducers: (builder) => {
         builder.addCase(getConversationAllByToken.fulfilled, (state, { payload }) => {
@@ -58,3 +64,4 @@ const ConversationSlice = createSlice({
 });
 
 export default ConversationSlice.reducer;
+export const { updateSortConversations } = ConversationSlice.actions

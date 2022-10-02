@@ -151,7 +151,13 @@ function Login() {
                                         <Form.Item
                                             label="Tên đăng nhập"
                                             name="username"
-                                            rules={[{ required: true, message: 'Vui lòng nhập số điện thoại của bạn!' }]}
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    pattern: /^0[0-9]{9}$/,
+                                                    message: 'Vui lòng nhập số điện thoại của bạn!',
+                                                },
+                                            ]}
                                         >
                                             <Input />
                                         </Form.Item>
@@ -199,8 +205,13 @@ function Login() {
                                         <Form.Item
                                             label="Số điện thoại"
                                             name="number"
-                                            rules={[{ required: true, message: 'Vui lòng nhập số điện thoại của bạn!' }]}
-
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    pattern: /^0[0-9]{9}$/,
+                                                    message: 'Vui lòng nhập số điện thoại của bạn!',
+                                                },
+                                            ]}
                                         >
                                             <Input />
                                         </Form.Item>

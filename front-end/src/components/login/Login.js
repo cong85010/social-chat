@@ -40,10 +40,6 @@ function Login() {
     const onSignUp = () => {
         form.validateFields()
             .then((values) => {
-                console.log('====================================');
-                console.log(values);
-                console.log('====================================');
-                // form.resetFields();
                 delete values.confirmPassword;
                 dispatch(SignUpUser({ phoneNumber: formPhone.getFieldValue('phoneNumber'), ...values }));
             })
