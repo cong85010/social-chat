@@ -212,14 +212,14 @@ function Login() {
                                         <Checkbox>Nhớ tài khoản</Checkbox>
                                     </Form.Item> */}
                                     <Row justify="center">
-                                        <Button
+                                        <StyledButton
                                             type="primary"
                                             icon={<LoginOutlined />}
                                             loading={isLoading}
                                             htmlType="submit"
                                         >
                                             ĐĂNG NHẬP
-                                        </Button>
+                                        </StyledButton>
                                     </Row>
                                 </Form>
                             </Tabs.TabPane>
@@ -254,14 +254,14 @@ function Login() {
                                     </p>
                                     <br />
                                     <Row justify="center">
-                                        <Button
+                                        <StyledButton
                                             type="primary"
                                             icon={<LoginOutlined />}
                                             loading={isLoadingRegister}
                                             htmlType="submit"
                                         >
                                             ĐĂNG KÝ
-                                        </Button>
+                                        </StyledButton>
                                     </Row>
                                 </Form>
                             </Tabs.TabPane>
@@ -567,9 +567,15 @@ const BodyContentRightForm = styled.div`
     label {
         font-size: 16px;
     }
+    .ant-tabs-tab-btn {
+        font-size: 20px;
+    }
+    .ant-tabs-nav {
+        transform: translate(22%, 0px);
+    }
 `;
 
-// const StyledTabList = styled(TabList)`
+// const StyledTabTabPane = styled(Tabs.TabPane)`
 //     list-style-type: none;
 //     font-size: 1.8rem;
 //     font-weight: 600;
@@ -614,12 +620,12 @@ const StyledTextRes = styled.p`
 `;
 
 const StyledButton = styled(Button)`
-    width: 200px;
-    height: 50px;
-    font-size: 22px;
+    width: 150px;
+    height: 40px;
+    font-size: 16px;
     font-weight: 600;
     position: relative;
-    left: 38px;
+    left: 25px;
 `;
 
 //  Footer
@@ -634,6 +640,7 @@ const FooterTitleLink = styled.p`
     font-size: 18px;
 `;
 const FooterLinkSocials = styled.div`
+    text-align: center;
     .icon {
         font-size: 1.4rem;
         margin: 0 10px;
