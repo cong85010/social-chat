@@ -122,16 +122,16 @@ function AboutChat() {
             >
                 <StyledBorder style={{ width: '100%', position: 'relative', backgroundColor: '#fffcfc00', top: 0 }}></StyledBorder>
                 <Panel header="Ảnh/Video" key="1" className="site-collapse-custom-panel">
-                    <StyledButton key="submit" style={{ top: '-10px', left: '12px' }} >Xem tất cả</StyledButton>
+                    <StyledButton key="submit" style={{ top: '-10px', left: '25%' }} >Xem tất cả</StyledButton>
                 </Panel>
                 <StyledBorder style={{ width: '100%', position: 'relative', backgroundColor: '#fffcfc00', top: 0 }}></StyledBorder>
                 <Panel header="File" key="2" className="site-collapse-custom-panel">
-                    <StyledButton key="submit" style={{ top: '-10px', left: '12px' }} >Xem tất cả</StyledButton>
+                    <StyledButton key="submit" style={{ top: '-10px', left: '25%' }} >Xem tất cả</StyledButton>
                 </Panel>
                 <StyledBorder style={{ width: '100%', position: 'relative', backgroundColor: '#fffcfc00', top: 0 }}></StyledBorder>
 
                 <Panel header="Link" key="3" className="site-collapse-custom-panel">
-                    <StyledButton key="submit" style={{ top: '-10px', left: '12px' }} >Xem tất cả</StyledButton>
+                    <StyledButton key="submit" style={{ top: '-10px', left: '25%' }} >Xem tất cả</StyledButton>
                 </Panel>
             </StyledCollapse>
         </StyledContent>
@@ -354,6 +354,7 @@ const StyledFunction = styled.div`
 
 const StyledFunctionIcon = styled.div`
     width: calc(33.33333% - 30px);
+    text-align: center;
     .anticon{
         font-size: 1.2em;
         line-height: 1.4em;

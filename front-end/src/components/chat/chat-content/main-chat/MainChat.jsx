@@ -163,8 +163,8 @@ const Wrapper = styled.div`
     flex-direction: column;
     justify-content: center;
     flex: 0 0 auto;
-    /* width: calc(100% - 343px); */
-    width: 100%;
+    width: calc(100% - 343px);
+    /* width: 100%; */
     height: 100%;
     flex-flow: row wrap;
 `;
