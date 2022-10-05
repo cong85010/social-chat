@@ -5,7 +5,7 @@ import { border, primaryColor, bgborder, textTitle } from '~/utils/color';
 import MenuIcon from './MenuIcon';
 import AvatarImg from './content/AvatarImg';
 import { HeaderIcon } from '../../utils/Layout';
-import { Button, Form, Input, Modal, Space, Tabs } from 'antd';
+import { Button, Divider, Form, Input, Menu, Modal, Radio, Space, Tabs, Upload } from 'antd';
 import {
     MessageOutlined,
     ContactsOutlined,
@@ -18,6 +18,7 @@ import {
     UsergroupAddOutlined,
     VideoCameraOutlined,
     LogoutOutlined,
+    PlusOutlined,
 } from '@ant-design/icons';
 import AvatarItem from './content/AvatarItem';
 import AvatarItemNoHours from './content/AvatarItemNoHours';
@@ -31,12 +32,15 @@ import { saveUserChat } from '~/redux/slices/UserChatSlice';
 import axios from 'axios';
 import { getHeaders, URL } from '~/utils/constant';
 import { getToken } from '~/utils/function';
+import AvatarItemListCheckedUsers from './content/AvatarItemListCheckedUsers';
+
 
 function MenuBar() {
     const [friend, setFriend] = useState(false);
     const [listAdd, setListAdd] = useState(false);
     const [listGroup, setListGroup] = useState(false);
     const [logOut, setLogOut] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
     const [option, setOption] = useState('chat');
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -132,6 +136,18 @@ function MenuBar() {
         setListGroup(false)
     }
 
+    const handleShowModalCreatGroup = () => {
+        setIsOpen(true)
+    }
+
+    const handleOKModalCreatGroup = () => {
+        setIsOpen(false)
+    }
+
+    const handleCancelModalCreatGroup = () => {
+        setIsOpen(false)
+    }
+
     useEffect(() => {
         dispatch(getConversationAllByToken(accessToken))
     }, [])
@@ -206,7 +222,7 @@ function MenuBar() {
     //  Tab Menu
     const tabMenu = () => {
         return (
-            <Tabs defaultActiveKey="1">
+            <StyledTabs defaultActiveKey="1">
                 <Tabs.TabPane tab="Tất cả" key="1">
                     {conversations.map((conversation, index) => (
                         <AvatarItem
@@ -228,7 +244,7 @@ function MenuBar() {
                         />
                     ))}
                 </Tabs.TabPane>
-            </Tabs>
+            </StyledTabs>
         );
     };
 
@@ -318,11 +334,11 @@ function MenuBar() {
                     <Space direction="horizontal">
                         <Search placeholder="Tìm Kiếm" allowClear onSearch={onSearch} />
                     </Space>
-                    <HeaderIcon >
-                        <UserAddOutlined onClick={handleShowModalAddFriend} />
+                    <HeaderIcon onClick={handleShowModalAddFriend} >
+                        <UserAddOutlined  />
                     </HeaderIcon>
-                    <HeaderIcon>
-                        <UsergroupAddOutlined />
+                    <HeaderIcon  onClick={handleShowModalCreatGroup}>
+                        <UsergroupAddOutlined/>
                     </HeaderIcon>
                 </HeaderSearch>
                 {option === 'chat' ? <TabMenuItem>{tabMenu()}</TabMenuItem> : null}
@@ -411,6 +427,51 @@ function MenuBar() {
                 
                 <StyledText>Bạn có muốn thoát ứng dụng không ?</StyledText>
             </StyledModal> */}
+
+            <StyledModal title="Tạo nhóm" open={isOpen} onCancel={handleCancelModalCreatGroup} onOk={handleOKModalCreatGroup}
+                footer={[
+                    <Button key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalCreatGroup}>Hủy</Button>,
+                    <Button key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalCreatGroup} type="primary">Đồng ý</Button>
+
+                ]}>
+                <StyledForm name="basic" labelCol={{ span: 8 }} wrapperCol={{ span: 24 }} initialValues={{ remember: false }}
+                    // onFinish={onFinish} onFinishFailed={onFinishFailed} 
+                    autoComplete="off">
+                    <Form.Item valuePropName="fileList">
+                        <Upload action="/upload.do" listType="picture-card">
+                            <div>
+                                <PlusOutlined />
+                                <div style={{ marginTop: 8 }}>Upload</div>
+                            </div>
+                        </Upload>
+                        <Input placeholder='Nhập tên nhóm' />
+                    </Form.Item>
+                    <Form.Item>
+                        <StyledText style={{ fontWeight: 600 }}>Thêm bạn vào nhóm</StyledText>
+                        <Input placeholder='Nhập tên, số điện thoại' style={{ borderRadius: '10px' }} />
+                    </Form.Item>
+                    <Divider style={{ margin: '16px 0 8px' }}></Divider>
+                    <StyledText style={{ fontWeight: 600 }}>Trò chuyện gần đây</StyledText>
+                    <StyledListRecentlyChat>
+                        <Form.Item>
+                            <Menu>
+                                <StyledRadioGroup>
+                                    {users.map((user, index) => (
+                                        <StyledRadio value={index}>
+                                            <AvatarItemListCheckedUsers key={index}
+                                                index={user._id}
+                                                name={user.name}
+                                                avatar={user.avatar}
+                                            />
+                                        </StyledRadio>
+                                    ))}
+                                </StyledRadioGroup>
+                            </Menu>
+
+                        </Form.Item>
+                    </StyledListRecentlyChat>
+                </StyledForm>
+            </StyledModal>
         </Wrapper>
     );
 }
@@ -470,9 +531,24 @@ const HeaderSearch = styled.div`
         background-color: ${bgborder};
     }
 `;
-const TabMenuItem = styled.div`
+export const TabMenuItem = styled.div`
     width: 100%;
-
+    display: flex;
+    width: 100%;
+    height: calc(100% - 64px);
+    overflow-y: scroll;
+    &::-webkit-scrollbar{
+        position: relative;
+        width: 6px;
+        background-color: #fff;
+    }
+    &::-webkit-scrollbar-track {
+        position: absolute;
+    }
+    &::-webkit-scrollbar-thumb {
+        position: absolute;
+        background-color: ${border};
+    }
     .ant-tabs-nav {
         padding: 0 15px;
         margin: 0;
@@ -525,14 +601,50 @@ const StyledText = styled.p`
     display: flex;
     flex: 1;
 `
-
-const StyledModal = styled(Modal)`
-
-`
-const StyledForm = styled(Form)`
-
-`
 const StyledResultAddFriend = styled.div`
     
+`
+
+const StyledTabs = styled(Tabs)`
+    
+`
+
+const StyledModal = styled(Modal)`
+`
+const StyledForm = styled(Form)`
+    .ant-form-item{
+        margin: 0 0 10px;
+    }
+    input{
+        margin-top: 8px;
+    }
+`
+
+const StyledRadioGroup = styled(Radio.Group)`
+    display: flex;
+    flex-direction: column;
+    
+`
+const StyledRadio = styled(Radio)`
+    margin-top: 4px;
+    &.ant-menu-item-selected{
+        background-color: transparent;
+    }
+`
+const StyledListRecentlyChat = styled.div`
+    max-height: 26vh;
+    overflow-y: scroll;
+    &::-webkit-scrollbar{
+        position: relative;
+        width: 6px;
+        background-color: #fff;
+    }
+    &::-webkit-scrollbar-track {
+        position: absolute;
+    }
+    &::-webkit-scrollbar-thumb {
+        position: absolute;
+        background-color: ${border};
+    }
 `
 

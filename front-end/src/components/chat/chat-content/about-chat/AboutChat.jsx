@@ -1,5 +1,5 @@
 import React from 'react';
-import { border, borderInfor } from '~/utils/color';
+import { border, borderInfor, text } from '~/utils/color';
 import styled from 'styled-components';
 import { Header, Content } from 'antd/lib/layout/layout';
 import { EditOutlined, BellOutlined, UsergroupAddOutlined, PushpinOutlined, SettingOutlined, PlusOutlined, CaretRightOutlined } from '@ant-design/icons';
@@ -8,7 +8,8 @@ import Modal from 'antd/lib/modal/Modal';
 import { Button, Collapse, Divider, Form, Menu, Radio, Upload } from 'antd';
 import Input from 'antd/lib/input/Input';
 import MenuItem from 'antd/lib/menu/MenuItem';
-
+import AvatarItemListCheckedUsers from '~/components/menu/content/AvatarItemListCheckedUsers';
+import { type } from '@testing-library/user-event/dist/type';
 
 function AboutChat() {
     const [isOpen1, setIsOpen1] = useState(false);
@@ -17,6 +18,25 @@ function AboutChat() {
     const [isOpenRename, setIsOpenRename] = useState(false);
     const { Panel } = Collapse;
 
+    const users = [{
+        _id: '1',
+        name: 'Minh Châu',
+        content: 'Hi Tuan!!',
+        avatar: 'https://s120-ava-talk.zadn.vn/4/8/3/5/51/120/3a1cf7ea2e80a0262202104db962090e.jpg',
+    },
+    {
+        _id: '2',
+        name: 'Duy Khang',
+        content: 'Hi Chau!!',
+        avatar: 'https://s120-ava-talk.zadn.vn/b/f/3/a/3/120/4ae7bbb88211e3fdd33873839ba6a1d8.jpg',
+    },
+    {
+        _id: '3',
+        name: 'Lê Tuấn',
+        content: 'Hi Chau!!',
+        avatar: 'https://s120-ava-talk.zadn.vn/c/f/3/5/20/120/e83b009221d944ac707d41f4da3e138e.jpg',
+    },
+    ]
 
     const handleShowModalTurnOffMess = () => {
         setIsOpen1(true)
@@ -124,16 +144,21 @@ function AboutChat() {
                 <Panel header="Ảnh/Video" key="1" className="site-collapse-custom-panel">
                     <StyledButton key="submit" style={{ top: '-10px', left: '25%' }} >Xem tất cả</StyledButton>
                 </Panel>
+
                 <StyledBorder style={{ width: '100%', position: 'relative', backgroundColor: '#fffcfc00', top: 0 }}></StyledBorder>
                 <Panel header="File" key="2" className="site-collapse-custom-panel">
                     <StyledButton key="submit" style={{ top: '-10px', left: '25%' }} >Xem tất cả</StyledButton>
                 </Panel>
-                <StyledBorder style={{ width: '100%', position: 'relative', backgroundColor: '#fffcfc00', top: 0 }}></StyledBorder>
 
+                <StyledBorder style={{ width: '100%', position: 'relative', backgroundColor: '#fffcfc00', top: 0 }}></StyledBorder>
                 <Panel header="Link" key="3" className="site-collapse-custom-panel">
                     <StyledButton key="submit" style={{ top: '-10px', left: '25%' }} >Xem tất cả</StyledButton>
                 </Panel>
+
+                <StyledBorder style={{ width: '100%', position: 'relative', backgroundColor: '#fffcfc00', top: 0 }}></StyledBorder>
+                
             </StyledCollapse>
+            <Button key="submit" type="primary" style={{ display:'flex', margin:'20px auto 0', justifyContent:'center'}}>Xóa kết bạn</Button>
         </StyledContent>
         <StyledFunction>
         </StyledFunction>
@@ -185,36 +210,15 @@ function AboutChat() {
                     <Form.Item>
                         <Menu>
                             <StyledRadioGroup>
-                                <StyledRadio value="option1">
-                                    <StyledMenuitem style={{ backgroundColor: 'transparent', color: '#333', fontWeight: '500' }}>
-                                        <StyledAvatar style={{ width: '44px', height: '44px', marginRight: '8px' }}></StyledAvatar>Nguyen Van A
-                                    </StyledMenuitem>
-                                </StyledRadio>
-                                <StyledRadio value="option2">
-                                    <StyledMenuitem style={{ backgroundColor: 'transparent', color: '#333', fontWeight: '500' }}>
-                                        <StyledAvatar style={{ width: '44px', height: '44px', marginRight: '8px' }}></StyledAvatar>Nguyen Van A
-                                    </StyledMenuitem>
-                                </StyledRadio>
-                                <StyledRadio value="option3">
-                                    <StyledMenuitem style={{ backgroundColor: 'transparent', color: '#333', fontWeight: '500' }}>
-                                        <StyledAvatar style={{ width: '44px', height: '44px', marginRight: '8px' }}></StyledAvatar>Nguyen Van A
-                                    </StyledMenuitem>
-                                </StyledRadio>
-                                <StyledRadio value="option4">
-                                    <StyledMenuitem style={{ backgroundColor: 'transparent', color: '#333', fontWeight: '500' }}>
-                                        <StyledAvatar style={{ width: '44px', height: '44px', marginRight: '8px' }}></StyledAvatar>Nguyen Van A
-                                    </StyledMenuitem>
-                                </StyledRadio>
-                                <StyledRadio value="option5">
-                                    <StyledMenuitem style={{ backgroundColor: 'transparent', color: '#333', fontWeight: '500' }}>
-                                        <StyledAvatar style={{ width: '44px', height: '44px', marginRight: '8px' }}></StyledAvatar>Nguyen Van A
-                                    </StyledMenuitem>
-                                </StyledRadio>
-                                <StyledRadio value="option6">
-                                    <StyledMenuitem style={{ backgroundColor: 'transparent', color: '#333', fontWeight: '500' }}>
-                                        <StyledAvatar style={{ width: '44px', height: '44px', marginRight: '8px' }}></StyledAvatar>Nguyen Van A
-                                    </StyledMenuitem>
-                                </StyledRadio>
+                                {users.map((user, index) => (
+                                    <StyledRadio value={index}>
+                                        <AvatarItemListCheckedUsers key={index}
+                                            index={user._id}
+                                            name={user.name}
+                                            avatar={user.avatar}
+                                        />
+                                    </StyledRadio>
+                                ))}
                             </StyledRadioGroup>
                         </Menu>
 
@@ -350,6 +354,7 @@ const StyledFunction = styled.div`
     width: 100%;
     padding: 0 30px;
     margin-top: 15px;
+    margin-bottom: 20px;
 `
 
 const StyledFunctionIcon = styled.div`
@@ -410,9 +415,25 @@ const StyledRadio = styled(Radio)`
 `
 const StyledListRecentlyChat = styled.div`
     max-height: 26vh;
-    overflow-y: auto;
+    overflow-y: scroll;
+    &::-webkit-scrollbar{
+        position: relative;
+        width: 6px;
+        background-color: #fff;
+    }
+    &::-webkit-scrollbar-track {
+        position: absolute;
+    }
+    &::-webkit-scrollbar-thumb {
+        position: absolute;
+        background-color: ${border};
+    }
 `
-const StyledMenuitem = styled(MenuItem)`
+const StyledMenuItem = styled(MenuItem)`
+    background-color: transparent;
+    color: #333;
+    font-size: 500;
+    min-height: 150px;
     .ant-menu-item-active{
         display: none;
     }
@@ -447,6 +468,7 @@ const StyledBorder = styled.div`
 const StyledDetailInfor = styled.div`
     display: flex;
     justify-content: space-between;
+    width: 132%;
 `
 
 const StyledContainInfor = styled.div`

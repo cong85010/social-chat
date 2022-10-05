@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import React, { useState } from 'react';
-import { Avatar, message } from 'antd';
+import { Avatar, Menu, message, Radio } from 'antd';
+import MenuItem from 'antd/lib/menu/MenuItem';
 import { textAbout, itemHover, border, textTitle } from '../../../utils/color';
 import { ItemContent, ContentName, ContentAbout } from '../../../utils/Layout';
 import { AvatarDefault, URL } from '~/utils/constant';
@@ -8,18 +9,7 @@ import { UserAddOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { getToken } from '~/utils/function';
 
-function AvatarItemNoHours({ name, content, avatar, curentUser, id }) {
-
-    const handleAddFriend = async () => {
-        const data = await axios.post(`${URL}/api/friend-request/send-to-user/${id}`, {}, {
-            headers: {
-                Authorization: `Bearer ${getToken()}`,
-                Accept: 'application/json',
-            },
-        }).catch(err => message.error(err?.response?.data?.messageError))
-        if (data.code === 200)
-            message.success("Gửi lời mời thành công")
-    }
+function AvatarItemListCheckedUsers({ name, content, avatar, curentUser, id }) {
     return (
         <Wrapper>
             <ItemContent>
@@ -28,19 +18,20 @@ function AvatarItemNoHours({ name, content, avatar, curentUser, id }) {
             <Content>
                 <TitleContent>
                     <ContentName>{name}</ContentName>
-                    <ContentAbout style={{ justifyContent: 'flex-end' }}> </ContentAbout>
                 </TitleContent>
             </Content>
+
         </Wrapper>
     );
 }
 
-export default AvatarItemNoHours;
+export default AvatarItemListCheckedUsers;
+
 const Wrapper = styled.div`
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    width: 100%;
+    width: 249%;
     padding: 0 16px;
     height: 72px;
     &:hover {
@@ -51,12 +42,12 @@ const Wrapper = styled.div`
 `;
 
 const Content = styled.div`
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        flex-direction: row;
-    `;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+`;
 const TitleContent = styled.div`
     width: 100%;
     display: flex;
