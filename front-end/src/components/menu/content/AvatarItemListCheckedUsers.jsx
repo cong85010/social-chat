@@ -31,7 +31,7 @@ const Wrapper = styled.div`
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    width: 249%;
+    width: 434px;
     padding: 0 16px;
     height: 72px;
     &:hover {
