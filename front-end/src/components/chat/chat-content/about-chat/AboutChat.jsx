@@ -128,10 +128,10 @@ function AboutChat() {
                     </StyledFunctionActive> */}
                 </StyledFunctionIcon>
                 {/* Khi nào vào nhóm , thì mới bật cái này */}
-                {/* <StyledFunctionIconInGroup>
+                <StyledFunctionIcon>
                     <SettingOutlined />
                     <StyledFunctionName>Quản lí nhóm</StyledFunctionName>
-                </StyledFunctionIconInGroup> */}
+                </StyledFunctionIcon>
 
             </StyledFunction>
             <StyledCollapse
@@ -156,9 +156,12 @@ function AboutChat() {
                 </Panel>
 
                 <StyledBorder style={{ width: '100%', position: 'relative', backgroundColor: '#fffcfc00', top: 0 }}></StyledBorder>
-                
+                <Panel header="Thiếp lập bảo mật" key="3" className="site-collapse-custom-panel">
+                    <StyledButton key="submit" style={{ top: '-10px', left: '25%' }} >Xóa kết bạn</StyledButton>
+                    <StyledButton key="submit" style={{ top: '10px', left: '25%', backgroundColor:'transparent', color:'red', width:'auto' }}>Rời khỏi nhóm trò chuyện</StyledButton>
+
+                </Panel>
             </StyledCollapse>
-            <Button key="submit" type="primary" style={{ display:'flex', margin:'20px auto 0', justifyContent:'center'}}>Xóa kết bạn</Button>
         </StyledContent>
         <StyledFunction>
         </StyledFunction>
@@ -360,6 +363,7 @@ const StyledFunction = styled.div`
 const StyledFunctionIcon = styled.div`
     width: calc(33.33333% - 30px);
     text-align: center;
+    cursor: pointer;
     .anticon{
         font-size: 1.2em;
         line-height: 1.4em;
@@ -455,7 +459,7 @@ const StyledButton = styled(Button)`
     font-weight: 700;
     width:175px;
     top:-60px;
-    background-color: ${borderInfor};
+    background-color: transparent;
     border-radius: 4px;
 `
 const StyledBorder = styled.div`

@@ -18,7 +18,7 @@ import {
     UserOutlined,
     VideoCameraOutlined,
 } from '@ant-design/icons';
-import { bodyChat, border, borderInfor, primaryColor } from '~/utils/color';
+import { bodyChat, border, borderInfor, primaryColor, text } from '~/utils/color';
 import TextArea from 'antd/lib/input/TextArea';
 import MyChat from './my-chat/MyChat';
 import FriendChat from './frient-chat/FriendChat';
@@ -29,10 +29,14 @@ import { useSelector, useDispatch } from 'react-redux';
 import { updateContentChat } from '~/redux/slices/ChatSlice';
 import { updateSortConversations } from '~/redux/slices/ConversationSlice';
 import AvatarItemListCheckedUsers from '~/components/menu/content/AvatarItemListCheckedUsers';
-function MainChat({ option, setOption, selectedUser, userID }) {
+import EmojiPicker, { Emoji } from 'emoji-picker-react';
+import { createRef } from 'react';
+
+
+
+function MainChat({ option, setOption, selectedUser, userID, remoteAvatar }) {
     // Click change layout
     const [collapsed, setCollapsed] = useState(false);
-
     const { userChat } = useSelector(state => state.userChat)
     const { chat } = useSelector(state => state.chat)
     const dispatch = useDispatch()
@@ -104,6 +108,16 @@ function MainChat({ option, setOption, selectedUser, userID }) {
     const handleCancelModalRename = () => {
         setIsOpenRename(false)
     }
+
+    // icon
+    const [inputStr, setInputStr] = useState('');
+    const [showPicker, setShowPicker] = useState();
+  
+    const onEmojiClick = (emojiObject) => {
+        setInputStr((prevInput) => prevInput + emojiObject.emoji);
+        setShowPicker(false);
+    };
+
     // Input
     useEffect(() => {
         const element = document.querySelector('#chat_input');
@@ -178,17 +192,20 @@ function MainChat({ option, setOption, selectedUser, userID }) {
                 </ContentHeaderChat>
             </HeaderWrapper>
             {/* Body Chat */}
-            <BodyChat>
+            <BodyChat >
                 {
                     chat.content?.map(message =>
                         message.senderId === user.id ?
                             <MyChat message={message} /> : <FriendChat message={message} />
                     )
                 }
+                {
+                    showPicker && <StyledEmojiPicker onEmojiClick={onEmojiClick} width={'450px'} />
+                }
             </BodyChat>
             <IconInput>
-                <IconItemInput>
-                    <SmileOutlined />
+                <IconItemInput >
+                    <SmileOutlined onClick={() => setShowPicker(val => !val)} />
                 </IconItemInput>
                 <IconItemInput>
                     <PictureOutlined />
@@ -208,6 +225,8 @@ function MainChat({ option, setOption, selectedUser, userID }) {
                         id="chat_input"
                         placeholder="Nhập nội dung"
                         autoSize
+                        value={inputStr}
+                        onChange={e => setInputStr(e.target.value)}
                     />
                 </InputMessage>
                 <IconMessage>
@@ -389,6 +408,11 @@ const BodyChat = styled.div`
         position: absolute;
         background-color: ${border};
     }
+    aside.EmojiPickerReact{
+        position: absolute;
+        bottom: 102px;
+        height: 350px !important;
+    }
 `;
 const StyledTextArea = styled(TextArea)`
     &.ant-input:focus{
@@ -432,6 +456,7 @@ const InputMessage = styled.div`
     #chat_input{
         border-color: transparent;
         box-shadow: none;
+        
     }
 `;
 const IconMessage = styled.div`
@@ -551,4 +576,12 @@ const StyledBorder = styled.div`
     position: absolute;
     bottom: 264px;
     left: 0;
+`
+const StyledEmojiPicker = styled(EmojiPicker)`
+        width: 200px;
+
+    .EmojiPickerReact.epr-main{
+        width: 200px;
+        
+    }
 `
