@@ -156,9 +156,9 @@ function AboutChat() {
                 </Panel>
 
                 <StyledBorder style={{ width: '100%', position: 'relative', backgroundColor: '#fffcfc00', top: 0 }}></StyledBorder>
-                <Panel header="Thiếp lập bảo mật" key="3" className="site-collapse-custom-panel">
+                <Panel header="Thiếp lập bảo mật" key="4" className="site-collapse-custom-panel">
                     <StyledButton key="submit" style={{ top: '-10px', left: '25%' }} >Xóa kết bạn</StyledButton>
-                    <StyledButton key="submit" style={{ top: '10px', left: '25%', backgroundColor:'transparent', color:'red', width:'auto' }}>Rời khỏi nhóm trò chuyện</StyledButton>
+                    <StyledButton key="submit" style={{ top: '10px', left: '25%', backgroundColor: 'transparent', color: 'red', width: 'auto' }}>Rời khỏi nhóm trò chuyện</StyledButton>
 
                 </Panel>
             </StyledCollapse>
@@ -229,7 +229,7 @@ function AboutChat() {
                 </StyledListRecentlyChat>
             </StyledForm>
         </StyledModal>
-        <StyledModal title="Thông tin tài khoản" open={isOpenInfor} onCancel={handleCancelModalInfor} onOk={handleOKModalInfor}
+        <StyledModal className='infor' title="Thông tin tài khoản" open={isOpenInfor} onCancel={handleCancelModalInfor} onOk={handleOKModalInfor}
             footer={[
                 <Button key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalInfor}>Hủy</Button>,
                 <Button key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalInfor} type="primary">Đồng ý</Button>
@@ -240,17 +240,19 @@ function AboutChat() {
                 autoComplete="off">
                 <Form.Item>
                     <StyledAvatarNen></StyledAvatarNen>
-                    <StyledAvatar style={{ position: 'relative', top: '-64px', left: '56%', border: '3px solid white', width: '80px', height: '80px' }}></StyledAvatar>
                 </Form.Item>
                 <Form.Item>
-                    <StyledNameEdit style={{ position: 'absolute', top: '-76px', left: '50%' }}>
+                    <StyledAvatar style={{ display: 'initial', position: 'absolute', top: '-75px', left: '50%', border: '3px solid white', width: '80px', height: '80px' }}></StyledAvatar>
+                </Form.Item>
+                <Form.Item>
+                    <StyledNameEdit style={{ position: 'absolute', top: '-48px', left: '40%' }}>
                         <StyledName>Your Name</StyledName>
                         <EditOutlined className='icon-edit' onClick={handleShowModalRename} />
                     </StyledNameEdit>
                 </Form.Item>
                 <Form.Item>
-                    <StyledButton key="back" style={{ left: '38px' }}>Nhắn tin</StyledButton>,
-                    <StyledButton key="submit" style={{ left: '80px' }} >Gọi điện</StyledButton>
+                    <StyledButton key="back" style={{ left: '20px' }}>Nhắn tin</StyledButton>,
+                    <StyledButton key="submit" style={{ left: '70px' }} >Gọi điện</StyledButton>
                 </Form.Item>
                 <StyledBorder></StyledBorder>
                 <Form.Item>
@@ -390,7 +392,11 @@ const StyledFunctionActive = styled.div`
 `
 
 const StyledModal = styled(Modal)`
+    &.infor{
+        width: 380px !important;
+    }
 `
+
 const StyledForm = styled(Form)`
     .ant-form-item{
         margin: 0 0 10px;
@@ -447,7 +453,7 @@ const StyledAvatarNen = styled.img`
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-    width: 520px;
+    width: 380px;
     height: 200px;
     cursor: pointer;
     padding: 0;
@@ -457,14 +463,14 @@ const StyledAvatarNen = styled.img`
 `
 const StyledButton = styled(Button)`
     font-weight: 700;
-    width:175px;
-    top:-60px;
+    width:120px;
+    top:-46px;
     background-color: transparent;
     border-radius: 4px;
 `
 const StyledBorder = styled.div`
     border-bottom: 8px solid ${borderInfor};
-    width: 520px;
+    width: 380px;
     position: absolute;
     bottom: 264px;
     left: 0;
