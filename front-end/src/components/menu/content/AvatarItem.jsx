@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import React, { useState } from 'react';
-import { Avatar } from 'antd';
+import { Avatar, Skeleton } from 'antd';
 import { textAbout, itemHover, border, textTitle } from '../../../utils/color';
 import { ItemContent, ContentName, ContentAbout } from '../../../utils/Layout';
 import { useDispatch } from 'react-redux';
@@ -10,10 +10,13 @@ import { ChatItem } from 'react-chat-elements';
 import { AvatarDefault } from '~/utils/constant';
 import moment from 'moment';
 
-function AvatarItem({ name, listMember = [], avatar, type, userIdCurrent, id, lastMessage }) {
+function AvatarItem({ name, listMember = [], avatar, type, userIdCurrent, id, lastMessage, isLoading }) {
 
     const dispatch = useDispatch()
     const getNameConversation = () => {
+        console.log(name);
+        console.log(listMember);
+        console.log(userIdCurrent);
         if (type) {
             return name;
         }
@@ -35,17 +38,16 @@ function AvatarItem({ name, listMember = [], avatar, type, userIdCurrent, id, la
         }))
     }
 
-    return (
-        <ChatItem
-            avatar={avatar || AvatarDefault}
-            alt={avatar}
-            title={getNameConversation()}
-            subtitle={lastMessage?.content[0]}
-            date={new Date(lastMessage?.timeSend)}
-            unread={0}
-            onClick={handleChangeChat}
-        />
-    );
+    return < ChatItem
+        avatar={avatar || AvatarDefault
+        }
+        alt={avatar}
+        title={getNameConversation()}
+        subtitle={lastMessage?.content[0]}
+        date={new Date(lastMessage?.timeSend)}
+        unread={0}
+        onClick={handleChangeChat}
+    />
 }
 
 export default AvatarItem;

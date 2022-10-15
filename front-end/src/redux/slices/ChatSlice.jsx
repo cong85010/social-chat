@@ -24,7 +24,7 @@ export const getChatByConversationID = createAsyncThunk('chat/getChat', async (C
         console.log(error);
         return thunkAPI.rejectWithValue({
             status: 401,
-            message: 'Đăng ký thất bại',
+            message: 'Thất bại',
         });
     }
 });
