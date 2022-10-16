@@ -20,6 +20,7 @@ export const SignInUser = createAsyncThunk('user/signin', async ({ user }, thunk
 export const SignUpUser = createAsyncThunk('user/signup', async (user, thunkAPI) => {
     try {
         const { data } = await axios.post(`${URL}/api/user/create`, user);
+        localStorage.setItem("accessToken", JSON.stringify(data.data.accessToken))
         return data;
     } catch (error) {
         console.log(error);
@@ -31,7 +32,10 @@ export const SignUpUser = createAsyncThunk('user/signup', async (user, thunkAPI)
 });
 
 const initialState = {
-    user: {},
+    user: {
+        userId: '',
+        accessToken: ''
+    },
     message: null,
     isLoading: false,
     isSuccess: false,
@@ -67,7 +71,7 @@ const UserSlice = createSlice({
             state.message = payload.message;
         });
         builder.addCase(SignUpUser.fulfilled, (state, { payload }) => {
-            state.user = payload.user;
+            state.user = payload.data;
             state.isLoading = false;
             state.isSuccess = true;
             state.isError = false;

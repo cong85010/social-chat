@@ -7,7 +7,7 @@ import axios from 'axios';
 import { getToken } from '~/utils/function';
 import { URL } from '~/utils/constant';
 
-function AvatarItemListAddFriend({ name, content, avatar, idFriend }) {
+function AvatarItemListAddFriend({ name, content, avatar, idFriend, closeModal }) {
     const updateStatus = async () => {
         await axios.post(`${URL}/api/friend-request/update-status`, {
             id: idFriend,
@@ -18,6 +18,7 @@ function AvatarItemListAddFriend({ name, content, avatar, idFriend }) {
                 Accept: 'application/json',
             },
         })
+        closeModal()
     }
     return (
         <Wrapper>

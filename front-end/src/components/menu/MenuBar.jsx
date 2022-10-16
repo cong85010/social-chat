@@ -5,7 +5,7 @@ import { border, primaryColor, bgborder, textTitle, borderInfor } from '~/utils/
 import MenuIcon from './MenuIcon';
 import AvatarImg from './content/AvatarImg';
 import { HeaderIcon } from '../../utils/Layout';
-import { Button, Divider, Form, Input, Menu, Modal, Radio, Space, Tabs, Upload } from 'antd';
+import { Button, Divider, Form, Input, Menu, Modal, Skeleton, Radio, Space, Tabs, Upload } from 'antd';
 import {
     MessageOutlined,
     ContactsOutlined,
@@ -45,7 +45,7 @@ function MenuBar() {
     const [option, setOption] = useState('chat');
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { userId, accessToken } = useSelector(state => state.user.user)
+    const { id: userId, accessToken } = useSelector(state => state.user.user)
     const { conversations } = useSelector(state => state.conversation)
     const { userChat } = useSelector(state => state.userChat)
 
@@ -53,6 +53,7 @@ function MenuBar() {
     const [friendInvited, setFriendInvited] = useState();
     const [isLoading, setIsLoading] = useState(false);
 
+    console.log(userId);
     // MenuIcon
     const renderItems2 = () => bottomItems.map((bottomItem, index) => <MenuIcon>{bottomItem.icon}</MenuIcon>);
 
@@ -237,18 +238,23 @@ function MenuBar() {
         return (
             <StyledTabs defaultActiveKey="1">
                 <Tabs.TabPane tab="Tất cả" key="1">
-                    {conversations.map((conversation, index) => (
-                        <AvatarItem
-                            key={index}
-                            index={conversation.id}
-                            userIdCurrent={userId}
-                            {...conversation}
-                        />
-                    ))}
+
+                    {isLoading ?
+                        <Skeleton avatar paragraph={{ rows: 2 }} /> :
+                        conversations.map((conversation, index) => (
+                            <AvatarItem
+                                isLoading={isLoading}
+                                key={index}
+                                index={conversation.id}
+                                userIdCurrent={userId}
+                                {...conversation}
+                            />
+                        ))}
                 </Tabs.TabPane>
                 <Tabs.TabPane tab="Chưa đọc" key="2">
                     {users.map((user, index) => (
                         <AvatarItem
+                            isLoading={isLoading}
                             key={index}
                             index={user._id}
                             name={user.name}
@@ -408,6 +414,7 @@ function MenuBar() {
                             key={index}
                             index={user._id}
                             idFriend={user.id}
+                            closeModal={handleShowModalCancelListAdd}
                             {...user.fromUser}
                         ></AvatarItemListAddFriend>
                     )) : friendInvited?.message}

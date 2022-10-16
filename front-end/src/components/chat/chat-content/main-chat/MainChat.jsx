@@ -32,11 +32,11 @@ import AvatarItemListCheckedUsers from '~/components/menu/content/AvatarItemList
 import EmojiPicker, { Emoji } from 'emoji-picker-react';
 import { createRef } from 'react';
 
-
-
-function MainChat({ option, setOption, selectedUser, userID, remoteAvatar }) {
+function MainChat({ option, setOption, selectedUser, userID }) {
     // Click change layout
     const [collapsed, setCollapsed] = useState(false);
+    const [form] = Form.useForm();
+
     const { userChat } = useSelector(state => state.userChat)
     const { chat } = useSelector(state => state.chat)
     const dispatch = useDispatch()
@@ -128,19 +128,17 @@ function MainChat({ option, setOption, selectedUser, userID, remoteAvatar }) {
             }
         });
     }, []);
+    const sendChat = ({ contentChat }) => {
 
-    const sendChat = () => {
-        console.log(userChat);
-        const input = document.getElementById('chat_input')
         var chatMessage = {
             conversationId: userChat.id,
-            content: [input.value],
+            content: [contentChat],
             type: 0,
             accessToken: user.accessToken
         };
-        input.value = ""
         stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(chatMessage));
         dispatch(updateSortConversations(userChat.id))
+        form.resetFields()
     };
 
     useEffect(() => {
@@ -218,22 +216,22 @@ function MainChat({ option, setOption, selectedUser, userID, remoteAvatar }) {
                 </IconItemInput>
 
             </IconInput>
-            <FooterChat>
+            <FormChat onFinish={sendChat} form={form}>
                 {/* <Form> */}
-                <InputMessage>
-                    <Input
-                        id="chat_input"
-                        placeholder="Nhập nội dung"
-                        autoSize
-                        value={inputStr}
-                        onChange={e => setInputStr(e.target.value)}
-                    />
-                </InputMessage>
+
+                <Form.Item name="contentChat" style={{ width: '100%', margin: 0  }}>
+                    <InputMessage>
+                        <Input
+                            placeholder="Nhập nội dung"
+                            autoSize
+                        />
+                    </InputMessage>
+                </Form.Item>
                 <IconMessage>
                     <IconItemInput>
                         <LikeOutlined />
                     </IconItemInput>
-                    <Button id="send" onClick={sendChat} type="primary">
+                    <Button id="send" htmlType='submit' type="primary">
                         Gửi
                     </Button>
                 </IconMessage>
@@ -344,7 +342,8 @@ function MainChat({ option, setOption, selectedUser, userID, remoteAvatar }) {
                     </Form.Item>
                 </StyledForm>
             </StyledModal>
-        </Wrapper>
+            </FormChat>
+        </Wrapper >
     );
 }
 
@@ -432,8 +431,8 @@ const IconInput = styled.div`
     border-top: 1px solid ${border};
 `;
 
-/* Footer Chat */
-const FooterChat = styled.div`
+/* Form Chat */
+const FormChat = styled(Form)`
     display: flex;
     padding: 0 16px;
     flex-direction: row;
