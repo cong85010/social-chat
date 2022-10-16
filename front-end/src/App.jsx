@@ -16,7 +16,7 @@ const PrivateRoute = ({ children }) => {
 
 function App() {
     message.config({
-        top: 100,
+        top: 50,
         duration: 2,
         maxCount: 3,
     });
@@ -34,8 +34,6 @@ function App() {
                 />
 
                 <Route path="/login" element={<Login />} />
-                {/* <Route path="/login" element={<Chat />} /> */}
-
             </Routes>
         </div>
     );

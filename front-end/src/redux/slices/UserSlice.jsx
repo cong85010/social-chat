@@ -1,11 +1,13 @@
 import { URL } from '~/utils/constant';
+
 const { createSlice, createAsyncThunk } = require('@reduxjs/toolkit');
 const { default: axios } = require('axios');
 
 export const SignInUser = createAsyncThunk('user/signin', async ({ user }, thunkAPI) => {
     try {
-        const data = await axios.post(`${URL}/api/auth/signin`, user);
+        const { data } = await axios.post(`${URL}/api/auth/login`, user);
 
+        localStorage.setItem("accessToken", JSON.stringify(data.data.accessToken))
         return data;
     } catch (error) {
         return thunkAPI.rejectWithValue({
@@ -15,15 +17,15 @@ export const SignInUser = createAsyncThunk('user/signin', async ({ user }, thunk
     }
 });
 
-export const SignUpUser = createAsyncThunk('user/signup', async ({ user }, thunkAPI) => {
+export const SignUpUser = createAsyncThunk('user/signup', async (user, thunkAPI) => {
     try {
-        const data = await axios.post(`${URL}/api/auth/signup`, user);
+        const { data } = await axios.post(`${URL}/api/user/create`, user);
         return data;
     } catch (error) {
         console.log(error);
         return thunkAPI.rejectWithValue({
             status: 401,
-            message: 'Đăng ký thất bại rồi',
+            message: 'Đăng ký thất bại',
         });
     }
 });
@@ -47,7 +49,7 @@ const UserSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder.addCase(SignInUser.fulfilled, (state, { payload }) => {
-            state.user = payload.user;
+            state.user = payload.data;
             state.isLoading = false;
             state.isSuccess = true;
             state.isError = false;

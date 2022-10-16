@@ -18,7 +18,6 @@ import { keyframes } from 'styled-components';
 import { TabList, Tab, Tabs, TabPanel } from 'react-tabs';
 import { useDispatch, useSelector } from 'react-redux';
 import { SignInUser, SignUpUser } from '~/redux/slices/UserSlice';
-
 function Login() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -31,7 +30,7 @@ function Login() {
         dispatch(SignUpUser({ user: values }));
     };
     const onFinishFailed = (errorInfo) => {
-        alert('Fail dang ki!!');
+        alert('Fail!!');
         console.log('Failed:', errorInfo);
     };
 
@@ -56,19 +55,20 @@ function Login() {
         }
     }, [isLoading, isSuccess, isError, message]);
     return (
-        <StyledContainer>
+        <StyledSection>
+            <StyledContainer>
                 <StyledHeader>
-                    <ImgTitle>
-                        <StyledImg
+                    <ImgTitle className="header__title">
+                        <img
                             src="https://image.bnews.vn/MediaUpload/Org/2022/08/05/1200x600wa-20220805120828.png"
                             alt=""
-                            style={{left: '0'}}
+                            className="header__title-img"
                         />
-                        <StyledImg
+                        <img
                             src="https://stc-zaloid.zdn.vn/zaloid/client/images/zlogo.png"
                             alt=""
                             srcset=""
-                            style={{right: '-40px'}}
+                            className="title__web"
                         />
                     </ImgTitle>
                     <StyledContact>
@@ -105,6 +105,12 @@ function Login() {
                                 srcset=""
                             />
                             <img
+                                className="body__img-detail img-4"
+                                src="https://thumbs.dreamstime.com/b/computer-display-web-camera-cartoon-people-conference-video-call-technology-internet-chat-image-webinar-meeting-192326674.jpg"
+                                alt=""
+                                srcset=""
+                            />
+                            <img
                                 className="body__img-detail img-5"
                                 src="https://media.istockphoto.com/vectors/virtual-group-meeting-being-held-via-video-conference-from-home-using-vector-id1277210356?k=20&m=1277210356&s=612x612&w=0&h=puqzG1bdLxt2kWmN264TYuNMhB6zyWsG0T2Vhi68-pM="
                                 alt=""
@@ -135,7 +141,7 @@ function Login() {
                                 <TabPanel>
                                     <Form
                                         name="basic"
-                                        labelCol={{ span: 10 }}
+                                        labelCol={{ span: 8 }}
                                         wrapperCol={{ span: 16 }}
                                         initialValues={{ remember: false }}
                                         onFinish={onFinish}
@@ -144,8 +150,14 @@ function Login() {
                                     >
                                         <Form.Item
                                             label="Tên đăng nhập"
-                                            name="phoneNumber"
-                                            rules={[{ required: true, pattern: /^0[0-9]{9}$/, message: 'Vui lòng nhập số điện thoại của bạn!' }]}
+                                            name="username"
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    pattern: /^0[0-9]{9}$/,
+                                                    message: 'Vui lòng nhập số điện thoại của bạn!',
+                                                },
+                                            ]}
                                         >
                                             <Input />
                                         </Form.Item>
@@ -186,14 +198,20 @@ function Login() {
                                         labelCol={{ span: 8 }}
                                         wrapperCol={{ span: 16 }}
                                         initialValues={{ remember: false }}
-
+                                        onFinish={onSignUp}
+                                        onFinishFailed={onFinishFailed}
                                         autoComplete="off"
                                     >
                                         <Form.Item
-
                                             label="Số điện thoại"
-                                            name="phoneNumber"
-                                            rules={[{ required: true, pattern: /^0[0-9]{9}$/, message: 'Vui lòng nhập số điện thoại của bạn!' }]}
+                                            name="number"
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    pattern: /^0[0-9]{9}$/,
+                                                    message: 'Vui lòng nhập số điện thoại của bạn!',
+                                                },
+                                            ]}
                                         >
                                             <Input />
                                         </Form.Item>
@@ -211,12 +229,7 @@ function Login() {
                                     </Form>
                                 </TabPanel>
                             </Tabs>
-                            <StyledModal open={isOpen} onOk={handleOkModal} onCancel={handleCancelModal} footer={[
-                                <Button key="back" style={{ fontWeight: 700 }} onClick={handleCancelModal}>Hủy</Button>,
-                                <Button onFinish={onSignUp}
-                                    onFinishFailed={onFinishFailed} key="submit" style={{ fontWeight: 700 }} onClick={handleOkModal} type="primary">Đồng ý</Button>
-
-                            ]}>
+                            <StyledModal open={isOpen} onOk={handleOkModal} onCancel={handleCancelModal}>
                                 <StyledInforPerson>Thông tin tài khoản</StyledInforPerson>
                                 <Divider></Divider>
                                 <StyledForm
@@ -224,14 +237,33 @@ function Login() {
                                     labelCol={{ span: 10 }}
                                     wrapperCol={{ span: 14 }}
                                     initialValues={{ remember: false }}
-
+                                    onFinish={onFinish}
+                                    onFinishFailed={onFinishFailed}
                                     autoComplete="off">
                                     <Form.Item
                                         label="Tên hiển thị"
-                                        name="name"
+                                        name="username"
                                         rules={[{ required: true, message: 'Vui lòng nhập mật khẩu của bạn!' }]}
                                     >
                                         <Input />
+                                    </Form.Item>
+
+                                    <Form.Item
+                                        label="Giới tính"
+                                        name="gioitinh"
+                                        rules={[{ required: false, message: 'Vui lòng nhập giới tính của bạn!' }]}
+                                    >
+                                        <Radio.Group>
+                                            <Radio value="Nam">Nam</Radio>
+                                            <Radio value="Nữ">Nữ</Radio>
+                                        </Radio.Group>
+                                    </Form.Item>
+                                    <Form.Item
+                                        label="Ngày sinh"
+                                        name="ngaysinh"
+                                        rules={[{ required: true, message: 'Vui lòng nhập ngày sinh của bạn!' }]}
+                                    >
+                                        <DatePicker placeholder='YYYY-MM-DD' />
                                     </Form.Item>
 
                                     <Form.Item
@@ -260,7 +292,7 @@ function Login() {
                                     </Form.Item>
 
                                     <Form.Item
-                                        label="Xác nhận mật khẩu"
+                                        label="Xác nhận"
                                         name="cofirmPassword"
                                         dependencies={['password']}
                                         hasFeedback
@@ -307,6 +339,7 @@ function Login() {
                     </FooterLinkSocials>
                 </StyledFooter>
             </StyledContainer>
+        </StyledSection>
 
     );
 }
@@ -360,9 +393,12 @@ const StyledSection = styled.div`
 
 // Header va container
 const StyledContainer = styled.div`
-    /* position: relative; */
-    height: 1024px;
+    position: absolute;
+    height: 100%;
     width: 100%;
+    top: 0;
+    left: 0;
+    
 `;
 
 const StyledHeader = styled(Header)`
@@ -373,29 +409,33 @@ const StyledHeader = styled(Header)`
     top: 0;
     left: 0;
     right: 0;
-    z-index: 1;
+    z-index: 10;
     box-shadow: 0 0 1px #00000052;
-    height: 64px;
+    
 `;
 const ImgTitle = styled.div`
-    position: absolute;
+    position: relative;
     width: 140px;
-    height: 64px;
-    padding: 0 50px;
+    display: flex;
+    justify-content: space-between;
+    .title__web {
+        position: absolute;
+        width: 100px;
+        top: 50%;
+        transform: translateY(-50%);
+        right: -42px;
+    }
+    .header__title-img {
+        position: absolute;
+        width: 100px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
 `;
-
-const StyledImg = styled.img`
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 100px;
-`
 const StyledContact = styled.div`
-    position: absolute;
     display: flex;
     justify-content: space-between;
     width: 400px;
-    right: 70px;
     .contact {
         font-size: 20px;
         font-weight: 600;
@@ -406,44 +446,38 @@ const StyledContact = styled.div`
 `;
 // Body
 const StyledContent = styled(Content)`
-    position: relative;
+    position: absolute;
     top: 64px;
-    /* min-width: 820px;
-    min-height: 1000px; */
+    display: flex;
+    justify-content: space-between;
     width: 100%;
-    height: 100%;
+    padding:180px 150px 304px;
     background-image: url(${background});
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-    display: flex;
-    justify-content: space-between;
-    padding-top: 80px;
+    
 `;
 const BodyContentLeft = styled.div`
-    width: 50%;
-    max-height: 400px;
-    display: block;
+    width: 834px;
+    height: 500px;
 `;
 const BodyContentLeftTitle = styled.p`
-    position: absolute;
-    padding-left: 80px;
-    font-size: 2.2rem;
+    font-size: 2.6rem;
     font-weight: 800;
     text-align: left;
     color: ${text};
 `;
 const BodyContentLeftImg = styled.div`
-    width: 600px;
-    height: 350px;
+    width: 750px;
+    display: block;
     position: absolute;
-    padding-left: 80px;
-    left: 150px;
-    top: 200px;
     .body__img-detail {
         border-radius: 50%;
         width: 120px;
+        height: 120px;
         margin-top: 40px;
+        object-fit: cover;
     }
     .img-1 {
         position: absolute;
@@ -488,20 +522,13 @@ const BodyContentLeftImg = styled.div`
         animation: ${FadeInUp} 0.6s ease-in both;
     }
 `;
-const BodyContentRight = styled.div`
-    width: 50%;
-    display: block;
-    max-height: 400px;
-
-`;
+const BodyContentRight = styled.div``;
 const BodyContentRightForm = styled.div`
-    width: 450px;
+    width: 100%;
     background-color: #f8f8f8;
     border-radius: 6px;
     padding: 20px 40px;
     box-shadow: 0 0 1px #727272;
-    position: relative;
-    right: -200px;
     label{
         font-size: 16px;
     }
@@ -563,7 +590,7 @@ const StyledButton = styled(Button)`
 //  Footer
 const StyledFooter = styled(Footer)`
     position: absolute;
-    top: 600px;
+    top: 900px;
     left: 50%;
     transform: translateX(-50%);
     background-color: transparent;
