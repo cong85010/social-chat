@@ -18,7 +18,7 @@ function Chat() {
             </MenuInner>
             <SlideNav>
                 <MainChat {...{ option, setOption }} />
-                {/* {option && <AboutChat />} */}
+                {option && <AboutChat />}
             </SlideNav>
         </Wrapper>
     );

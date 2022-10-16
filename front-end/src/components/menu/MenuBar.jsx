@@ -1,11 +1,11 @@
 import styled from 'styled-components';
 import React, { useEffect, useRef, useState } from 'react';
 import BackToUp from '@uiw/react-back-to-top';
-import { border, primaryColor, bgborder, textTitle } from '~/utils/color';
+import { border, primaryColor, bgborder, textTitle, borderInfor } from '~/utils/color';
 import MenuIcon from './MenuIcon';
 import AvatarImg from './content/AvatarImg';
 import { HeaderIcon } from '../../utils/Layout';
-import { Button, Form, Input, Modal, Skeleton, Space, Tabs } from 'antd';
+import { Button, Divider, Form, Input, Menu, Modal, Skeleton, Radio, Space, Tabs, Upload } from 'antd';
 import {
     MessageOutlined,
     ContactsOutlined,
@@ -18,6 +18,8 @@ import {
     UsergroupAddOutlined,
     VideoCameraOutlined,
     LogoutOutlined,
+    PlusOutlined,
+    EditOutlined,
 } from '@ant-design/icons';
 import AvatarItem from './content/AvatarItem';
 import AvatarItemNoHours from './content/AvatarItemNoHours';
@@ -31,12 +33,15 @@ import { saveUserChat } from '~/redux/slices/UserChatSlice';
 import axios from 'axios';
 import { getHeaders, URL } from '~/utils/constant';
 import { getToken } from '~/utils/function';
+import AvatarItemListCheckedUsers from './content/AvatarItemListCheckedUsers';
 
 function MenuBar() {
     const [friend, setFriend] = useState(false);
     const [listAdd, setListAdd] = useState(false);
     const [listGroup, setListGroup] = useState(false);
     const [logOut, setLogOut] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
+    const [isOpenInfor, setIsOpenInFor] = useState(false);
     const [option, setOption] = useState('chat');
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -133,6 +138,30 @@ function MenuBar() {
         setListGroup(false)
     }
 
+    const handleShowModalCreatGroup = () => {
+        setIsOpen(true)
+    }
+
+    const handleOKModalCreatGroup = () => {
+        setIsOpen(false)
+    }
+
+    const handleCancelModalCreatGroup = () => {
+        setIsOpen(false)
+    }
+
+    const handleShowModalInfor = () => {
+        setIsOpenInFor(true)
+    }
+
+    const handleOKModalInfor = () => {
+        setIsOpenInFor(false)
+    }
+
+    const handleCancelModalInfor = () => {
+        setIsOpenInFor(false)
+    }
+
     useEffect(() => {
         dispatch(getConversationAllByToken(accessToken))
     }, [])
@@ -207,7 +236,7 @@ function MenuBar() {
     //  Tab Menu
     const tabMenu = () => {
         return (
-            <Tabs defaultActiveKey="1">
+            <StyledTabs defaultActiveKey="1">
                 <Tabs.TabPane tab="Tất cả" key="1">
 
                     {isLoading ?
@@ -234,7 +263,7 @@ function MenuBar() {
                         />
                     ))}
                 </Tabs.TabPane>
-            </Tabs>
+            </StyledTabs>
         );
     };
 
@@ -302,7 +331,7 @@ function MenuBar() {
     return (
         <Wrapper>
             <StartWrapper>
-                <AvatarImg />
+                <AvatarImg/>
                 <TopMenuICon>
                     <MenuIcon>
                         <MessageOutlined onClick={() => setOption('chat')} />
@@ -324,10 +353,10 @@ function MenuBar() {
                     <Space direction="horizontal">
                         <Search placeholder="Tìm Kiếm" allowClear onSearch={onSearch} />
                     </Space>
-                    <HeaderIcon >
-                        <UserAddOutlined onClick={handleShowModalAddFriend} />
+                    <HeaderIcon onClick={handleShowModalAddFriend} >
+                        <UserAddOutlined />
                     </HeaderIcon>
-                    <HeaderIcon>
+                    <HeaderIcon onClick={handleShowModalCreatGroup}>
                         <UsergroupAddOutlined />
                     </HeaderIcon>
                 </HeaderSearch>
@@ -418,6 +447,89 @@ function MenuBar() {
                 
                 <StyledText>Bạn có muốn thoát ứng dụng không ?</StyledText>
             </StyledModal> */}
+
+            <StyledModal title="Tạo nhóm" open={isOpen} onCancel={handleCancelModalCreatGroup} onOk={handleOKModalCreatGroup}
+                footer={[
+                    <Button key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalCreatGroup}>Hủy</Button>,
+                    <Button key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalCreatGroup} type="primary">Đồng ý</Button>
+
+                ]}>
+                <StyledForm name="basic" labelCol={{ span: 8 }} wrapperCol={{ span: 24 }} initialValues={{ remember: false }}
+                    // onFinish={onFinish} onFinishFailed={onFinishFailed} 
+                    autoComplete="off">
+                    <Form.Item valuePropName="fileList">
+                        <Upload action="/upload.do" listType="picture-card">
+                            <div>
+                                <PlusOutlined />
+                                <div style={{ marginTop: 8 }}>Upload</div>
+                            </div>
+                        </Upload>
+                        <Input placeholder='Nhập tên nhóm' />
+                    </Form.Item>
+                    <Form.Item>
+                        <StyledText style={{ fontWeight: 600 }}>Thêm bạn vào nhóm</StyledText>
+                        <Input placeholder='Nhập tên, số điện thoại' style={{ borderRadius: '10px' }} />
+                    </Form.Item>
+                    <Divider style={{ margin: '16px 0 8px' }}></Divider>
+                    <StyledText style={{ fontWeight: 600 }}>Trò chuyện gần đây</StyledText>
+                    <StyledListRecentlyChat>
+                        <Form.Item>
+                            <Menu>
+                                <StyledRadioGroup>
+                                    {users.map((user, index) => (
+                                        <StyledRadio value={index}>
+                                            <AvatarItemListCheckedUsers key={index}
+                                                index={user._id}
+                                                name={user.name}
+                                                avatar={user.avatar}
+                                            />
+                                        </StyledRadio>
+                                    ))}
+                                </StyledRadioGroup>
+                            </Menu>
+
+                        </Form.Item>
+                    </StyledListRecentlyChat>
+                </StyledForm>
+            </StyledModal>
+            <StyledModal title="Thông tin tài khoản" open={isOpenInfor} onCancel={handleCancelModalInfor} onOk={handleOKModalInfor}
+                footer={[
+                    <Button key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalInfor}>Hủy</Button>,
+                    <Button key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalInfor} type="primary">Đồng ý</Button>
+
+                ]}>
+                <StyledForm name="basic" labelCol={{ span: 8 }} wrapperCol={{ span: 18 }} initialValues={{ remember: false }}
+                    // onFinish={onFinish} onFinishFailed={onFinishFailed} 
+                    autoComplete="off">
+                    <Form.Item>
+                        <StyledAvatarNen></StyledAvatarNen>
+                        <StyledAvatar style={{ position: 'relative', top: '-64px', left: '56%', border: '3px solid white', width: '80px', height: '80px' }}></StyledAvatar>
+                    </Form.Item>
+                    <Form.Item>
+                        <StyledNameEdit style={{ position: 'absolute', top: '-76px', left: '50%' }}>
+                            <StyledName>Your Name</StyledName>
+                        </StyledNameEdit>
+                    </Form.Item>
+                    <StyledBorder></StyledBorder>
+                    <Form.Item>
+                        <StyledContainInfor>
+                            <StyledText style={{ top: '-30px' }}><h3>Thông tin cá nhân</h3></StyledText>
+                            <StyledDetailInfor>
+                                <StyledText>Số điện thoại</StyledText>
+                                <StyledText>0123456789</StyledText>
+                            </StyledDetailInfor>
+                            <StyledDetailInfor>
+                                <StyledText>Giới tính</StyledText>
+                                <StyledText>Nữ</StyledText>
+                            </StyledDetailInfor>
+                            <StyledDetailInfor>
+                                <StyledText>Ngày sinh</StyledText>
+                                <StyledText>2001/09/08</StyledText>
+                            </StyledDetailInfor>
+                        </StyledContainInfor>
+                    </Form.Item>
+                </StyledForm>
+            </StyledModal>
         </Wrapper>
     );
 }
@@ -477,9 +589,24 @@ const HeaderSearch = styled.div`
         background-color: ${bgborder};
     }
 `;
-const TabMenuItem = styled.div`
+export const TabMenuItem = styled.div`
     width: 100%;
-
+    display: flex;
+    width: 100%;
+    height: calc(100% - 64px);
+    overflow-y: scroll;
+    &::-webkit-scrollbar{
+        position: relative;
+        width: 6px;
+        background-color: #fff;
+    }
+    &::-webkit-scrollbar-track {
+        position: absolute;
+    }
+    &::-webkit-scrollbar-thumb {
+        position: absolute;
+        background-color: ${border};
+    }
     .ant-tabs-nav {
         padding: 0 15px;
         margin: 0;
@@ -532,14 +659,116 @@ const StyledText = styled.p`
     display: flex;
     flex: 1;
 `
-
-const StyledModal = styled(Modal)`
-
-`
-const StyledForm = styled(Form)`
-
-`
 const StyledResultAddFriend = styled.div`
     
 `
 
+const StyledTabs = styled(Tabs)`
+    
+`
+
+const StyledModal = styled(Modal)`
+`
+const StyledForm = styled(Form)`
+    .ant-form-item{
+        margin: 0 0 10px;
+    }
+    input{
+        margin-top: 8px;
+    }
+`
+
+const StyledRadioGroup = styled(Radio.Group)`
+    display: flex;
+    flex-direction: column;
+    
+`
+const StyledRadio = styled(Radio)`
+    margin-top: 4px;
+    &.ant-menu-item-selected{
+        background-color: transparent;
+    }
+`
+const StyledListRecentlyChat = styled.div`
+    max-height: 26vh;
+    overflow-y: scroll;
+    &::-webkit-scrollbar{
+        position: relative;
+        width: 6px;
+        background-color: #fff;
+    }
+    &::-webkit-scrollbar-track {
+        position: absolute;
+    }
+    &::-webkit-scrollbar-thumb {
+        position: absolute;
+        background-color: ${border};
+    }
+`
+const StyledAvatarNen = styled.img`
+    background-image: url('https://info-imgs.vgcloud.vn/2022/01/03/13/gap-go-con-meo-hai-mat-ky-la-noi-tieng-khap-mang-xa-hoi.jpg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    width: 520px;
+    height: 200px;
+    cursor: pointer;
+    padding: 0;
+    position: relative;
+    top: -24px;
+    left: -24px;
+`
+const StyledAvatar = styled.img`
+    background-image: url('https://img4.thuthuatphanmem.vn/uploads/2021/06/04/hinh-nen-chu-cho-cory-chan-ngan-tren-duong-ray_032045111.jpg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    cursor: pointer;
+`
+const StyledNameEdit = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px 0 0;
+    flex-direction: row;
+    .icon-edit{
+        font-size: 1.2em;
+        line-height: 1.4em;
+        background-color: ${border};
+        border-radius: 50%;
+        width: 1.4em;
+        height: 1.4em;
+        opacity: 0.8;
+    }
+`
+
+const StyledName = styled.h2`
+    min-width: 50px;
+    margin: 0 8px;
+`
+const StyledButton = styled(Button)`
+    font-weight: 700;
+    width:175px;
+    top:-60px;
+    background-color: ${borderInfor};
+    border-radius: 4px;
+`
+const StyledBorder = styled.div`
+    border-bottom: 8px solid ${borderInfor};
+    width: 520px;
+    position: absolute;
+    bottom: 264px;
+    left: 0;
+`
+const StyledContainInfor = styled.div`
+    position: relative;
+    top: -30px;
+`
+const StyledDetailInfor = styled.div`
+    display: flex;
+    justify-content: space-between;
+    width: 132%;
+`

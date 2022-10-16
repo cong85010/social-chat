@@ -27,6 +27,7 @@ export const HeaderIcon = styled.div`
 // Content Avarat
 export const ItemContent = styled.div`
     margin-right: 16px;
+    cursor: pointer;
 `;
 
 export const ContentAbout = styled.div`
