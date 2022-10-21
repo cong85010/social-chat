@@ -50,6 +50,9 @@ const UserSlice = createSlice({
             state.user = null;
             state.isSuccess = false;
         },
+        updateUser: (state, { payload }) => {
+            state.user = payload;
+        }
     },
     extraReducers: (builder) => {
         builder.addCase(SignInUser.fulfilled, (state, { payload }) => {
@@ -92,4 +95,4 @@ const UserSlice = createSlice({
 });
 
 export default UserSlice.reducer;
-export const { logout } = UserSlice.actions;
+export const { logout, updateUser } = UserSlice.actions;

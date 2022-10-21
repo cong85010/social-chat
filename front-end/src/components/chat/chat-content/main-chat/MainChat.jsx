@@ -32,9 +32,9 @@ import AvatarItemListCheckedUsers from '~/components/menu/content/AvatarItemList
 import EmojiPicker, { Emoji } from 'emoji-picker-react';
 import { createRef } from 'react';
 
-function MainChat({ option, setOption, selectedUser, userID }) {
+function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
     // Click change layout
-    const [collapsed, setCollapsed] = useState(false);
+    const [collapsed, setCollapsed] = useState(isShowAbout);
     const [form] = Form.useForm();
 
     const { userChat } = useSelector(state => state.userChat)
@@ -48,10 +48,6 @@ function MainChat({ option, setOption, selectedUser, userID }) {
     var sock = new SockJS(`${URL}/ws`);
     let stompClient = Stomp.over(sock);
     const { user } = useSelector(state => state.user)
-
-    const toggleCollapsed = () => {
-        setCollapsed(!collapsed);
-    };
 
     const users = [{
         _id: '1',
@@ -112,22 +108,13 @@ function MainChat({ option, setOption, selectedUser, userID }) {
     // icon
     const [inputStr, setInputStr] = useState('');
     const [showPicker, setShowPicker] = useState();
-  
+
     const onEmojiClick = (emojiObject) => {
         setInputStr((prevInput) => prevInput + emojiObject.emoji);
         setShowPicker(false);
     };
 
-    // Input
-    useEffect(() => {
-        const element = document.querySelector('#chat_input');
-        element.addEventListener('keydown', (e) => {
-            if (e.keyCode === 13 && !e.shiftKey) {
-                e.preventDefault();
-                document.querySelector('#send').click();
-            }
-        });
-    }, []);
+
     const sendChat = ({ contentChat }) => {
 
         var chatMessage = {
@@ -155,7 +142,7 @@ function MainChat({ option, setOption, selectedUser, userID }) {
 
     // console.log(messages);
     return (
-        <Wrapper>
+        <Wrapper isShowAbout={isShowAbout}>
             <HeaderWrapper>
                 <ItemContent onClick={handleShowModalInfor}>
                     <Avatar
@@ -179,11 +166,11 @@ function MainChat({ option, setOption, selectedUser, userID }) {
                         <HeaderIcon>
                             <VideoCameraOutlined />
                         </HeaderIcon>
-                        <HeaderIcon onClick={toggleCollapsed}>
-                            {collapsed ? (
-                                <MenuFoldOutlined onClick={() => setOption('action')} />
+                        <HeaderIcon>
+                            {isShowAbout ? (
+                                <MenuFoldOutlined onClick={() => setIsShowAbout(!isShowAbout)} />
                             ) : (
-                                <MenuUnfoldOutlined onClick={() => setOption('unaction')} />
+                                <MenuUnfoldOutlined onClick={() => setIsShowAbout(!isShowAbout)} />
                             )}
                         </HeaderIcon>
                     </IconContent>
@@ -219,7 +206,7 @@ function MainChat({ option, setOption, selectedUser, userID }) {
             <FormChat onFinish={sendChat} form={form}>
                 {/* <Form> */}
 
-                <Form.Item name="contentChat" style={{ width: '100%', margin: 0  }}>
+                <Form.Item name="contentChat" style={{ width: '100%', margin: 0 }}>
                     <InputMessage>
                         <Input
                             placeholder="Nhập nội dung"
@@ -236,112 +223,111 @@ function MainChat({ option, setOption, selectedUser, userID }) {
                     </Button>
                 </IconMessage>
                 {/* </Form> */}
-            </FooterChat>
-            <StyledModal title="Tạo nhóm" open={isOpen} onCancel={handleCancelModalCreatGroup} onOk={handleOKModalCreatGroup}
-                footer={[
-                    <Button key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalCreatGroup}>Hủy</Button>,
-                    <Button key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalCreatGroup} type="primary">Đồng ý</Button>
+                <StyledModal title="Tạo nhóm" open={isOpen} onCancel={handleCancelModalCreatGroup} onOk={handleOKModalCreatGroup}
+                    footer={[
+                        <Button key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalCreatGroup}>Hủy</Button>,
+                        <Button key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalCreatGroup} type="primary">Đồng ý</Button>
 
-                ]}>
-                <StyledForm name="basic" labelCol={{ span: 8 }} wrapperCol={{ span: 24 }} initialValues={{ remember: false }}
-                    // onFinish={onFinish} onFinishFailed={onFinishFailed} 
-                    autoComplete="off">
-                    <Form.Item valuePropName="fileList">
-                        <Upload action="/upload.do" listType="picture-card">
-                            <div>
-                                <PlusOutlined />
-                                <div style={{ marginTop: 8 }}>Upload</div>
-                            </div>
-                        </Upload>
-                        <Input placeholder='Nhập tên nhóm' />
-                    </Form.Item>
-                    <Form.Item>
-                        <StyledText style={{ fontWeight: 600 }}>Thêm bạn vào nhóm</StyledText>
-                        <Input placeholder='Nhập tên, số điện thoại' style={{ borderRadius: '10px' }} />
-                    </Form.Item>
-                    <Divider style={{ margin: '16px 0 8px' }}></Divider>
-                    <StyledText style={{ fontWeight: 600 }}>Trò chuyện gần đây</StyledText>
-                    <StyledListRecentlyChat>
-                        <Form.Item>
-                            <Menu>
-                                <StyledRadioGroup>
-                                    {users.map((user, index) => (
-                                        <StyledRadio value={index}>
-                                            <AvatarItemListCheckedUsers key={index}
-                                                index={user._id}
-                                                name={user.name}
-                                                avatar={user.avatar}
-                                            />
-                                        </StyledRadio>
-                                    ))}
-                                </StyledRadioGroup>
-                            </Menu>
-
+                    ]}>
+                    <StyledForm name="basic" labelCol={{ span: 8 }} wrapperCol={{ span: 24 }} initialValues={{ remember: false }}
+                        // onFinish={onFinish} onFinishFailed={onFinishFailed} 
+                        autoComplete="off">
+                        <Form.Item valuePropName="fileList">
+                            <Upload action="/upload.do" listType="picture-card">
+                                <div>
+                                    <PlusOutlined />
+                                    <div style={{ marginTop: 8 }}>Upload</div>
+                                </div>
+                            </Upload>
+                            <Input placeholder='Nhập tên nhóm' />
                         </Form.Item>
-                    </StyledListRecentlyChat>
-                </StyledForm>
-            </StyledModal>
-            <StyledModal className='infor' title="Thông tin tài khoản" open={isOpenInFor} onCancel={handleCancelModalInfor} onOk={handleOKModalInfor}
-                footer={[
-                    <Button key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalInfor}>Hủy</Button>,
-                    <Button key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalInfor} type="primary">Đồng ý</Button>
+                        <Form.Item>
+                            <StyledText style={{ fontWeight: 600 }}>Thêm bạn vào nhóm</StyledText>
+                            <Input placeholder='Nhập tên, số điện thoại' style={{ borderRadius: '10px' }} />
+                        </Form.Item>
+                        <Divider style={{ margin: '16px 0 8px' }}></Divider>
+                        <StyledText style={{ fontWeight: 600 }}>Trò chuyện gần đây</StyledText>
+                        <StyledListRecentlyChat>
+                            <Form.Item>
+                                <Menu>
+                                    <StyledRadioGroup>
+                                        {users.map((user, index) => (
+                                            <StyledRadio value={index}>
+                                                <AvatarItemListCheckedUsers key={index}
+                                                    index={user._id}
+                                                    name={user.name}
+                                                    avatar={user.avatar}
+                                                />
+                                            </StyledRadio>
+                                        ))}
+                                    </StyledRadioGroup>
+                                </Menu>
 
-                ]}>
-                <StyledForm name="basic" labelCol={{ span: 8 }} wrapperCol={{ span: 18 }} initialValues={{ remember: false }}
-                    // onFinish={onFinish} onFinishFailed={onFinishFailed} 
-                    autoComplete="off">
-                    <Form.Item>
-                        <StyledAvatarNen></StyledAvatarNen>
-                    </Form.Item>
-                    <Form.Item>
-                        <StyledAvatar style={{ display: 'initial', position: 'absolute', top: '-75px', left: '50%', border: '3px solid white', width: '80px', height: '80px' }}></StyledAvatar>
-                    </Form.Item>
-                    <Form.Item>
-                        <StyledNameEdit style={{ position: 'absolute', top: '-48px', left: '40%' }}>
-                            <StyledName>Your Name</StyledName>
-                            <EditOutlined className='icon-edit' onClick={handleShowModalRename} />
-                        </StyledNameEdit>
-                    </Form.Item>
-                    <Form.Item>
-                        <StyledButton key="back" style={{ left: '20px' }}>Nhắn tin</StyledButton>,
-                        <StyledButton key="submit" style={{ left: '70px' }} >Gọi điện</StyledButton>
-                    </Form.Item>
-                    <StyledBorder></StyledBorder>
-                    <Form.Item>
-                        <StyledContainInfor>
-                            <StyledText style={{ top: '-30px' }}><h3>Thông tin cá nhân</h3></StyledText>
-                            <StyledDetailInfor>
-                                <StyledText>Số điện thoại</StyledText>
-                                <StyledText>0123456789</StyledText>
-                            </StyledDetailInfor>
-                            <StyledDetailInfor>
-                                <StyledText>Giới tính</StyledText>
-                                <StyledText>Nữ</StyledText>
-                            </StyledDetailInfor>
-                            <StyledDetailInfor>
-                                <StyledText>Ngày sinh</StyledText>
-                                <StyledText>2001/09/08</StyledText>
-                            </StyledDetailInfor>
-                        </StyledContainInfor>
-                    </Form.Item>
-                </StyledForm>
-            </StyledModal>
-            <StyledModal title="Đặt tên gợi nhớ" open={isOpenRename} onCancel={handleCancelModalRename} onOk={handleOKModalRename}
-                footer={[
-                    <Button key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalRename}>Hủy</Button>,
-                    <Button key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalRename} type="primary">Đồng ý</Button>
+                            </Form.Item>
+                        </StyledListRecentlyChat>
+                    </StyledForm>
+                </StyledModal>
+                <StyledModal className='infor' title="Thông tin tài khoản" open={isOpenInFor} onCancel={handleCancelModalInfor} onOk={handleOKModalInfor}
+                    footer={[
+                        <Button key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalInfor}>Hủy</Button>,
+                        <Button key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalInfor} type="primary">Đồng ý</Button>
 
-                ]}>
-                <StyledForm name="basic" labelCol={{ span: 8 }} wrapperCol={{ span: 24 }} initialValues={{ remember: false }}
-                    // onFinish={onFinish} onFinishFailed={onFinishFailed} 
-                    autoComplete="off">
-                    <Form.Item>
-                        <StyledAvatar style={{ position: 'relative', left: '42%' }}></StyledAvatar>
-                        <StyledText style={{ display: 'flex', justifyContent: 'center', margin: '6px 0', fontSize: '16px', fontWeight: 500 }}>Hãy đặt một cái tên dễ nhớ</StyledText>
-                        <Input />
-                    </Form.Item>
-                </StyledForm>
-            </StyledModal>
+                    ]}>
+                    <StyledForm name="basic" labelCol={{ span: 8 }} wrapperCol={{ span: 18 }} initialValues={{ remember: false }}
+                        // onFinish={onFinish} onFinishFailed={onFinishFailed} 
+                        autoComplete="off">
+                        <Form.Item>
+                            <StyledAvatarNen></StyledAvatarNen>
+                        </Form.Item>
+                        <Form.Item>
+                            <StyledAvatar style={{ display: 'initial', position: 'absolute', top: '-75px', left: '50%', border: '3px solid white', width: '80px', height: '80px' }}></StyledAvatar>
+                        </Form.Item>
+                        <Form.Item>
+                            <StyledNameEdit style={{ position: 'absolute', top: '-48px', left: '40%' }}>
+                                <StyledName>Your Name</StyledName>
+                                <EditOutlined className='icon-edit' onClick={handleShowModalRename} />
+                            </StyledNameEdit>
+                        </Form.Item>
+                        <Form.Item>
+                            <StyledButton key="back" style={{ left: '20px' }}>Nhắn tin</StyledButton>,
+                            <StyledButton key="submit" style={{ left: '70px' }} >Gọi điện</StyledButton>
+                        </Form.Item>
+                        <StyledBorder></StyledBorder>
+                        <Form.Item>
+                            <StyledContainInfor>
+                                <StyledText style={{ top: '-30px' }}><h3>Thông tin cá nhân</h3></StyledText>
+                                <StyledDetailInfor>
+                                    <StyledText>Số điện thoại</StyledText>
+                                    <StyledText>0123456789</StyledText>
+                                </StyledDetailInfor>
+                                <StyledDetailInfor>
+                                    <StyledText>Giới tính</StyledText>
+                                    <StyledText>Nữ</StyledText>
+                                </StyledDetailInfor>
+                                <StyledDetailInfor>
+                                    <StyledText>Ngày sinh</StyledText>
+                                    <StyledText>2001/09/08</StyledText>
+                                </StyledDetailInfor>
+                            </StyledContainInfor>
+                        </Form.Item>
+                    </StyledForm>
+                </StyledModal>
+                <StyledModal title="Đặt tên gợi nhớ" open={isOpenRename} onCancel={handleCancelModalRename} onOk={handleOKModalRename}
+                    footer={[
+                        <Button key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalRename}>Hủy</Button>,
+                        <Button key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalRename} type="primary">Đồng ý</Button>
+
+                    ]}>
+                    <StyledForm name="basic" labelCol={{ span: 8 }} wrapperCol={{ span: 24 }} initialValues={{ remember: false }}
+                        // onFinish={onFinish} onFinishFailed={onFinishFailed} 
+                        autoComplete="off">
+                        <Form.Item>
+                            <StyledAvatar style={{ position: 'relative', left: '42%' }}></StyledAvatar>
+                            <StyledText style={{ display: 'flex', justifyContent: 'center', margin: '6px 0', fontSize: '16px', fontWeight: 500 }}>Hãy đặt một cái tên dễ nhớ</StyledText>
+                            <Input />
+                        </Form.Item>
+                    </StyledForm>
+                </StyledModal>
             </FormChat>
         </Wrapper >
     );
@@ -354,7 +340,7 @@ const Wrapper = styled.div`
     flex-direction: column;
     justify-content: center;
     flex: 0 0 auto;
-    width: calc(100% - 343px);
+    width: ${p => p.isShowAbout ? 'calc(100% - 343px)' : '100%'};
     /* width: 100%; */
     height: 100%;
     flex-flow: row wrap;

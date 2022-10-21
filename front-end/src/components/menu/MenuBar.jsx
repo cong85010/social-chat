@@ -46,7 +46,7 @@ function MenuBar() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { id: userId, accessToken } = useSelector(state => state.user.user)
-    const { conversations } = useSelector(state => state.conversation)
+    const { conversations, isLoading: isLoadingConversations } = useSelector(state => state.conversation)
     const { userChat } = useSelector(state => state.userChat)
 
     const [findFriend, setFindFriend] = useState();
@@ -171,7 +171,8 @@ function MenuBar() {
             if (!userChat)
                 dispatch(saveUserChat(conversations[0]))
         }
-    }, [conversations])
+    }, [conversations, dispatch, userChat, isLoadingConversations])
+
     //  Search
     const { Search } = Input;
     const suffix = (
@@ -239,8 +240,8 @@ function MenuBar() {
             <StyledTabs defaultActiveKey="1">
                 <Tabs.TabPane tab="Tất cả" key="1">
 
-                    {isLoading ?
-                        <Skeleton avatar paragraph={{ rows: 2 }} /> :
+                    {isLoadingConversations ?
+                        [1, 2, 4, 5, 6].map(x => <div style={{ padding: '10px' }}> <Skeleton avatar paragraph={{ rows: 1 }} /></div>) :
                         conversations.map((conversation, index) => (
                             <AvatarItem
                                 isLoading={isLoading}
@@ -328,10 +329,11 @@ function MenuBar() {
         },
     ];
 
+    console.log(isLoading);
     return (
         <Wrapper>
             <StartWrapper>
-                <AvatarImg/>
+                <AvatarImg />
                 <TopMenuICon>
                     <MenuIcon>
                         <MessageOutlined onClick={() => setOption('chat')} />
@@ -402,7 +404,7 @@ function MenuBar() {
             </StyledModal>
 
             {/* Modal show dsach loi moi ket ban */}
-            <StyledModal title="Danh sách kết bạn" open={listAdd} onCancel={handleShowModalCancelListAdd} onOk={handleShowModalOKListAdd}
+            <StyledModal centered title="Danh sách kết bạn" open={listAdd} onCancel={handleShowModalCancelListAdd} onOk={handleShowModalOKListAdd}
                 footer={[
                     <Button key="back" style={{ fontWeight: 700 }} onClick={handleShowModalCancelListAdd}>Hủy</Button>,
                     <Button key="submit" style={{ fontWeight: 700 }} type="primary" onClick={handleShowModalOKListAdd}>Đồng ý</Button>
@@ -421,7 +423,7 @@ function MenuBar() {
                 </StyledResultAddFriend>
             </StyledModal>
 
-            <StyledModal title="Danh sách nhóm" open={listGroup} onCancel={handleShowModalCancelListGroup} onOk={handleShowModalOKListGroup}
+            <StyledModal centered title="Danh sách nhóm" open={listGroup} onCancel={handleShowModalCancelListGroup} onOk={handleShowModalOKListGroup}
                 footer={[
                     <Button key="back" style={{ fontWeight: 700 }} onClick={handleShowModalCancelListGroup}>Hủy</Button>,
                     <Button key="submit" style={{ fontWeight: 700 }} type="primary" onClick={handleShowModalOKListGroup}>Đồng ý</Button>
@@ -448,7 +450,7 @@ function MenuBar() {
                 <StyledText>Bạn có muốn thoát ứng dụng không ?</StyledText>
             </StyledModal> */}
 
-            <StyledModal title="Tạo nhóm" open={isOpen} onCancel={handleCancelModalCreatGroup} onOk={handleOKModalCreatGroup}
+            <StyledModal centered title="Tạo nhóm" open={isOpen} onCancel={handleCancelModalCreatGroup} onOk={handleOKModalCreatGroup}
                 footer={[
                     <Button key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalCreatGroup}>Hủy</Button>,
                     <Button key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalCreatGroup} type="primary">Đồng ý</Button>
@@ -492,7 +494,7 @@ function MenuBar() {
                     </StyledListRecentlyChat>
                 </StyledForm>
             </StyledModal>
-            <StyledModal title="Thông tin tài khoản" open={isOpenInfor} onCancel={handleCancelModalInfor} onOk={handleOKModalInfor}
+            <StyledModal centered title="Thông tin tài khoản" open={isOpenInfor} onCancel={handleCancelModalInfor} onOk={handleOKModalInfor}
                 footer={[
                     <Button key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalInfor}>Hủy</Button>,
                     <Button key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalInfor} type="primary">Đồng ý</Button>
@@ -541,6 +543,7 @@ const Wrapper = styled.nav`
     justify-content: space-between;
     height: 100%;
     border-right: 1px solid ${border};
+    width: 100%;
 `;
 
 const StartWrapper = styled.div`
@@ -592,6 +595,7 @@ const HeaderSearch = styled.div`
 export const TabMenuItem = styled.div`
     width: 100%;
     display: flex;
+    flex: 1;
     width: 100%;
     height: calc(100% - 64px);
     overflow-y: scroll;
@@ -610,6 +614,9 @@ export const TabMenuItem = styled.div`
     .ant-tabs-nav {
         padding: 0 15px;
         margin: 0;
+    }
+    .ant-tabs {
+        width: 100%;
     }
 `;
 // Search

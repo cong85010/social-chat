@@ -1,19 +1,42 @@
 import styled from 'styled-components';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
-import { Avatar, DatePicker, Input } from 'antd';
+import { Avatar, DatePicker, Input, message, Row } from 'antd';
 
 import { border, borderInfor, text } from '~/utils/color';
 import Modal from 'antd/lib/modal/Modal';
 import { Button, Collapse, Divider, Form, Menu, Radio, Upload } from 'antd';
 import moment from 'moment/moment';
-import { UserOutlined, CameraOutlined } from '@ant-design/icons';
+import { UserOutlined, CameraOutlined, LoadingOutlined, PlusOutlined } from '@ant-design/icons';
+import { useSelector, useDispatch } from 'react-redux';
+import axios from 'axios';
+import { AvatarDefault, URL } from '~/utils/constant';
+import { getToken } from '~/utils/function';
+import { updateUser } from '~/redux/slices/UserSlice';
 
+const getBase64 = (img, callback) => {
+    const reader = new FileReader();
+    reader.addEventListener('load', () => callback(reader.result));
+    reader.readAsDataURL(img);
+};
+const beforeUpload = (file) => {
+    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+    if (!isJpgOrPng) {
+        message.error('You can only upload JPG/PNG file!');
+    }
+    const isLt2M = file.size / 1024 / 1024 < 2;
+    if (!isLt2M) {
+        message.error('Image must smaller than 2MB!');
+    }
+    return isJpgOrPng && isLt2M;
+};
 
 function AvatarImg() {
     const [isOpenInfor, setIsOpenInformation] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
-
+    const [formProfile] = Form.useForm()
+    const user = useSelector(state => state.user.user)
+    const dispatch = useDispatch()
 
     const handleShowModalInformation = () => {
         setIsOpenInformation(true)
@@ -38,10 +61,68 @@ function AvatarImg() {
     const handleCancelModalUpdateInformation = () => {
         setIsOpen(false)
     }
+
+    const handleUpdateProfile = (values) => {
+
+        axios.put(`${URL}/api/user/update`, {
+            ...values,
+            avatar: imageUrl,
+            id: user.id,
+        }, {
+            headers: {
+                Authorization: `Bearer ${getToken()}`,
+                Accept: 'application/json',
+            },
+        }).then(res => {
+            message.success("Cập nhật thông tin thành công");
+            setIsOpen(false)
+            console.log(res);
+            dispatch(updateUser(res?.data?.data))
+        }).catch(err => message.error(err))
+    }
+
+    const [loading, setLoading] = useState(false);
+    const [imageUrl, setImageUrl] = useState(user.avatar);
+    const handleChange = (info) => {
+        if (info.file.status === 'uploading') {
+            setLoading(true);
+            return;
+        }
+        // Get this url from response in real world.
+        getBase64(info.file.originFileObj, (url) => {
+            setLoading(false);
+            setImageUrl(url);
+        });
+    };
+    const uploadButton = (
+        <div>
+            {loading ? <LoadingOutlined /> : <PlusOutlined />}
+            <div
+                style={{
+                    marginTop: 8,
+                }}
+            >
+                Upload
+            </div>
+        </div>
+    );
+
+    const beforeUpload = (file) => {
+        const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+        if (!isJpgOrPng) {
+            message.error('You can only upload JPG/PNG file!');
+        }
+        const isLt2M = file.size / 1024 / 1024 < 2;
+        if (!isLt2M) {
+            message.error('Image must smaller than 2MB!');
+        }
+        return isJpgOrPng && isLt2M;
+    };
+
     return (
         <Wrapper>
-            <Avatar onClick={handleShowModalInformation} size={48} src="https://s120-ava-talk.zadn.vn/4/8/3/5/51/120/3a1cf7ea2e80a0262202104db962090e.jpg" />
-            <StyledModal className='infor' title="Thông tin tài khoản" open={isOpenInfor} onCancel={handleCancelModalInformation} onOk={handleOKModalInformation}
+            <Avatar onClick={handleShowModalInformation} size={48} src={user?.avatar || AvatarDefault} />
+            <StyledModal destroyOnClose centered className='infor' title="Thông tin tài khoản" open={isOpenInfor} onCancel={handleCancelModalInformation} onOk={handleOKModalInformation}
                 footer={[
                     <Button key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalInformation}>Hủy</Button>,
                     <Button key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalInformation} type="primary">Đồng ý</Button>
@@ -54,11 +135,11 @@ function AvatarImg() {
                         <StyledAvatarNen></StyledAvatarNen>
                     </Form.Item>
                     <Form.Item>
-                        <StyledAvatar style={{ display: 'initial', position: 'absolute', top: '-75px', left: '50%', border: '3px solid white', width: '80px', height: '80px' }}></StyledAvatar>
+                        <StyledAvatar alt="Avatar" src={user?.avatar} style={{ display: 'initial', position: 'absolute', top: '-75px', left: '50%', border: '3px solid white', width: '80px', height: '80px' }}></StyledAvatar>
                     </Form.Item>
                     <Form.Item>
                         <StyledNameEdit style={{ position: 'absolute', top: '-48px', left: '40%' }}>
-                            <StyledName>Your Name</StyledName>
+                            <StyledName>{user?.name || "Loading..."}</StyledName>
                         </StyledNameEdit>
                     </Form.Item>
                     <StyledBorder></StyledBorder>
@@ -67,15 +148,15 @@ function AvatarImg() {
                             <StyledText style={{ top: '-30px' }}><h3>Thông tin cá nhân</h3></StyledText>
                             <StyledDetailInfor>
                                 <StyledText>Số điện thoại</StyledText>
-                                <StyledText>0123456789</StyledText>
+                                <StyledText>{user.phoneNumber || "Loading..."}</StyledText>
                             </StyledDetailInfor>
                             <StyledDetailInfor>
                                 <StyledText>Giới tính</StyledText>
-                                <StyledText>Nữ</StyledText>
+                                <StyledText>{user?.gender ? 'Nam' : 'Nữ'}</StyledText>
                             </StyledDetailInfor>
                             <StyledDetailInfor>
                                 <StyledText>Ngày sinh</StyledText>
-                                <StyledText>2001/09/08</StyledText>
+                                <StyledText>{moment(user?.dateOfBirth).format("DD/MM/YYYY")}</StyledText>
                             </StyledDetailInfor>
                         </StyledContainInfor>
                     </Form.Item>
@@ -83,6 +164,8 @@ function AvatarImg() {
                 <StyledButton type='default' onClick={handleShowModalUpdateInformation}>Cập nhật thông tin</StyledButton>
             </StyledModal>
             <StyledModal
+                destroyOnClose
+                centered
                 className='infor'
                 title='Cập nhật tài khoản'
                 open={isOpen}
@@ -95,7 +178,8 @@ function AvatarImg() {
                         type="primary"
                         icon={<UserOutlined />}
                         style={{ fontWeight: 700 }}
-                        onClick={handleOKModalUpdateInformation}
+                        htmlType="submit"
+                        onClick={() => formProfile.submit()}
                     >
                         Cập nhật
                     </Button>,
@@ -103,17 +187,36 @@ function AvatarImg() {
                 onOk={handleOKModalUpdateInformation}
             >
                 <StyledForm
+                    form={formProfile}
                     name="signup"
                     labelCol={{ span: 8 }}
                     wrapperCol={{ span: 16 }}
                     autoComplete="off"
+                    initialValues={{
+                        name: user.name,
+                        dateOfBirth: moment(user.dateOfBirth),
+                        gender: user.gender
+                    }}
+                    onFinish={handleUpdateProfile}
+                    in
                 >
                     <Form.Item>
-                        <StyledAvatarNen></StyledAvatarNen>
+                        <StyledAvatarNen src={imageUrl} />
                     </Form.Item>
-                    <Form.Item style={{ margin: '0' }}>
-                        <StyledAvatar style={{ display: 'initial', position: 'absolute', top: '-75px', left: '63%', border: '3px solid white', width: '80px', height: '80px' }}></StyledAvatar>
-                        <CameraOutlined className='cameraUpdate' />
+                    <Form.Item >
+                        {/* <StyledAvatar style={{ display: 'initial', position: 'absolute', top: '-75px', left: '63%', border: '3px solid white', width: '80px', height: '80px' }}></StyledAvatar>
+                        <CameraOutlined className='cameraUpdate' /> */}
+                        <Upload Upload
+                            name="avatar"
+                            listType="picture-card"
+                            className="avatar-uploader"
+                            // showUploadList={false}
+                            // action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                            beforeUpload={beforeUpload}
+                            onChange={handleChange}
+                        >
+                            {imageUrl ? <img src={imageUrl} width="100" height="100" /> : uploadButton}
+                        </Upload>
                     </Form.Item>
                     <Form.Item
                         label="Tên hiển thị"
@@ -125,25 +228,26 @@ function AvatarImg() {
                         label="Ngày sinh"
                         name="dateOfBirth"
                     >
-                        <DatePicker defaultValue={moment(new Date())} format={'DD/MM/YYYY'} autoComplete />
+                        <DatePicker format={'DD/MM/YYYY'} autoComplete />
                     </Form.Item>
                     <Form.Item
                         label="Giới tính"
-                        name="gioitinh"
+                        name="gender"
                     >
-                        <Radio.Group defaultValue={'Nam'}>
-                            <Radio value="Nam">Nam</Radio>
-                            <Radio value="Nữ">Nữ</Radio>
+                        <Radio.Group defaultValue={user.gender}>
+                            <Radio value={true} name='gender'>Nam</Radio>
+                            <Radio value={false} name='gender'>Nữ</Radio>
                         </Radio.Group>
                     </Form.Item>
 
                 </StyledForm>
-            </StyledModal>
-        </Wrapper>
+            </StyledModal >
+        </Wrapper >
     );
 }
 
 export default AvatarImg;
+
 const Wrapper = styled.nav`
     width: 100%;
     height: 64px;
@@ -200,15 +304,12 @@ const StyledAvatarNen = styled.img`
     left: -24px;
 `
 const StyledAvatar = styled.img`
-    background-image: url('https://img4.thuthuatphanmem.vn/uploads/2021/06/04/hinh-nen-chu-cho-cory-chan-ngan-tren-duong-ray_032045111.jpg');
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
     width: 64px;
     height: 64px;
     border-radius: 50%;
     cursor: pointer;
     box-shadow: 0 0 0 1px #ccc;
+    object-fit: cover;
 `
 const StyledNameEdit = styled.div`
     display: flex;

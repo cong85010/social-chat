@@ -10,6 +10,7 @@ import Input from 'antd/lib/input/Input';
 import MenuItem from 'antd/lib/menu/MenuItem';
 import AvatarItemListCheckedUsers from '~/components/menu/content/AvatarItemListCheckedUsers';
 import { type } from '@testing-library/user-event/dist/type';
+import { useSelector } from 'react-redux';
 
 function AboutChat() {
     const [isOpen1, setIsOpen1] = useState(false);
@@ -17,6 +18,7 @@ function AboutChat() {
     const [isOpenInfor, setIsOpenInFor] = useState(false);
     const [isOpenRename, setIsOpenRename] = useState(false);
     const { Panel } = Collapse;
+    const { user } = useSelector(state => state.user)
 
     const users = [{
         _id: '1',
@@ -86,7 +88,7 @@ function AboutChat() {
         setIsOpenRename(false)
     }
 
-
+    console.log(user);
     return (<StyledSection>
         <StyledHeader>
             <h3>Thông tin hội thoại</h3>
@@ -94,7 +96,7 @@ function AboutChat() {
         <StyledContent>
             <StyledAvatar onClick={handleShowModalInfor}></StyledAvatar>
             <StyledNameEdit>
-                <StyledName>Your Name</StyledName>
+                <StyledName>{user.name}</StyledName>
                 <EditOutlined className='icon-edit' onClick={handleShowModalRename} />
             </StyledNameEdit>
             <StyledFunction>
@@ -229,7 +231,7 @@ function AboutChat() {
                 </StyledListRecentlyChat>
             </StyledForm>
         </StyledModal>
-        <StyledModal className='infor' title="Thông tin tài khoản" open={isOpenInfor} onCancel={handleCancelModalInfor} onOk={handleOKModalInfor}
+        <StyledModal centered className='infor' title="Thông tin tài khoản" open={isOpenInfor} onCancel={handleCancelModalInfor} onOk={handleOKModalInfor}
             footer={[
                 <Button key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalInfor}>Hủy</Button>,
                 <Button key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalInfor} type="primary">Đồng ý</Button>
@@ -274,7 +276,7 @@ function AboutChat() {
                 </Form.Item>
             </StyledForm>
         </StyledModal>
-        <StyledModal title="Đặt tên gợi nhớ" open={isOpenRename} onCancel={handleCancelModalRename} onOk={handleOKModalRename}
+        <StyledModal centered title="Đặt tên gợi nhớ" open={isOpenRename} onCancel={handleCancelModalRename} onOk={handleOKModalRename}
             footer={[
                 <Button key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalRename}>Hủy</Button>,
                 <Button key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalRename} type="primary">Đồng ý</Button>

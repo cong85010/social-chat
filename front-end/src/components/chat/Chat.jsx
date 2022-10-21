@@ -6,19 +6,15 @@ import AboutChat from './chat-content/about-chat/AboutChat';
 import { useEffect } from 'react';
 
 function Chat() {
-    const [option, setOption] = useState('action');
-    const [contact, setContact] = useState([]);
-    const [selectedUser, setSelectedUser] = useState();
-    const [currentChat, setCurrentChat] = useState(undefined);
-    const [curentUser, setCurentUser] = useState(undefined);
+    const [isShowAbout, setIsShowAbout] = useState(false);
     return (
         <Wrapper>
             <MenuInner>
                 <MenuBar />
             </MenuInner>
             <SlideNav>
-                <MainChat {...{ option, setOption }} />
-                {option && <AboutChat />}
+                <MainChat {...{ isShowAbout, setIsShowAbout }} />
+                {isShowAbout && <AboutChat />}
             </SlideNav>
         </Wrapper>
     );
