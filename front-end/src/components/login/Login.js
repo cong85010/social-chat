@@ -27,8 +27,8 @@ function Login() {
     const dispatch = useDispatch();
     const { isLoading, isSuccess, isError, message: messages, user } = useSelector((state) => state.user);
     const [checkOTP, setCheckOTP] = useState(false);
-    const [isShowModalOTP, setIsShowModalOTP] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
+    const [isShowModalOTP, setIsShowModalOTP] = useState(false);
     const [isLoadingRegister, setIsLoadingRegister] = useState(false);
     const [form] = Form.useForm();
     const [formPhone] = Form.useForm();
@@ -56,12 +56,46 @@ function Login() {
     const handleShowModal = () => {
         setIsOpen(true);
     };
-    const handleOkModal = () => {
-        setIsOpen(false);
-    };
+
     const handleCancelModal = () => {
         setIsOpen(false);
     };
+
+    // xac nhap mat khau moi
+    const [isShowModalNewPassword, setIsShowModalNewPassword] = useState(false);
+    const handleShowModalNewPassword = () => {
+        setIsShowModalNewPassword(true);
+    };
+
+    const handleOkModalNewPassword = () => {
+        setIsShowModalNewPassword(false);
+    };
+
+    const handleCancelModalNewPassword = () => {
+        setIsShowModalNewPassword(false);
+    };
+    // RegisterOTP
+    const [isOpenModalRegisterOTP, setIsOpenModalRegisterOTP] = useState(false);
+
+    const handleShowModalRegisterOTP = () => {
+        setIsOpenModalRegisterOTP(true);
+    };
+
+    const handleCancelModalRegisterOTP = () => {
+        setIsOpenModalRegisterOTP(false);
+    };
+
+    // Reset mk OTP
+    const [isOpenModalResetPasswordOTP, setIsOpenModalResetPasswordOTP] = useState(false);
+
+    const handleShowModalResetPasswordOTP = () => {
+        setIsOpenModalResetPasswordOTP(true);
+    };
+
+    const handleCancelModalResetPasswordOTP = () => {
+        setIsOpenModalResetPasswordOTP(false);
+    };
+
     // forgotpass
     const [isOpenModalForgetPassword, setIsOpenModalForgetPassword] = useState(false);
 
@@ -69,24 +103,10 @@ function Login() {
         setIsOpenModalForgetPassword(true);
     };
 
-    const handleOkModalForgetPassword = () => {
-        setIsOpenModalForgetPassword(false);
-    };
-
     const handleCancelModalForgetPassword = () => {
         setIsOpenModalForgetPassword(false);
     };
-    const handleShowModalOTP = () => {
-        setIsShowModalOTP(true);
-    };
 
-    const handleOkModalOTP = () => {
-        setIsShowModalOTP(false);
-    };
-
-    const handleCancelModalOTP = () => {
-        setIsShowModalOTP(false);
-    };
     //
     useEffect(() => {
         if (isSuccess) {
@@ -112,7 +132,7 @@ function Login() {
         }
         // setIsShowModalOTP(true)
         setIsLoadingRegister(false);
-        setIsOpen(true);
+        setIsOpenModalRegisterOTP(true);
     };
 
     const handleChangeOTP = (value) => {
@@ -225,7 +245,11 @@ function Login() {
                                     >
                                         <Input.Password></Input.Password>
                                     </Form.Item>
-                                    <ForgetPass className="forget" style={{color:"#1890FF", cursor:"pointer"}} onClick={handleShowModalForgetPassword}>
+                                    <ForgetPass
+                                        className="forget"
+                                        style={{ color: '#1890FF', cursor: 'pointer' }}
+                                        onClick={handleShowModalForgetPassword}
+                                    >
                                         Quên mật khẩu?
                                     </ForgetPass>
                                     <Row justify="center">
@@ -265,7 +289,7 @@ function Login() {
                                         <Input defaultValue={'0368795645'} />
                                     </Form.Item>
 
-                                    <p style={{textAlign:'center'}}>
+                                    <p style={{ textAlign: 'center' }}>
                                         Bằng việc đăng kí, bạn đã đồng ý với Zalo về <a href="">Điều khoản dịch vụ</a> &{' '}
                                         <a href="">Chính sách bảo mật</a>
                                     </p>
@@ -283,22 +307,101 @@ function Login() {
                                 </Form>
                             </Tabs.TabPane>
                         </Tabs>
+                        {/* Gửi OTP đăng kí*/}
+                        <StyledModal
+                            title="Xác nhận OTP"
+                            open={isOpenModalRegisterOTP}
+                            onCancel={handleCancelModalRegisterOTP}
+                            onOk={handleShowModal}
+                            footer={[
+                                <Button key="back" onClick={handleCancelModalRegisterOTP}>
+                                    Hủy
+                                </Button>,
+                                <Button key="submit" onClick={handleShowModal} type="primary">
+                                    Đồng ý
+                                </Button>,
+                            ]}
+                        >
+                            <StyledForm
+                                name="basic"
+                                labelCol={{ span: 8 }}
+                                wrapperCol={{ span: 24 }}
+                                initialValues={{ remember: false }}
+                                autoComplete="off"
+                            >
+                                <Form.Item>
+                                    <StyledText
+                                        style={{
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                            margin: '6px 0',
+                                            fontSize: '16px',
+                                            fontWeight: 500,
+                                        }}
+                                    >
+                                        Mã OTP
+                                    </StyledText>
+                                    <Input />
+                                    <StyledText style={{textAlign:'center', margin: '6px 0', color:'#1890FF', cursor:'pointer'}}>Gửi lại mã OTP</StyledText>
+                                </Form.Item>
+                            </StyledForm>
+                        </StyledModal>
+                        {/* Xác nhận OTP rest mật khẩu*/}
+                        <StyledModal
+                            title="Xác nhận OTP"
+                            open={isOpenModalResetPasswordOTP}
+                            onCancel={handleCancelModalResetPasswordOTP}
+                            onOk={handleShowModalNewPassword}
+                            footer={[
+                                <Button key="back" onClick={handleCancelModalResetPasswordOTP}>
+                                    Hủy
+                                </Button>,
+                                <Button key="submit" onClick={handleShowModalNewPassword} type="primary">
+                                    Đồng ý
+                                </Button>,
+                            ]}
+                        >
+                            <StyledForm
+                                name="basic"
+                                labelCol={{ span: 8 }}
+                                wrapperCol={{ span: 24 }}
+                                initialValues={{ remember: false }}
+                                autoComplete="off"
+                            >
+                                <Form.Item>
+                                    <StyledText
+                                        style={{
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                            margin: '6px 0',
+                                            fontSize: '16px',
+                                            fontWeight: 500,
+                                        }}
+                                    >
+                                        Mã OTP
+                                    </StyledText>
+                                    <Input />
+                                    <StyledText style={{textAlign:'center', margin: '6px 0', color:'#1890FF', cursor:'pointer'}}>Gửi lại mã OTP</StyledText>
+                                </Form.Item>
+                            </StyledForm>
+                        </StyledModal>
+                        {/* Thông tin tài khoản đăng kí */}
                         <StyledModal
                             open={isOpen}
                             onCancel={handleCancelModal}
-                            // footer={[
-                            //     <Button key="back" onClick={handleCancelModal}>
-                            //         Hủy
-                            //     </Button>,
-                            //     <Button
-                            //         type="primary"
-                            //         icon={<UserOutlined />}
-                            //         loading={isLoadingRegister}
-                            //         onClick={onSignUp}
-                            //     >
-                            //         Cập nhật
-                            //     </Button>,
-                            // ]}
+                            footer={[
+                                <Button key="back" onClick={handleCancelModal}>
+                                    Hủy
+                                </Button>,
+                                <Button
+                                    type="primary"
+                                    icon={<UserOutlined />}
+                                    loading={isLoadingRegister}
+                                    onClick={onSignUp}
+                                >
+                                    Đăng kí
+                                </Button>,
+                            ]}
                             onOk={onSignUp}
                         >
                             <StyledInforPerson>Thông tin tài khoản</StyledInforPerson>
@@ -310,13 +413,6 @@ function Login() {
                                 wrapperCol={{ span: 16 }}
                                 autoComplete="off"
                             >
-                                <Form.Item
-                                    label="Mã OTP"
-                                    name="maOTP"
-                                    rules={[{ required: true, message: 'Vui lòng nhập mã OTP mới vừa gửi về máy của bạn!' }]}
-                                >
-                                    <Input />
-                                </Form.Item>
                                 <Form.Item
                                     label="Tên hiển thị"
                                     name="name"
@@ -331,16 +427,6 @@ function Login() {
                                 >
                                     <DatePicker defaultValue={moment(new Date())} format={'DD/MM/YYYY'} autoComplete />
                                 </Form.Item>
-                                {/* <Form.Item
-                                    label="Giới tính"
-                                    name="gioitinh"
-                                    rules={[{ required: true, message: 'Vui lòng nhập giới tính của bạn!' }]}
-                                >
-                                    <Radio.Group defaultValue={''}>
-                                        <Radio value="Nam">Nam</Radio>
-                                        <Radio value="Nữ">Nữ</Radio>
-                                    </Radio.Group>
-                                </Form.Item> */}
                                 <Form.Item
                                     label="Mật khẩu"
                                     name="password"
@@ -372,16 +458,18 @@ function Login() {
                                 </Form.Item>
                             </StyledForm>
                         </StyledModal>
+
+                        {/* Quên mật khẩu */}
                         <StyledModal
                             title="Quên mật khẩu"
                             open={isOpenModalForgetPassword}
                             onCancel={handleCancelModalForgetPassword}
-                            onOk={handleOkModalForgetPassword}
+                            onOk={handleShowModalResetPasswordOTP}
                             footer={[
                                 <Button key="back" onClick={handleCancelModalForgetPassword}>
                                     Hủy
                                 </Button>,
-                                <Button key="submit" onClick={handleShowModalOTP}>
+                                <Button key="submit" onClick={handleShowModalResetPasswordOTP} type="primary">
                                     Đồng ý
                                 </Button>,
                             ]}
@@ -391,7 +479,6 @@ function Login() {
                                 labelCol={{ span: 8 }}
                                 wrapperCol={{ span: 24 }}
                                 initialValues={{ remember: false }}
-                                // onFinish={onFinish} onFinishFailed={onFinishFailed}
                                 autoComplete="off"
                             >
                                 <Form.Item>
@@ -410,16 +497,17 @@ function Login() {
                                 </Form.Item>
                             </StyledForm>
                         </StyledModal>
+                        {/* Xác nhận mật khẩu mới */}
                         <StyledModal
-                            title="Xác nhận OTP"
-                            open={isShowModalOTP}
-                            onCancel={handleCancelModalOTP}
-                            onOk={handleOkModalOTP}
+                            title="Xác nhận mật khẩu mới"
+                            open={isShowModalNewPassword}
+                            onCancel={handleCancelModalNewPassword}
+                            onOk={handleOkModalNewPassword}
                             footer={[
-                                <Button key="back" onClick={handleCancelModalOTP}>
+                                <Button key="back" onClick={handleCancelModalNewPassword}>
                                     Hủy
                                 </Button>,
-                                <Button key="submit" onClick={handleOkModalOTP}>
+                                <Button key="submit" onClick={handleOkModalNewPassword} type="primary">
                                     Đồng ý
                                 </Button>,
                             ]}
@@ -431,16 +519,10 @@ function Login() {
                                 initialValues={{ remember: false }}
                                 autoComplete="off"
                             >
-                                <Form.Item label="Mã OTP"
-                                name="maOTP">
+                                <Form.Item label="Nhập khẩu mới" name="newPassword">
                                     <Input />
                                 </Form.Item>
-                                <Form.Item label="Nhập khẩu mới"
-                                name="newPassword">
-                                    <Input />
-                                </Form.Item>
-                                <Form.Item label="Xác nhận mật khẩu mới"
-                                name="reNewPassword">
+                                <Form.Item label="Xác nhận mật khẩu mới" name="reNewPassword">
                                     <Input />
                                 </Form.Item>
                             </StyledForm>
