@@ -432,7 +432,7 @@ const InputMessage = styled.div`
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    width: 91%;
+    width: 100%;
     textarea.ant-input {
         font-size: 15px;
         font-weight: 400;
