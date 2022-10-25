@@ -9,14 +9,15 @@ import { Button, Collapse, Divider, Form, Menu, Radio, Upload } from 'antd';
 import Input from 'antd/lib/input/Input';
 import MenuItem from 'antd/lib/menu/MenuItem';
 import AvatarItemListCheckedUsers from '~/components/menu/content/AvatarItemListCheckedUsers';
+import AvatarMember from '~/components/menu/content/AvatarMember';
 import { type } from '@testing-library/user-event/dist/type';
 import { useSelector } from 'react-redux';
-
 function AboutChat() {
     const [isOpen1, setIsOpen1] = useState(false);
     const [isOpen2, setIsOpen2] = useState(false);
     const [isOpenInfor, setIsOpenInFor] = useState(false);
     const [isOpenRename, setIsOpenRename] = useState(false);
+    const [isOpenMember, setIsOpenMember] = useState(false);
     const { Panel } = Collapse;
     const { user } = useSelector(state => state.user)
 
@@ -88,6 +89,17 @@ function AboutChat() {
         setIsOpenRename(false)
     }
 
+    const handleShowModalMember = () => {
+        setIsOpenMember(true)
+    }
+
+    const handleOKModalMember = () => {
+        setIsOpenMember(false)
+    }
+
+    const handleCancelModalMember = () => {
+        setIsOpenMember(false)
+    }
     console.log(user);
     return (<StyledSection>
         <StyledHeader>
@@ -95,7 +107,7 @@ function AboutChat() {
         </StyledHeader>
         <StyledContent>
             <StyledAvatar onClick={handleShowModalInfor}></StyledAvatar>
-            <StyledNameEdit>
+            <StyledNameEdit className='name-user-about-chat'>
                 <StyledName>{user.name}</StyledName>
                 <EditOutlined className='icon-edit' onClick={handleShowModalRename} />
             </StyledNameEdit>
@@ -105,34 +117,26 @@ function AboutChat() {
                         <BellOutlined />
                         <StyledFunctionName>Tắt thông báo</StyledFunctionName>
                     </StyledFunctionTurnOff>
-                    {/* <StyledFunctionActive>
-                        <StyledFunctionName>Bật thông báo</StyledFunctionName>
-                    </StyledFunctionActive> */}
                 </StyledFunctionIcon>
                 <StyledFunctionIcon>
                     <StyledFunctionTurnOff>
                         <PushpinOutlined />
                         <StyledFunctionName>Ghim hội thoại</StyledFunctionName>
                     </StyledFunctionTurnOff>
-                    {/* <StyledFunctionActive>
-                        <PushpinOutlined />
-                        <StyledFunctionName>Bỏ ghim hội thoại</StyledFunctionName>
-                    </StyledFunctionActive> */}
                 </StyledFunctionIcon>
                 <StyledFunctionIcon>
                     <StyledFunctionTurnOff onClick={handleShowModalCreatGroup}>
                         <UsergroupAddOutlined />
                         <StyledFunctionName>Tạo nhóm trò chuyện</StyledFunctionName>
                     </StyledFunctionTurnOff>
-                    {/* <StyledFunctionActive>
-                        <UsergroupAddOutlined />
-                        <StyledFunctionName>Thêm thành viên</StyledFunctionName>
-                    </StyledFunctionActive> */}
+
                 </StyledFunctionIcon>
-                {/* Khi nào vào nhóm , thì mới bật cái này */}
                 <StyledFunctionIcon>
+                    <StyledFunctionTurnOff onClick={handleShowModalMember}>
                     <SettingOutlined />
                     <StyledFunctionName>Quản lí nhóm</StyledFunctionName>
+                    </StyledFunctionTurnOff>
+                    
                 </StyledFunctionIcon>
 
             </StyledFunction>
@@ -246,8 +250,8 @@ function AboutChat() {
                 <Form.Item>
                     <StyledAvatar style={{ display: 'initial', position: 'absolute', top: '-75px', left: '50%', border: '3px solid white', width: '80px', height: '80px' }}></StyledAvatar>
                 </Form.Item>
-                <Form.Item>
-                    <StyledNameEdit style={{ position: 'absolute', top: '-48px', left: '40%' }}>
+                <Form.Item wrapperCol={{ span: 24 }}>
+                    <StyledNameEdit>
                         <StyledName>Your Name</StyledName>
                         <EditOutlined className='icon-edit' onClick={handleShowModalRename} />
                     </StyledNameEdit>
@@ -292,7 +296,23 @@ function AboutChat() {
                 </Form.Item>
             </StyledForm>
         </StyledModal>
+        <StyledModal centered title="Danh sách thành viên" open={isOpenMember} onCancel={handleCancelModalMember} onOk={handleOKModalMember}
+                footer={[
+                    <Button key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalMember}>Hủy</Button>,
+                    <Button key="submit" style={{ fontWeight: 700 }} type="primary" onClick={handleOKModalMember}>Đồng ý</Button>
+                ]}>
 
+                <StyledResultAddFriend>
+                     {users.map((user, index) => (
+                        <AvatarMember
+                            key={index}
+                            index={user._id}
+                            name={user.name}
+                            avatar={user.avatar}
+                        ></AvatarMember>
+                    ))}
+                </StyledResultAddFriend>
+        </StyledModal>
     </StyledSection>);
 }
 
@@ -333,10 +353,14 @@ const StyledAvatar = styled.img`
 `
 
 const StyledNameEdit = styled.div`
+    position: relative;
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 10px 0 0;
     flex-direction: row;
     .icon-edit{
         font-size: 1.2em;
@@ -346,6 +370,10 @@ const StyledNameEdit = styled.div`
         width: 1.4em;
         height: 1.4em;
         opacity: 0.8;
+    }
+    &.name-user-about-chat{
+        position: relative;
+        top: 0px;
     }
 `
 
@@ -508,4 +536,8 @@ const StyledCollapse = styled(Collapse)`
     border: 0px;
     border-radius: 2px;
     }
+`
+
+const StyledResultAddFriend = styled.div`
+    
 `

@@ -9,6 +9,7 @@ import {
     UserOutlined,
     YoutubeOutlined,
 } from '@ant-design/icons';
+import { render } from '@testing-library/react';
 import { Button, DatePicker, Divider, Form, Input, message, Modal, Radio, Row, Tabs } from 'antd';
 import { Content, Footer, Header } from 'antd/lib/layout/layout';
 import axios from 'axios';
@@ -21,6 +22,7 @@ import { SignInUser, SignUpUser } from '~/redux/slices/UserSlice';
 import { text } from '~/utils/color';
 import { URL } from '~/utils/constant';
 import background from '../img/background.jpg';
+import OtpInput from 'react-otp-input';
 
 function Login() {
     const navigate = useNavigate();
@@ -135,10 +137,10 @@ function Login() {
         setIsOpenModalRegisterOTP(true);
     };
 
-    const handleChangeOTP = (value) => {
-        console.log(value);
-    };
+    //OTP
+    const [code, setCode] = useState('');
 
+    const handleChange = (code) => setCode(code);
     return (
         <StyledContainer>
             <StyledHeader>
@@ -341,8 +343,22 @@ function Login() {
                                     >
                                         Mã OTP
                                     </StyledText>
-                                    <Input />
-                                    <StyledText style={{textAlign:'center', margin: '6px 0', color:'#1890FF', cursor:'pointer'}}>Gửi lại mã OTP</StyledText>
+                                    <StyledOtpInput
+                                        value={code}
+                                        onChange={handleChange}
+                                        numInputs={6}
+                                        separator={<span style={{ width: '8px' }}></span>}
+                                    />
+                                    <StyledText className='abc'
+                                        style={{
+                                            textAlign: 'center',
+                                            margin: '6px 0',
+                                            color: '#1890FF',
+                                            cursor: 'pointer',
+                                        }}
+                                    >
+                                        Gửi lại mã OTP
+                                    </StyledText>
                                 </Form.Item>
                             </StyledForm>
                         </StyledModal>
@@ -380,8 +396,22 @@ function Login() {
                                     >
                                         Mã OTP
                                     </StyledText>
-                                    <Input />
-                                    <StyledText style={{textAlign:'center', margin: '6px 0', color:'#1890FF', cursor:'pointer'}}>Gửi lại mã OTP</StyledText>
+                                    <StyledOtpInput
+                                        value={code}
+                                        onChange={handleChange}
+                                        numInputs={6}
+                                        separator={<span style={{ width: '8px' }}></span>}
+                                    />
+                                    <StyledText
+                                        style={{
+                                            textAlign: 'center',
+                                            margin: '6px 0',
+                                            color: '#1890FF',
+                                            cursor: 'pointer',
+                                        }}
+                                    >
+                                        Gửi lại mã OTP
+                                    </StyledText>
                                 </Form.Item>
                             </StyledForm>
                         </StyledModal>
@@ -753,38 +783,6 @@ const BodyContentRightForm = styled.div`
         transform: translate(22%, 0px);
     }
 `;
-
-// const StyledTabTabPane = styled(Tabs.TabPane)`
-//     list-style-type: none;
-//     font-size: 1.8rem;
-//     font-weight: 600;
-//     position: relative;
-//     display: flex;
-//     justify-content: space-between;
-//     padding: 0;
-//     outline: none;
-// `;
-
-// const StyledTab = styled(Tab)`
-//     cursor: pointer;
-//     color: ${text};
-//     &.tab-register:hover,
-//     &.tab-login:hover{
-//         transform: translateY(-1px);
-//     }
-
-//     &.tab-login::after{
-//         content: "";
-//         display: block;
-//         height: 100%;
-//         width: 2px;
-//         background-color: #333;
-//         position: absolute;
-//         top: 50%;
-//         transform: translateY(-50%);
-//         left: 210px;
-//     }
-// `;
 const ForgetPass = styled.p`
     text-align: right;
     position: relative;
@@ -831,6 +829,7 @@ const FooterLinkSocials = styled.div`
 `;
 // modal
 const StyledModal = styled(Modal)`
+    width: 410px !important;
     button {
         font-size: 16px;
         line-height: 16px;
@@ -844,9 +843,18 @@ const StyledInforPerson = styled.div`
 
 const StyledForm = styled(Form)`
     label {
-        font-size: 18px;
+        font-size: 16px;
     }
 `;
 
 const StyledText = styled.p``;
+const StyledOtpInput = styled(OtpInput)`
+    display: flex;
+    input {
+        width: 54px !important;
+        height: 54px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+    }
+`;
 export default Login;

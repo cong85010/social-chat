@@ -129,7 +129,6 @@ function AvatarImg() {
 
                 ]}>
                 <StyledForm name="basic" labelCol={{ span: 8 }} wrapperCol={{ span: 18 }} initialValues={{ remember: false }}
-                    // onFinish={onFinish} onFinishFailed={onFinishFailed} 
                     autoComplete="off">
                     <Form.Item>
                         <StyledAvatarNen></StyledAvatarNen>
@@ -137,9 +136,9 @@ function AvatarImg() {
                     <Form.Item>
                         <StyledAvatar alt="Avatar" src={user?.avatar} style={{ display: 'initial', position: 'absolute', top: '-75px', left: '50%', border: '3px solid white', width: '80px', height: '80px' }}></StyledAvatar>
                     </Form.Item>
-                    <Form.Item>
-                        <StyledNameEdit style={{ position: 'absolute', top: '-48px', left: '40%' }}>
-                            <StyledName>{user?.name || "Loading..."}</StyledName>
+                    <Form.Item wrapperCol={{span: 24}}>
+                        <StyledNameEdit eEdit>
+                            <StyledName style={{margin:'0 auto'}}>{user?.name || "Loading..."}</StyledName>
                         </StyledNameEdit>
                     </Form.Item>
                     <StyledBorder></StyledBorder>
@@ -312,10 +311,14 @@ const StyledAvatar = styled.img`
     object-fit: cover;
 `
 const StyledNameEdit = styled.div`
+    position: relative;
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 10px 0 0;
     flex-direction: row;
     .icon-edit{
         font-size: 1.2em;

@@ -39,7 +39,7 @@ const Wrapper = styled.div`
     flex-direction: row-reverse;
     padding: 5px 16px 7px 16px;
     width: 100%;
-    margin-bottom:20px;
+    margin-bottom:0px;
 `;
 
 const ItemContent = styled.div`
