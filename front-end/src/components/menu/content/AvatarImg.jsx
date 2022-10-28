@@ -120,7 +120,7 @@ function AvatarImg() {
     };
 
     return (
-        <Wrapper>
+        <Wrapper style={{textAlign:'center'}}>
             <Avatar onClick={handleShowModalInformation} size={48} src={user?.avatar || AvatarDefault} />
             <StyledModal destroyOnClose centered className='infor' title="Thông tin tài khoản" open={isOpenInfor} onCancel={handleCancelModalInformation} onOk={handleOKModalInformation}
                 footer={[

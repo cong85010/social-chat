@@ -163,9 +163,8 @@ function AboutChat() {
 
                 <StyledBorder style={{ width: '100%', position: 'relative', backgroundColor: '#fffcfc00', top: 0 }}></StyledBorder>
                 <Panel header="Thiếp lập bảo mật" key="4" className="site-collapse-custom-panel">
-                    <StyledButton key="submit" style={{ top: '-10px', left: '38%' }} >Xóa kết bạn</StyledButton>
-                    <StyledButton key="submit" style={{ top: '10px', left: '38%', backgroundColor: 'transparent', color: 'red', width: 'auto' }}>Rời khỏi nhóm trò chuyện</StyledButton>
-
+                    <StyledButton key="submit" style={{ top: '-10px', left: '36%' }} >Xóa kết bạn</StyledButton>
+                    <StyledButton key="submit" style={{ top: '32px', backgroundColor: 'transparent', color: 'red', width: 'auto' }}>Rời khỏi nhóm trò chuyện</StyledButton>
                 </Panel>
             </StyledCollapse>
         </StyledContent>

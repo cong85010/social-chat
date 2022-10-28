@@ -1,11 +1,12 @@
 import styled from 'styled-components';
 import React, { useEffect, useState, useRef } from 'react';
-import { Avatar, Button, Divider, Form, Input, Menu, message, Modal, Radio, Upload } from 'antd';
+import { Avatar, Button, Divider, Form, Input, Menu, message, Modal, Radio, Spin, Upload } from 'antd';
 import { ItemContent, ContentName, HeaderIcon, ContentAbout, IconItemInput } from '~/utils/Layout';
 import {
     EditOutlined,
     FileAddOutlined,
     FileExclamationOutlined,
+    FolderAddOutlined,
     LikeOutlined,
     MenuFoldOutlined,
     MenuUnfoldOutlined,
@@ -31,6 +32,7 @@ import { updateSortConversations } from '~/redux/slices/ConversationSlice';
 import AvatarItemListCheckedUsers from '~/components/menu/content/AvatarItemListCheckedUsers';
 import EmojiPicker, { Emoji } from 'emoji-picker-react';
 import { createRef } from 'react';
+
 
 function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
     // Click change layout
@@ -105,15 +107,39 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
         setIsOpenRename(false)
     }
 
-    // icon
-    const [inputStr, setInputStr] = useState('');
-    const [showPicker, setShowPicker] = useState();
+    // icon cách 1
+    // const [inputStr, setInputStr] = useState('');
+    // const [showPicker, setShowPicker] = useState();
+    // const onEmojiClick = (e, { emojiObject }) => {
+    //     setInputStr(prevInput => prevInput + emojiObject.emoji);
+    //     setShowPicker(false);
+    // };
 
-    const onEmojiClick = (emojiObject) => {
-        setInputStr((prevInput) => prevInput + emojiObject.emoji);
-        setShowPicker(false);
-    };
+    // cacsh 2
+    const inputRef = createRef();
+    const [message, setMessage] = useState('');
+    const [showEmojis, setShowEmojis] = useState();
+    const [cursorPosition, setCursorPosition] = useState();
 
+    const pickEmoji = ({ emoji }) => {
+        const ref = inputRef.current;
+        ref.focus();
+        const start = message.substring(0, ref.selectionStart);
+        const end = message.substring(ref.selectionStart, ref.selectionStart - 1);
+        const text = start + emoji + end;
+        setMessage(text);
+        setCursorPosition(start.length + emoji.length);
+    }
+
+    const handleShowEmojis = () => {
+        inputRef.current.focus();
+        setShowEmojis(!showEmojis)
+    }
+
+    useEffect(() => {
+        inputRef.current.selectionEnd = cursorPosition;
+    }, [cursorPosition])
+    // end icon
 
     const sendChat = ({ contentChat }) => {
 
@@ -141,6 +167,44 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
     }, [])
 
     // console.log(messages);
+
+    // upload folder
+
+
+    //upload file
+    const [fileList, setFileList] = useState([
+        {
+          uid: '-1',
+          name: 'xxx.png',
+          status: 'done',
+          url: 'http://www.baidu.com/xxx.png',
+        },
+      ]);
+      const handleChange = (info) => {
+        let newFileList = [...info.fileList];
+    
+        // 1. Limit the number of uploaded files
+        // Only to show two recent uploaded files, and old ones will be replaced by the new
+        newFileList = newFileList.slice(-2);
+    
+        // 2. Read from response and show file link
+        newFileList = newFileList.map((file) => {
+          if (file.response) {
+            // Component will show file.url as link
+            file.url = file.response.url;
+          }
+          return file;
+        });
+        setFileList(newFileList);
+      };
+      const props = {
+        action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
+        onChange: handleChange,
+        multiple: true,
+      };
+
+    //upload image
+
     return (
         <Wrapper isShowAbout={isShowAbout}>
             <HeaderWrapper>
@@ -184,19 +248,63 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
                             <MyChat message={message} /> : <FriendChat message={message} />
                     )
                 }
-                {
+                {/* cách 1 */}
+                {/* { 
                     showPicker && <StyledEmojiPicker onEmojiClick={onEmojiClick} width={'450px'} />
+                } */}
+                {
+                    showEmojis && <StyledEmojiPicker onEmojiClick={pickEmoji} width={'450px'} />
                 }
             </BodyChat>
             <IconInput>
                 <IconItemInput >
-                    <SmileOutlined onClick={() => setShowPicker(val => !val)} />
+                    {/* cách 1 */}
+                    {/* <SmileOutlined onClick={() => setShowPicker(val => !val)} /> */}
+                    <SmileOutlined onClick={handleShowEmojis} />
                 </IconItemInput>
+                {/* upload hình ảnh */}
                 <IconItemInput>
-                    <PictureOutlined />
+                    <StyledUpload multiple listType='picture' action={"http://localhost:3000/login"}
+                        showUploadList={{ showRemoveIcon: true }} accept=".png,.jpg,.doc,.jpeg"
+                        beforeUpload={(file) => {
+                            console.log({ file });
+                            return false;
+                        }}
+                        // defaultFileList={[
+                        //     {
+                        //         uid: '-xxx',
+                        //         percent: 50,
+                        //         name: 'Ảnh lỗi chỗ này',
+                        //         status: 'uploading',
+                        //         url: 'https://www.google.com/'
+                        //     }
+                        // ]}
+                        iconRender={() => {
+                            return <Spin></Spin>
+                        }}
+                        progress={{
+                            strokeWidth: 3,
+                            strokeColor: {
+                                "0%": "#f0f",
+                                "100%": "#ff0"
+                            }
+                        }}
+                    >
+                        <PictureOutlined />
+                    </StyledUpload>
                 </IconItemInput>
+                {/* upload file */}
                 <IconItemInput>
-                    <FileAddOutlined />
+                    <StyledUpload {...props} fileList={fileList} maxCount={2}>
+                        <FileAddOutlined />
+                    </StyledUpload>
+                </IconItemInput>
+                {/* upload folder */}
+                <IconItemInput>
+                    <StyledUpload action="https://www.mocky.io/v2/5cc8019d300000980a055e76" style={{ position: 'relative' }}
+                        accept=".png,.jpg,.doc,.jpeg">
+                        <FolderAddOutlined />
+                    </StyledUpload>
                 </IconItemInput>
                 <IconItemInput>
                     <FileExclamationOutlined />
@@ -211,7 +319,16 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
                         <Input
                             placeholder="Nhập nội dung"
                             autoSize
-                        />
+                            // cách 1 icon.
+                            // value={inputStr}
+                            // onChange={e => setInputStr(e.target.value)}
+                            value={message}
+                            onChange={e => setMessage(e.target.value)}
+                            ref={inputRef}
+                            autoFocus
+                        >
+
+                        </Input>
                     </InputMessage>
                 </Form.Item>
                 <IconMessage>
@@ -282,7 +399,7 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
                         <Form.Item>
                             <StyledAvatar style={{ display: 'initial', position: 'absolute', top: '-75px', left: '50%', border: '3px solid white', width: '80px', height: '80px' }}></StyledAvatar>
                         </Form.Item>
-                        <Form.Item wrapperCol={{span: 24}}>
+                        <Form.Item wrapperCol={{ span: 24 }}>
                             <StyledNameEdit>
                                 <StyledName>Your Name<EditOutlined className='icon-edit' onClick={handleShowModalRename} /> </StyledName>
                             </StyledNameEdit>
@@ -581,5 +698,25 @@ const StyledEmojiPicker = styled(EmojiPicker)`
     .EmojiPickerReact.epr-main{
         width: 200px;
         
+    }
+`
+
+const StyledUpload = styled(Upload)`
+    .ant-upload-list-picture .ant-upload-list-item{
+        background-color: #fff;
+        z-index: 1;
+    }
+    .ant-upload-list.ant-upload-list-picture,
+    .ant-upload-list.ant-upload-list-text{
+        position: absolute;
+        bottom: 110px;
+    }
+    .ant-upload-list-item-name{
+        height: 30px;
+    }
+    .ant-upload-list-text-container{
+        background: #fff;
+        border-radius: 4px;
+        line-height: 30px;
     }
 `
