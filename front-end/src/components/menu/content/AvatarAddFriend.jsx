@@ -6,9 +6,8 @@ import { ItemContent, ContentName, ContentAbout } from '../../../utils/Layout';
 import { AvatarDefault, URL } from '~/utils/constant';
 import axios from 'axios';
 import { getToken } from '~/utils/function';
-
-function AvatarItemNoHours({ name, content, avatar, curentUser, id }) {
-
+import { UserAddOutlined } from '@ant-design/icons';
+function AvatarAddFriend({ name, content, avatar, curentUser, id }) {
     const handleAddFriend = async () => {
         const data = await axios.post(`${URL}/api/friend-request/send-to-user/${id}`, {}, {
             headers: {
@@ -27,14 +26,14 @@ function AvatarItemNoHours({ name, content, avatar, curentUser, id }) {
             <Content>
                 <TitleContent>
                     <ContentName>{name}</ContentName>
-                    <ContentAbout style={{ justifyContent: 'flex-end' }}> </ContentAbout>
+                    <ContentAbout style={{ justifyContent: 'flex-end' }}><UserAddOutlined style={{ fontSize: 30 }} onClick={handleAddFriend} /> </ContentAbout>
                 </TitleContent>
             </Content>
         </Wrapper>
     );
 }
 
-export default AvatarItemNoHours;
+export default AvatarAddFriend;
 const Wrapper = styled.div`
     display: flex;
     justify-content: flex-start;

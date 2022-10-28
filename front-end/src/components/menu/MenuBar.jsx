@@ -34,6 +34,7 @@ import axios from 'axios';
 import { getHeaders, URL } from '~/utils/constant';
 import { getToken } from '~/utils/function';
 import AvatarItemListCheckedUsers from './content/AvatarItemListCheckedUsers';
+import AvatarAddFriend from './content/AvatarAddFriend';
 
 function MenuBar() {
     const [friend, setFriend] = useState(false);
@@ -396,9 +397,9 @@ function MenuBar() {
                     <StyledText>Kết quả tìm kiếm</StyledText>
                     {
                         findFriend?.code === 200 ?
-                            <AvatarItemNoHours
+                            <AvatarAddFriend
                                 {...findFriend?.data}
-                            ></AvatarItemNoHours> : findFriend?.message
+                            ></AvatarAddFriend> : findFriend?.message
                     }
                 </StyledResultAddFriend>
             </StyledModal>

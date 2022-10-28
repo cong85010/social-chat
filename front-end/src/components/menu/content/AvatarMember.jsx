@@ -1,24 +1,14 @@
 import styled from 'styled-components';
 import React, { useState } from 'react';
-import { Avatar, message } from 'antd';
+import { Avatar, Button, message } from 'antd';
 import { textAbout, itemHover, border, textTitle } from '../../../utils/color';
 import { ItemContent, ContentName, ContentAbout } from '../../../utils/Layout';
 import { AvatarDefault, URL } from '~/utils/constant';
 import axios from 'axios';
 import { getToken } from '~/utils/function';
+import { UserAddOutlined } from '@ant-design/icons';
 
-function AvatarItemNoHours({ name, content, avatar, curentUser, id }) {
-
-    const handleAddFriend = async () => {
-        const data = await axios.post(`${URL}/api/friend-request/send-to-user/${id}`, {}, {
-            headers: {
-                Authorization: `Bearer ${getToken()}`,
-                Accept: 'application/json',
-            },
-        }).catch(err => message.error(err?.response?.data?.messageError))
-        if (data.code === 200)
-            message.success("Gửi lời mời thành công")
-    }
+function AvatarAddFriend({ name, content, avatar, curentUser, id }) {
     return (
         <Wrapper>
             <ItemContent>
@@ -27,14 +17,17 @@ function AvatarItemNoHours({ name, content, avatar, curentUser, id }) {
             <Content>
                 <TitleContent>
                     <ContentName>{name}</ContentName>
-                    <ContentAbout style={{ justifyContent: 'flex-end' }}> </ContentAbout>
+                    <ContentAbout style={{ justifyContent: 'flex-end' }}></ContentAbout>
                 </TitleContent>
+                <MoreContent>
+                    <Button type='primary'>Đuổi ra</Button>
+                </MoreContent>
             </Content>
         </Wrapper>
     );
 }
 
-export default AvatarItemNoHours;
+export default AvatarAddFriend;
 const Wrapper = styled.div`
     display: flex;
     justify-content: flex-start;
@@ -61,4 +54,12 @@ const TitleContent = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
+`;
+const MoreContent = styled.div`
+    width: 45%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    color: ${textTitle};
+    flex-direction: row;
 `;
