@@ -18,9 +18,12 @@ function FriendChat({ avatar, message, status }) {
         //         headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${user.accessToken}`, },
         //     }).then(res => console.log(res))
         // }, [id])
+
+        console.log(message);
+        if (!message?.content?.length) return <></>
         return <div>
-            {message?.fileName}
-            <Image src={message.content[0]} alt="hinh anh" width={100} height={100} />
+            <Image src={message?.content[0]} alt="hinh anh" width={100} height={100} />
+            <p> {message?.fileName}</p>
         </div>
     }
 

@@ -13,7 +13,7 @@ function MyChat({ avatar, message, status }) {
     const MessageTypFile = () => {
 
         return <div>
-            {message.fileName}
+            {message.fileName}<br />
             <Image src={message.url} alt="hinh anh" width={100} height={100} />
         </div>
     }

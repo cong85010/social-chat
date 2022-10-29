@@ -34,6 +34,7 @@ import EmojiPicker, { Emoji } from 'emoji-picker-react';
 import { createRef } from 'react';
 import axios from 'axios';
 import { ObjectID } from 'bson';
+import InputEmoji from 'react-input-emoji'
 
 
 
@@ -57,6 +58,11 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
     //use your link here
     const sock = new SockJS(`${URL}/ws`);
     const stompClient = Stomp.over(sock);
+    const [text, setText] = useState('')
+
+    function handleOnEnter(text) {
+        console.log('enter', text)
+    }
 
 
     const users = [{
@@ -129,12 +135,12 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
         setShowEmojis(!showEmojis)
     }
 
-    const sendChat = ({ contentChat }) => {
+    const sendChat = (text) => {
 
-        console.log(contentChat);
+        console.log(text);
 
         let isFile = false
-        let _content = contentChat;
+        let _content = text;
         if (fileList.length) {
             const id = new ObjectID();
             _content = id;
@@ -266,6 +272,7 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
                     )
                 }
             </BodyChat>
+
             <IconInput>
                 <Popover trigger="click" placement='bottomLeft' content={<StyledEmojiPicker onEmojiClick={pickEmoji} width={'450px'} />}>
                     <IconItemInput >
@@ -275,7 +282,7 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
                     </IconItemInput>
                 </Popover>
                 {/* upload hình ảnh */}
-                <IconItemInput>
+                {/* <IconItemInput>
                     <StyledUpload multiple listType='picture' action={"http://localhost:3000/login"}
                         showUploadList={{ showRemoveIcon: true }} accept=".png,.jpg,.doc,.jpeg"
                         beforeUpload={(file) => {
@@ -304,7 +311,7 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
                     >
                         <PictureOutlined />
                     </StyledUpload>
-                </IconItemInput>
+                </IconItemInput> */}
                 {/* upload file */}
                 <IconItemInput>
                     <StyledUpload {...props} fileList={fileList} maxCount={2}>
@@ -323,6 +330,14 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
                 </IconItemInput>
 
             </IconInput>
+            <InputEmoji
+                id='chatForm'
+                value={text}
+                onChange={setText}
+                cleanOnEnter
+                onEnter={sendChat}
+                placeholder="Type a message"
+            />
             <FormChat onFinish={sendChat} form={form}>
                 {/* <Form> */}
 
@@ -340,6 +355,7 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
                         >
 
                         </Input>
+
                     </InputMessage>
                 </Form.Item>
                 <IconMessage>
