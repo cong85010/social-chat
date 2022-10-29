@@ -1,11 +1,28 @@
-import styled from 'styled-components';
+import { Avatar, Image } from 'antd';
+import axios from 'axios';
 import React, { useEffect } from 'react';
-import { Avatar } from 'antd';
+import { useSelector } from 'react-redux';
+import styled from 'styled-components';
 import { bgColor } from '~/utils/color';
-import { useDispatch, useSelector } from 'react-redux';
-import { getConversationAllByToken } from '~/redux/slices/ConversationSlice';
+import { URL } from '~/utils/constant';
 
 function FriendChat({ avatar, message, status }) {
+    const { user } = useSelector(state => state.user)
+
+
+    const MessageTypFile = (id) => {
+        // useEffect(() => {
+        //     axios({
+        //         method: "get",
+        //         url: `${URL}/api/message/get-message-file/${message.content[0]}`,
+        //         headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${user.accessToken}`, },
+        //     }).then(res => console.log(res))
+        // }, [id])
+        return <div>
+            {message?.fileName}
+            <Image src={message.content[0]} alt="hinh anh" width={100} height={100} />
+        </div>
+    }
 
     return (
         <Wrapper>
@@ -21,8 +38,8 @@ function FriendChat({ avatar, message, status }) {
                 <MessageContent>
                     <MessageItem>
                         <MessageText>
-                            {message.content[0]}
-                            {/* <ContentAbout>{message.time}</ContentAbout> */}
+                            {message.type === 1 ? <MessageTypFile id={message?.id} /> :
+                                message.content[0]}
                         </MessageText>
                     </MessageItem>
                 </MessageContent>

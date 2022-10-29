@@ -1,18 +1,29 @@
 import styled from 'styled-components';
 import React from 'react';
-import { Avatar } from 'antd';
+import { Avatar, Image } from 'antd';
 import { bgColor, border, myMessage } from '~/utils/color';
 import { ContentAbout } from '~/utils/Layout';
+import { useSelector } from 'react-redux';
+import axios from 'axios';
+import { AvatarDefault, URL } from '~/utils/constant';
 
 function MyChat({ avatar, message, status }) {
+    const { user } = useSelector(state => state.user)
 
+    const MessageTypFile = () => {
+
+        return <div>
+            {message.fileName}
+            <Image src={message.url} alt="hinh anh" width={100} height={100} />
+        </div>
+    }
     return (
         <Wrapper>
             <ItemContent>
                 {/* Avatar */}
                 <Avatar
                     size={40}
-                    src="https://s120-ava-talk.zadn.vn/4/8/3/5/51/120/3a1cf7ea2e80a0262202104db962090e.jpg"
+                    src={avatar || AvatarDefault}
                 />
             </ItemContent>
             {/* Mesage */}
@@ -20,8 +31,8 @@ function MyChat({ avatar, message, status }) {
                 <MessageContent>
                     <MessageItem>
                         <MessageText>
-                            {message.content[0]}
-                            {/* <ContentAbout>{message.time}</ContentAbout> */}
+                            {message.type === 1 ? <MessageTypFile /> :
+                                message.content[0]}
                         </MessageText>
                     </MessageItem>
                 </MessageContent>

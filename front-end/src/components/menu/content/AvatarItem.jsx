@@ -14,15 +14,9 @@ function AvatarItem({ name, listMember = [], avatar, type, userIdCurrent, id, la
 
     const dispatch = useDispatch()
     const getNameConversation = () => {
-        console.log(name);
-        console.log(listMember);
-        console.log(userIdCurrent);
-        if (type) {
-            return name;
-        }
-        if (listMember.length)
+        if (listMember.length === 2)
             return listMember.find(m => m.id !== userIdCurrent)?.name;
-        else return "Chưa xác định"
+        return name || "Chưa xác định"
     }
 
     const handleChangeChat = () => {
