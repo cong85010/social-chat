@@ -208,7 +208,7 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
 
         // 1. Limit the number of uploaded files
         // Only to show two recent uploaded files, and old ones will be replaced by the new
-        newFileList = newFileList.slice(-2);
+        newFileList = newFileList.slice(-4);
 
         // 2. Read from response and show file link
         newFileList = newFileList.map((file) => {
@@ -282,39 +282,10 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
                     </IconItemInput>
                 </Popover>
                 {/* upload hình ảnh */}
-                {/* <IconItemInput>
-                    <StyledUpload multiple listType='picture' action={"http://localhost:3000/login"}
-                        showUploadList={{ showRemoveIcon: true }} accept=".png,.jpg,.doc,.jpeg"
-                        beforeUpload={(file) => {
-                            console.log({ file });
-                            return false;
-                        }}
-                        // defaultFileList={[
-                        //     {
-                        //         uid: '-xxx',
-                        //         percent: 50,
-                        //         name: 'Ảnh lỗi chỗ này',
-                        //         status: 'uploading',
-                        //         url: 'https://www.google.com/'
-                        //     }
-                        // ]}
-                        iconRender={() => {
-                            return <Spin></Spin>
-                        }}
-                        progress={{
-                            strokeWidth: 3,
-                            strokeColor: {
-                                "0%": "#f0f",
-                                "100%": "#ff0"
-                            }
-                        }}
-                    >
-                        <PictureOutlined />
-                    </StyledUpload>
-                </IconItemInput> */}
+            
                 {/* upload file */}
                 <IconItemInput>
-                    <StyledUpload {...props} fileList={fileList} maxCount={2}>
+                    <StyledUpload {...props} fileList={fileList}>
                         <FileAddOutlined />
                     </StyledUpload>
                 </IconItemInput>
@@ -746,5 +717,6 @@ const StyledUpload = styled(Upload)`
         background: #fff;
         border-radius: 4px;
         line-height: 30px;
+        margin-top: 4px;
     }
 `
