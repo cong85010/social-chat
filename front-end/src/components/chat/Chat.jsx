@@ -30,6 +30,7 @@ const Wrapper = styled.div`
     min-width: 100%;
     height: 100vh;
     flex-flow: row wrap;
+    position: absolute;
 `;
 
 const MenuInner = styled.div`

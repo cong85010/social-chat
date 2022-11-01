@@ -213,13 +213,17 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
     };
 
     //Scroll To Bottom
-    const bottomRef = useRef(null);
+    const messageEl = useRef(null);
     const [messages, setMessages] = useState([]);
 
     useEffect(() => {
-        // 👇️ scroll to bottom every time messages change
-        bottomRef.current?.scrollIntoView({behavior: 'smooth'});
-    }, [messages]);
+        if (messageEl) {
+          messageEl.current.addEventListener('DOMNodeInserted', event => {
+            const { currentTarget: target } = event;
+            target.scroll({ top: target.scrollHeight, behavior: 'smooth' });
+          });
+        }
+      }, [])
     return (
         <Wrapper isShowAbout={isShowAbout}>
             <HeaderWrapper>
@@ -256,14 +260,14 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
                 </ContentHeaderChat>
             </HeaderWrapper>
             {/* Body Chat */}
-            <BodyChat >
+            <BodyChat ref={messageEl}>
                 {
                     chat.content?.map(message =>
                         message.senderId === user.id ?
                             <MyChat message={message} /> : <FriendChat message={message} />
                     )
                 }
-                <div ref={bottomRef} />
+                {/* <div /> */}
 
             </BodyChat>
 
