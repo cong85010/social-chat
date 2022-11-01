@@ -213,10 +213,13 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
     };
 
     //Scroll To Bottom
-    const scrollToBottom = useScrollToBottom();
-    const [sticky] = useSticky();
+    const bottomRef = useRef(null);
+    const [messages, setMessages] = useState([]);
 
-
+    useEffect(() => {
+        // 👇️ scroll to bottom every time messages change
+        bottomRef.current?.scrollIntoView({behavior: 'smooth'});
+    }, [messages]);
     return (
         <Wrapper isShowAbout={isShowAbout}>
             <HeaderWrapper>
@@ -260,6 +263,7 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
                             <MyChat message={message} /> : <FriendChat message={message} />
                     )
                 }
+                <div ref={bottomRef} />
 
             </BodyChat>
 
@@ -291,34 +295,23 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
                 </IconItemInput>
 
             </IconInput>
-            <InputEmoji
-                id='chatForm'
-                value={text}
-                onChange={setText}
-                cleanOnEnter
-                onEnter={sendChat}
-                placeholder="Type a message"
-            />
             <FormChat onFinish={sendChat} form={form}>
                 {/* <Form> */}
 
                 <Form.Item name="contentChat" style={{ width: '100%', margin: 0 }}>
                     <InputMessage>
-                        <Input
+                        
+                        <InputEmoji
                             id='chatForm'
-                            placeholder="Nhập nội dung"
-                        >
-                        </Input>
+                            value={text}
+                            onChange={setText}
+                            cleanOnEnter
+                            onEnter={sendChat}
+                            placeholder="Type a message"
+                        />
                     </InputMessage>
                 </Form.Item>
-                <IconMessage>
-                    <IconItemInput>
-                        <LikeOutlined />
-                    </IconItemInput>
-                    <Button id="send" htmlType='submit' type="primary">
-                        Gửi
-                    </Button>
-                </IconMessage>
+            
                 {/* </Form> */}
 
             </FormChat>
