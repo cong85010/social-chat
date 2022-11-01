@@ -272,13 +272,11 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
             </BodyChat>
 
             <IconInput>
-                <Popover trigger="click" placement='bottomLeft' content={<StyledEmojiPicker onEmojiClick={pickEmoji} width={'450px'} />}>
+                {/* <Popover trigger="click" placement='bottomLeft' content={<StyledEmojiPicker onEmojiClick={pickEmoji} width={'450px'} />}>
                     <IconItemInput >
-                        {/* cách 1 */}
-                        {/* <SmileOutlined onClick={() => setShowPicker(val => !val)} /> */}
                         <SmileOutlined />
                     </IconItemInput>
-                </Popover>
+                </Popover> */}
                 {/* upload hình ảnh */}
             
                 {/* upload file */}
@@ -696,5 +694,8 @@ const StyledUpload = styled(Upload)`
     }
     .ant-tooltip-placement-top{
         display: none;
+    }
+    .ant-upload-list {
+        z-index: 1;
     }
 `

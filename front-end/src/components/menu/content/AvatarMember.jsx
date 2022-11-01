@@ -1,12 +1,13 @@
 import styled from 'styled-components';
 import React, { useState } from 'react';
-import { Avatar, Button, message } from 'antd';
 import { textAbout, itemHover, border, textTitle } from '../../../utils/color';
 import { ItemContent, ContentName, ContentAbout } from '../../../utils/Layout';
 import { AvatarDefault, URL } from '~/utils/constant';
 import axios from 'axios';
 import { getToken } from '~/utils/function';
 import { UserAddOutlined } from '@ant-design/icons';
+import { Button,Avatar } from "antd";
+
 
 function AvatarAddFriend({ name, content, avatar, curentUser, id }) {
     return (
@@ -20,7 +21,7 @@ function AvatarAddFriend({ name, content, avatar, curentUser, id }) {
                     <ContentAbout style={{ justifyContent: 'flex-end' }}></ContentAbout>
                 </TitleContent>
                 <MoreContent>
-                    <Button type='primary'>Đuổi ra</Button>
+                    <Button type='default'>Đuổi ra</Button>
                 </MoreContent>
             </Content>
         </Wrapper>
