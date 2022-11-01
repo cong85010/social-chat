@@ -12,6 +12,8 @@ import AvatarItemListCheckedUsers from '~/components/menu/content/AvatarItemList
 import AvatarMember from '~/components/menu/content/AvatarMember';
 import { type } from '@testing-library/user-event/dist/type';
 import { useSelector } from 'react-redux';
+import { AvatarDefault } from '~/utils/constant';
+
 function AboutChat() {
     const [isOpen1, setIsOpen1] = useState(false);
     const [isOpen2, setIsOpen2] = useState(false);
@@ -106,7 +108,10 @@ function AboutChat() {
             <h3>Thông tin hội thoại</h3>
         </StyledHeader>
         <StyledContent>
-            <StyledAvatar onClick={handleShowModalInfor}></StyledAvatar>
+            <StyledAvatar onClick={handleShowModalInfor}
+                src={user?.avatar || AvatarDefault}
+
+            ></StyledAvatar>
             <StyledNameEdit className='name-user-about-chat'>
                 <StyledName>{user.name}</StyledName>
                 <EditOutlined className='icon-edit' onClick={handleShowModalRename} />
@@ -133,10 +138,10 @@ function AboutChat() {
                 </StyledFunctionIcon>
                 <StyledFunctionIcon>
                     <StyledFunctionTurnOff onClick={handleShowModalMember}>
-                    <SettingOutlined />
-                    <StyledFunctionName>Quản lí nhóm</StyledFunctionName>
+                        <SettingOutlined />
+                        <StyledFunctionName>Quản lí nhóm</StyledFunctionName>
                     </StyledFunctionTurnOff>
-                    
+
                 </StyledFunctionIcon>
 
             </StyledFunction>
@@ -296,21 +301,21 @@ function AboutChat() {
             </StyledForm>
         </StyledModal>
         <StyledModal centered title="Danh sách thành viên" open={isOpenMember} onCancel={handleCancelModalMember} onOk={handleOKModalMember}
-                footer={[
-                    <Button key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalMember}>Hủy</Button>,
-                    <Button key="submit" style={{ fontWeight: 700 }} type="primary" onClick={handleOKModalMember}>Đồng ý</Button>
-                ]}>
+            footer={[
+                <Button key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalMember}>Hủy</Button>,
+                <Button key="submit" style={{ fontWeight: 700 }} type="primary" onClick={handleOKModalMember}>Đồng ý</Button>
+            ]}>
 
-                <StyledResultAddFriend>
-                     {users.map((user, index) => (
-                        <AvatarMember
-                            key={index}
-                            index={user._id}
-                            name={user.name}
-                            avatar={user.avatar}
-                        ></AvatarMember>
-                    ))}
-                </StyledResultAddFriend>
+            <StyledResultAddFriend>
+                {users.map((user, index) => (
+                    <AvatarMember
+                        key={index}
+                        index={user._id}
+                        name={user.name}
+                        avatar={user.avatar}
+                    ></AvatarMember>
+                ))}
+            </StyledResultAddFriend>
         </StyledModal>
     </StyledSection>);
 }

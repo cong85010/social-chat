@@ -1,15 +1,18 @@
 import { Avatar, Image } from 'antd';
 import axios from 'axios';
-import React, { useEffect } from 'react';
+import React, { useEffect ,useState} from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { bgColor } from '~/utils/color';
 import { URL } from '~/utils/constant';
+import { AvatarDefault } from '~/utils/constant';
+import { DeleteOutlined, HeartOutlined } from '@ant-design/icons';
+import { FacebookSelector } from 'react-reactions/lib/components/facebook/FacebookSelector';
 
 function FriendChat({ avatar, message, status }) {
     const { user } = useSelector(state => state.user)
-
-
+    const [hover, setHover] = useState(false);
+    const [hoverEmoji, setHoverEmoji] = useState(false);
     const MessageTypFile = (id) => {
         // useEffect(() => {
         //     axios({
@@ -33,20 +36,30 @@ function FriendChat({ avatar, message, status }) {
                 {/* Avatar */}
                 <Avatar
                     size={40}
-                    src="https://s120-ava-talk.zadn.vn/4/8/3/5/51/120/3a1cf7ea2e80a0262202104db962090e.jpg"
+                    src={user?.avatar || AvatarDefault}
                 />
             </ItemContent>
             {/* Mesage */}
             <MessageContainer>
                 <MessageContent>
-                    <MessageItem>
-                        <MessageText>
+                    <MessageItem onMouseEnter={() => { setHover(true) }} onMouseLeave={() => { setHover(false) }}>
+                        <MessageText >
                             {message.type === 1 ? <MessageTypFile id={message?.id} /> :
                                 message.content[0]}
                         </MessageText>
+                        <div className='react-icon' style={{ display: 'flex' }}>
+                            {hover && <StyledDeleteOutlined />}
+                            {hover && <StyledHeartOutlined onMouseEnter={() => { setHoverEmoji(true) }} onMouseLeave={() => { setHoverEmoji(false) }} />}
+                            {/* <StyledDeleteOutlined/>
+                            <StyledHeartOutlined/> */}
+                        </div>
+                        {
+                        hoverEmoji && <FacebookSelector/>
+                        }
                     </MessageItem>
                 </MessageContent>
             </MessageContainer>
+
         </Wrapper>
     );
 }
@@ -55,7 +68,6 @@ export default FriendChat;
 
 const Wrapper = styled.div`
     display: flex;
-    flex: 1;
     justify-content: flex-start;
     align-items: flex-start;
     flex-direction: row;
@@ -83,8 +95,8 @@ const MessageContent = styled.div`
 `;
 const MessageItem = styled.div`
     display: flex;
-    align-items: flex-start;
-    flex-direction: column;
+    align-items: flex-end;
+    flex-direction: row;
 `;
 const MessageText = styled.div`
     min-width: 32px;
@@ -99,3 +111,40 @@ const MessageText = styled.div`
     text-shadow: 0 0 0 rgba(0, 0, 0, 0.3);
     background: ${bgColor};
 `;
+const StyledDeleteOutlined = styled(DeleteOutlined)`
+    margin-top: 2px;
+    background-color: #fff;
+    border-radius: 50%;
+    padding: 3px;
+    cursor: pointer;
+    z-index: 1;
+    margin-left: 6px;
+    margin-right: 6px;
+    &:hover{
+        transform: translateY(-2px);
+    }
+`
+const StyledHeartOutlined = styled(HeartOutlined)`
+    background-color: #fff;
+    margin-top: 2px;
+    border-radius: 50%;
+    padding: 3px;
+    color: red;
+    cursor: pointer;
+    z-index: 1;
+    position: relative;
+    &:hover{
+        transform: translateY(-2px);
+    }
+    &::before{
+        content: "";
+        position: absolute;
+        display: block;
+        /* background-color: red; */
+        width: 350px;
+        height: 80px;
+        /* left: 555px; */
+        top: -44px;
+    }
+`
+

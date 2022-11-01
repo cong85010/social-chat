@@ -35,9 +35,7 @@ import { createRef } from 'react';
 import axios from 'axios';
 import { ObjectID } from 'bson';
 import InputEmoji from 'react-input-emoji'
-
-
-
+import ScrollToBottom, { useScrollToBottom, useSticky } from 'react-scroll-to-bottom';
 function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
     // Click change layout
     const [form] = Form.useForm();
@@ -50,10 +48,7 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
     const [isOpenInFor, setIsOpenInFor] = useState(false);
     const [isOpenRename, setIsOpenRename] = useState(false);
     const [fileList, setFileList] = useState([]);
-    const inputRef = useRef();
     const [message, setMessage] = useState('');
-    const [showEmojis, setShowEmojis] = useState();
-    const [cursorPosition, setCursorPosition] = useState();
     const { user } = useSelector(state => state.user)
     //use your link here
     const sock = new SockJS(`${URL}/ws`);
@@ -63,7 +58,6 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
     function handleOnEnter(text) {
         console.log('enter', text)
     }
-
 
     const users = [{
         _id: '1',
@@ -122,17 +116,9 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
     }
 
     const pickEmoji = ({ emoji }) => {
-        // const ref = inputRef.current;
-        // const start = message.substring(0, ref.);
-        // const end = message.substring(ref.selectiselectionStartonStart, ref.selectionStart - 1);
-        // const text = start + emoji + end;
 
         const formChat = document.getElementById('chatForm')
         formChat.value += emoji;
-    }
-
-    const handleShowEmojis = () => {
-        setShowEmojis(!showEmojis)
     }
 
     const sendChat = (text) => {
@@ -226,7 +212,10 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
         multiple: true,
     };
 
-    //upload image
+    //Scroll To Bottom
+    const scrollToBottom = useScrollToBottom();
+    const [sticky] = useSticky();
+
 
     return (
         <Wrapper isShowAbout={isShowAbout}>
@@ -271,6 +260,7 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
                             <MyChat message={message} /> : <FriendChat message={message} />
                     )
                 }
+
             </BodyChat>
 
             <IconInput>
@@ -317,16 +307,8 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
                         <Input
                             id='chatForm'
                             placeholder="Nhập nội dung"
-                        // cách 1 icon.
-                        // value={inputStr}
-                        // onChange={e => setInputStr(e.target.value)}
-                        // value={message   }
-                        // onChange={e => setMessage(e.target.value)}
-                        // ref={inputRef}
                         >
-
                         </Input>
-
                     </InputMessage>
                 </Form.Item>
                 <IconMessage>
@@ -492,8 +474,9 @@ const IconContent = styled.div`
 `;
 /* Body Chat */
 const BodyChat = styled.div`
-    display: flex;
+    /* display: flex; */
     flex-direction: column;
+    /* justify-content: flex-end; */
     width: 100%;
     height: calc(100% - 169px);
     background-color: ${bodyChat};
@@ -516,11 +499,6 @@ const BodyChat = styled.div`
         height: 350px !important;
     }
 `;
-const StyledTextArea = styled(TextArea)`
-    &.ant-input:focus{
-       box-shadow: none;
-    }
-`
 /* Icon Chat */
 const IconInput = styled.div`
     display: flex;
@@ -718,5 +696,8 @@ const StyledUpload = styled(Upload)`
         border-radius: 4px;
         line-height: 30px;
         margin-top: 4px;
+    }
+    .ant-tooltip-placement-top{
+        display: none;
     }
 `
