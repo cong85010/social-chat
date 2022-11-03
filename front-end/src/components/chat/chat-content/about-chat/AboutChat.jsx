@@ -12,12 +12,15 @@ import AvatarItemListCheckedUsers from '~/components/menu/content/AvatarItemList
 import AvatarMember from '~/components/menu/content/AvatarMember';
 import { type } from '@testing-library/user-event/dist/type';
 import { useSelector } from 'react-redux';
+import { AvatarDefault } from '~/utils/constant';
+
 function AboutChat() {
     const [isOpen1, setIsOpen1] = useState(false);
     const [isOpen2, setIsOpen2] = useState(false);
     const [isOpenInfor, setIsOpenInFor] = useState(false);
     const [isOpenRename, setIsOpenRename] = useState(false);
     const [isOpenMember, setIsOpenMember] = useState(false);
+    const [isAddMemberInGroup, setIsAddMemberInGroup] = useState(false);
     const { Panel } = Collapse;
     const { user } = useSelector(state => state.user)
 
@@ -100,13 +103,26 @@ function AboutChat() {
     const handleCancelModalMember = () => {
         setIsOpenMember(false)
     }
+    // them thanh vien
+    const handleShowModalAddMemberInGroup = () => {
+        setIsAddMemberInGroup(true)
+    }
+    const handleCancelModalAddMemberInGroup = () => {
+        setIsAddMemberInGroup(false)
+    }
+    const handleOKModalAddMemberInGroup = () => {
+        setIsAddMemberInGroup(false)
+    }
     console.log(user);
     return (<StyledSection>
         <StyledHeader>
             <h3>Thông tin hội thoại</h3>
         </StyledHeader>
         <StyledContent>
-            <StyledAvatar onClick={handleShowModalInfor}></StyledAvatar>
+            <StyledAvatar onClick={handleShowModalInfor}
+                src={user?.avatar || AvatarDefault}
+
+            ></StyledAvatar>
             <StyledNameEdit className='name-user-about-chat'>
                 <StyledName>{user.name}</StyledName>
                 <EditOutlined className='icon-edit' onClick={handleShowModalRename} />
@@ -133,10 +149,10 @@ function AboutChat() {
                 </StyledFunctionIcon>
                 <StyledFunctionIcon>
                     <StyledFunctionTurnOff onClick={handleShowModalMember}>
-                    <SettingOutlined />
-                    <StyledFunctionName>Quản lí nhóm</StyledFunctionName>
+                        <SettingOutlined />
+                        <StyledFunctionName>Quản lí nhóm</StyledFunctionName>
                     </StyledFunctionTurnOff>
-                    
+
                 </StyledFunctionIcon>
 
             </StyledFunction>
@@ -296,21 +312,56 @@ function AboutChat() {
             </StyledForm>
         </StyledModal>
         <StyledModal centered title="Danh sách thành viên" open={isOpenMember} onCancel={handleCancelModalMember} onOk={handleOKModalMember}
-                footer={[
-                    <Button key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalMember}>Hủy</Button>,
-                    <Button key="submit" style={{ fontWeight: 700 }} type="primary" onClick={handleOKModalMember}>Đồng ý</Button>
-                ]}>
+            footer={[
+                <Button key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalMember}>Hủy</Button>,
+                <Button key="submit" style={{ fontWeight: 700 }} type="primary" onClick={handleOKModalMember}>Đồng ý</Button>
+            ]}>
+            <Button type='primary' style={{ marginRight: '8px' }} onClick={handleShowModalAddMemberInGroup}>Thêm thành viên mới</Button>
+            <Divider/>
+            <StyledResultAddFriend>
+                {users.map((user, index) => (
+                    <AvatarMember
+                        key={index}
+                        index={user._id}
+                        name={user.name}
+                        avatar={user.avatar}
+                    ></AvatarMember>
+                ))}
+            </StyledResultAddFriend>
+        </StyledModal>
+        <StyledModal centered title="Thêm thành viên mới vào nhóm" open={isAddMemberInGroup} onCancel={handleCancelModalAddMemberInGroup} onOk={handleOKModalAddMemberInGroup}
+            footer={[
+                <Button key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalAddMemberInGroup}>Hủy</Button>,
+                <Button key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalAddMemberInGroup} type="primary">Đồng ý</Button>
 
-                <StyledResultAddFriend>
-                     {users.map((user, index) => (
-                        <AvatarMember
-                            key={index}
-                            index={user._id}
-                            name={user.name}
-                            avatar={user.avatar}
-                        ></AvatarMember>
-                    ))}
-                </StyledResultAddFriend>
+            ]}>
+            <StyledForm name="basic" labelCol={{ span: 8 }} wrapperCol={{ span: 24 }} initialValues={{ remember: false }}
+                autoComplete="off">
+                <Form.Item>
+                    <StyledText style={{ fontWeight: 600 }}>Tìm kiếm bạn bè</StyledText>
+                    <Input placeholder='Nhập tên, số điện thoại' style={{ borderRadius: '10px' }} />
+                </Form.Item>
+                <Divider style={{ margin: '16px 0 8px' }}></Divider>
+                <StyledText style={{ fontWeight: 600 }}>Trò chuyện gần đây</StyledText>
+                <StyledListRecentlyChat>
+                    <Form.Item>
+                        <Menu>
+                            <StyledRadioGroup>
+                                {users.map((user, index) => (
+                                    <StyledRadio value={index}>
+                                        <AvatarItemListCheckedUsers key={index}
+                                            index={user._id}
+                                            name={user.name}
+                                            avatar={user.avatar}
+                                        />
+                                    </StyledRadio>
+                                ))}
+                            </StyledRadioGroup>
+                        </Menu>
+
+                    </Form.Item>
+                </StyledListRecentlyChat>
+            </StyledForm>
         </StyledModal>
     </StyledSection>);
 }

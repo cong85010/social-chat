@@ -35,9 +35,7 @@ import { createRef } from 'react';
 import axios from 'axios';
 import { ObjectID } from 'bson';
 import InputEmoji from 'react-input-emoji'
-
-
-
+import ScrollToBottom, { useScrollToBottom, useSticky } from 'react-scroll-to-bottom';
 function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
     // Click change layout
     const [form] = Form.useForm();
@@ -50,10 +48,7 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
     const [isOpenInFor, setIsOpenInFor] = useState(false);
     const [isOpenRename, setIsOpenRename] = useState(false);
     const [fileList, setFileList] = useState([]);
-    const inputRef = useRef();
     const [message, setMessage] = useState('');
-    const [showEmojis, setShowEmojis] = useState();
-    const [cursorPosition, setCursorPosition] = useState();
     const { user } = useSelector(state => state.user)
     //use your link here
     const sock = new SockJS(`${URL}/ws`);
@@ -63,7 +58,6 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
     function handleOnEnter(text) {
         console.log('enter', text)
     }
-
 
     const users = [{
         _id: '1',
@@ -122,17 +116,9 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
     }
 
     const pickEmoji = ({ emoji }) => {
-        // const ref = inputRef.current;
-        // const start = message.substring(0, ref.);
-        // const end = message.substring(ref.selectiselectionStartonStart, ref.selectionStart - 1);
-        // const text = start + emoji + end;
 
         const formChat = document.getElementById('chatForm')
         formChat.value += emoji;
-    }
-
-    const handleShowEmojis = () => {
-        setShowEmojis(!showEmojis)
     }
 
     const sendChat = (text) => {
@@ -208,7 +194,7 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
 
         // 1. Limit the number of uploaded files
         // Only to show two recent uploaded files, and old ones will be replaced by the new
-        newFileList = newFileList.slice(-2);
+        newFileList = newFileList.slice(-4);
 
         // 2. Read from response and show file link
         newFileList = newFileList.map((file) => {
@@ -226,8 +212,18 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
         multiple: true,
     };
 
-    //upload image
+    //Scroll To Bottom
+    const messageEl = useRef(null);
+    const [messages, setMessages] = useState([]);
 
+    useEffect(() => {
+        if (messageEl) {
+          messageEl.current.addEventListener('DOMNodeInserted', event => {
+            const { currentTarget: target } = event;
+            target.scroll({ top: target.scrollHeight, behavior: 'smooth' });
+          });
+        }
+      }, [])
     return (
         <Wrapper isShowAbout={isShowAbout}>
             <HeaderWrapper>
@@ -264,57 +260,28 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
                 </ContentHeaderChat>
             </HeaderWrapper>
             {/* Body Chat */}
-            <BodyChat >
+            <BodyChat ref={messageEl}>
                 {
                     chat.content?.map(message =>
                         message.senderId === user.id ?
                             <MyChat message={message} /> : <FriendChat message={message} />
                     )
                 }
+                {/* <div /> */}
+
             </BodyChat>
 
             <IconInput>
-                <Popover trigger="click" placement='bottomLeft' content={<StyledEmojiPicker onEmojiClick={pickEmoji} width={'450px'} />}>
+                {/* <Popover trigger="click" placement='bottomLeft' content={<StyledEmojiPicker onEmojiClick={pickEmoji} width={'450px'} />}>
                     <IconItemInput >
-                        {/* cách 1 */}
-                        {/* <SmileOutlined onClick={() => setShowPicker(val => !val)} /> */}
                         <SmileOutlined />
                     </IconItemInput>
-                </Popover>
+                </Popover> */}
                 {/* upload hình ảnh */}
-                {/* <IconItemInput>
-                    <StyledUpload multiple listType='picture' action={"http://localhost:3000/login"}
-                        showUploadList={{ showRemoveIcon: true }} accept=".png,.jpg,.doc,.jpeg"
-                        beforeUpload={(file) => {
-                            console.log({ file });
-                            return false;
-                        }}
-                        // defaultFileList={[
-                        //     {
-                        //         uid: '-xxx',
-                        //         percent: 50,
-                        //         name: 'Ảnh lỗi chỗ này',
-                        //         status: 'uploading',
-                        //         url: 'https://www.google.com/'
-                        //     }
-                        // ]}
-                        iconRender={() => {
-                            return <Spin></Spin>
-                        }}
-                        progress={{
-                            strokeWidth: 3,
-                            strokeColor: {
-                                "0%": "#f0f",
-                                "100%": "#ff0"
-                            }
-                        }}
-                    >
-                        <PictureOutlined />
-                    </StyledUpload>
-                </IconItemInput> */}
+            
                 {/* upload file */}
                 <IconItemInput>
-                    <StyledUpload {...props} fileList={fileList} maxCount={2}>
+                    <StyledUpload {...props} fileList={fileList}>
                         <FileAddOutlined />
                     </StyledUpload>
                 </IconItemInput>
@@ -330,42 +297,23 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
                 </IconItemInput>
 
             </IconInput>
-            <InputEmoji
-                id='chatForm'
-                value={text}
-                onChange={setText}
-                cleanOnEnter
-                onEnter={sendChat}
-                placeholder="Type a message"
-            />
             <FormChat onFinish={sendChat} form={form}>
                 {/* <Form> */}
 
                 <Form.Item name="contentChat" style={{ width: '100%', margin: 0 }}>
                     <InputMessage>
-                        <Input
+                        
+                        <InputEmoji
                             id='chatForm'
-                            placeholder="Nhập nội dung"
-                        // cách 1 icon.
-                        // value={inputStr}
-                        // onChange={e => setInputStr(e.target.value)}
-                        // value={message   }
-                        // onChange={e => setMessage(e.target.value)}
-                        // ref={inputRef}
-                        >
-
-                        </Input>
-
+                            value={text}
+                            onChange={setText}
+                            cleanOnEnter
+                            onEnter={sendChat}
+                            placeholder="Type a message"
+                        />
                     </InputMessage>
                 </Form.Item>
-                <IconMessage>
-                    <IconItemInput>
-                        <LikeOutlined />
-                    </IconItemInput>
-                    <Button id="send" htmlType='submit' type="primary">
-                        Gửi
-                    </Button>
-                </IconMessage>
+            
                 {/* </Form> */}
 
             </FormChat>
@@ -521,8 +469,9 @@ const IconContent = styled.div`
 `;
 /* Body Chat */
 const BodyChat = styled.div`
-    display: flex;
+    /* display: flex; */
     flex-direction: column;
+    /* justify-content: flex-end; */
     width: 100%;
     height: calc(100% - 169px);
     background-color: ${bodyChat};
@@ -545,11 +494,6 @@ const BodyChat = styled.div`
         height: 350px !important;
     }
 `;
-const StyledTextArea = styled(TextArea)`
-    &.ant-input:focus{
-       box-shadow: none;
-    }
-`
 /* Icon Chat */
 const IconInput = styled.div`
     display: flex;
@@ -746,5 +690,12 @@ const StyledUpload = styled(Upload)`
         background: #fff;
         border-radius: 4px;
         line-height: 30px;
+        margin-top: 4px;
+    }
+    .ant-tooltip-placement-top{
+        display: none;
+    }
+    .ant-upload-list {
+        z-index: 1;
     }
 `
