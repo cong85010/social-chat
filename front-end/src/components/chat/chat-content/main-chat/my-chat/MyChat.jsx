@@ -1,11 +1,10 @@
-import styled from 'styled-components';
+import { EllipsisOutlined } from '@ant-design/icons';
+import { Avatar, Button, Image, Popover } from 'antd';
 import React from 'react';
-import { Avatar, Image } from 'antd';
-import { bgColor, border, myMessage } from '~/utils/color';
-import { ContentAbout } from '~/utils/Layout';
 import { useSelector } from 'react-redux';
-import axios from 'axios';
-import { AvatarDefault, URL } from '~/utils/constant';
+import styled from 'styled-components';
+import { myMessage } from '~/utils/color';
+import { AvatarDefault } from '~/utils/constant';
 
 function MyChat({ avatar, message, status }) {
     const { user } = useSelector(state => state.user)
@@ -15,6 +14,12 @@ function MyChat({ avatar, message, status }) {
         return <div>
             {message.fileName}<br />
             <Image src={message.url} alt="hinh anh" width={100} height={100} />
+        </div>
+    }
+
+    const MENU = () => {
+        return <div>
+            <Button size='small'>Thu hồi</Button>
         </div>
     }
     return (
@@ -30,7 +35,13 @@ function MyChat({ avatar, message, status }) {
             <MessageContainer>
                 <MessageContent>
                     <MessageItem>
+
                         <MessageText>
+                            <WrapperIcon className="chat-more">
+                                <Popover placement="left" content={MENU} trigger="click">
+                                    <EllipsisOutlined />
+                                </Popover>
+                            </WrapperIcon>
                             {message.type === 1 ? <MessageTypFile /> :
                                 message.content[0]}
                         </MessageText>
@@ -76,8 +87,28 @@ const MessageItem = styled.div`
     align-items: flex-end;
     flex-direction: column;
     margin-right: 10px;
+
+    &:hover .chat-more {
+        visibility: visible;
+    }
 `;
+
+const WrapperIcon = styled.div`
+    visibility: hidden;
+    position: absolute;
+    left: -25px;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #f3f3f3b9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 12px;
+    width: 20px;
+    cursor: pointer;
+`
 const MessageText = styled.div`
+    position: relative;
     min-width: 32px;
     max-width: calc(100% - 38px);
     display: flex;
@@ -89,4 +120,5 @@ const MessageText = styled.div`
     margin-bottom: 4px;
     text-shadow: 0 0 0 rgba(0, 0, 0, 0.3);
     background: ${myMessage};
+
 `;

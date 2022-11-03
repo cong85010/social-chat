@@ -1,40 +1,29 @@
-import styled from 'styled-components';
-import React, { useEffect, useState, useRef } from 'react';
-import { Avatar, Button, Divider, Form, Input, Menu, message, Modal, Popover, Radio, Spin, Upload } from 'antd';
-import { ItemContent, ContentName, HeaderIcon, ContentAbout, IconItemInput } from '~/utils/Layout';
 import {
     EditOutlined,
     FileAddOutlined,
     FileExclamationOutlined,
-    FolderAddOutlined,
-    LikeOutlined,
-    MenuFoldOutlined,
+    FolderAddOutlined, MenuFoldOutlined,
     MenuUnfoldOutlined,
-    PhoneOutlined,
-    PictureOutlined,
-    PlusOutlined,
-    SmileOutlined,
-    UserAddOutlined,
-    UsergroupAddOutlined,
-    UserOutlined,
-    VideoCameraOutlined,
+    PhoneOutlined, PlusOutlined,
+    SmileOutlined, UsergroupAddOutlined, VideoCameraOutlined
 } from '@ant-design/icons';
-import { bodyChat, border, borderInfor, primaryColor, text } from '~/utils/color';
-import TextArea from 'antd/lib/input/TextArea';
-import MyChat from './my-chat/MyChat';
-import FriendChat from './frient-chat/FriendChat';
-import SockJS from 'sockjs-client';
-import Stomp from 'stompjs';
-import { AvatarDefault, URL } from '~/utils/constant';
-import { useSelector, useDispatch } from 'react-redux';
-import { updateContentChat } from '~/redux/slices/ChatSlice';
-import { updateSortConversations } from '~/redux/slices/ConversationSlice';
-import AvatarItemListCheckedUsers from '~/components/menu/content/AvatarItemListCheckedUsers';
-import EmojiPicker, { Emoji } from 'emoji-picker-react';
-import { createRef } from 'react';
+import { Avatar, Button, Divider, Form, Input, Menu, Modal, Popover, Radio, Upload } from 'antd';
 import axios from 'axios';
 import { ObjectID } from 'bson';
-import InputEmoji from 'react-input-emoji'
+import React, { useEffect, useRef, useState } from 'react';
+import InputEmoji from 'react-input-emoji';
+import { useDispatch, useSelector } from 'react-redux';
+import SockJS from 'sockjs-client';
+import Stomp from 'stompjs';
+import styled from 'styled-components';
+import AvatarItemListCheckedUsers from '~/components/menu/content/AvatarItemListCheckedUsers';
+import { updateContentChat } from '~/redux/slices/ChatSlice';
+import { updateSortConversations } from '~/redux/slices/ConversationSlice';
+import { bodyChat, border, borderInfor, primaryColor } from '~/utils/color';
+import { AvatarDefault, URL } from '~/utils/constant';
+import { ContentAbout, ContentName, HeaderIcon, IconItemInput, ItemContent } from '~/utils/Layout';
+import FriendChat from './frient-chat/FriendChat';
+import MyChat from './my-chat/MyChat';
 
 
 
@@ -131,13 +120,7 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
         formChat.value += emoji;
     }
 
-    const handleShowEmojis = () => {
-        setShowEmojis(!showEmojis)
-    }
-
     const sendChat = (text) => {
-
-        console.log(text);
 
         let isFile = false
         let _content = text;
@@ -201,7 +184,7 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
             setIsConected(true)
         }
 
-    }, [sock, isConnected])
+    }, [sock, isConnected, stompClient, user.id, dispatch, form])
 
     const handleChange = (info) => {
         let newFileList = [...info.fileList];
@@ -274,51 +257,11 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
             </BodyChat>
 
             <IconInput>
-                <Popover trigger="click" placement='bottomLeft' content={<StyledEmojiPicker onEmojiClick={pickEmoji} width={'450px'} />}>
-                    <IconItemInput >
-                        {/* cách 1 */}
-                        {/* <SmileOutlined onClick={() => setShowPicker(val => !val)} /> */}
-                        <SmileOutlined />
-                    </IconItemInput>
-                </Popover>
-                {/* upload hình ảnh */}
-                {/* <IconItemInput>
-                    <StyledUpload multiple listType='picture' action={"http://localhost:3000/login"}
-                        showUploadList={{ showRemoveIcon: true }} accept=".png,.jpg,.doc,.jpeg"
-                        beforeUpload={(file) => {
-                            console.log({ file });
-                            return false;
-                        }}
-                        // defaultFileList={[
-                        //     {
-                        //         uid: '-xxx',
-                        //         percent: 50,
-                        //         name: 'Ảnh lỗi chỗ này',
-                        //         status: 'uploading',
-                        //         url: 'https://www.google.com/'
-                        //     }
-                        // ]}
-                        iconRender={() => {
-                            return <Spin></Spin>
-                        }}
-                        progress={{
-                            strokeWidth: 3,
-                            strokeColor: {
-                                "0%": "#f0f",
-                                "100%": "#ff0"
-                            }
-                        }}
-                    >
-                        <PictureOutlined />
-                    </StyledUpload>
-                </IconItemInput> */}
-                {/* upload file */}
                 <IconItemInput>
                     <StyledUpload {...props} fileList={fileList} maxCount={2}>
                         <FileAddOutlined />
                     </StyledUpload>
                 </IconItemInput>
-                {/* upload folder */}
                 <IconItemInput>
                     <StyledUpload action="https://www.mocky.io/v2/5cc8019d300000980a055e76" style={{ position: 'relative' }}
                         accept=".png,.jpg,.doc,.jpeg">
@@ -333,14 +276,12 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
             <InputEmoji
                 id='chatForm'
                 value={text}
-                onChange={setText}
+                // onChange={setText}
                 cleanOnEnter
                 onEnter={sendChat}
                 placeholder="Type a message"
             />
-            <FormChat onFinish={sendChat} form={form}>
-                {/* <Form> */}
-
+            {/* <FormChat onFinish={sendChat} form={form}>
                 <Form.Item name="contentChat" style={{ width: '100%', margin: 0 }}>
                     <InputMessage>
                         <Input
@@ -366,9 +307,7 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
                         Gửi
                     </Button>
                 </IconMessage>
-                {/* </Form> */}
-
-            </FormChat>
+            </FormChat> */}
             <StyledModal title="Tạo nhóm" open={isOpen} onCancel={handleCancelModalCreatGroup} onOk={handleOKModalCreatGroup}
                 footer={[
                     <Button key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalCreatGroup}>Hủy</Button>,
@@ -545,11 +484,7 @@ const BodyChat = styled.div`
         height: 350px !important;
     }
 `;
-const StyledTextArea = styled(TextArea)`
-    &.ant-input:focus{
-       box-shadow: none;
-    }
-`
+
 /* Icon Chat */
 const IconInput = styled.div`
     display: flex;
@@ -571,34 +506,6 @@ const FormChat = styled(Form)`
     height: 55px;
     width: 100%;
     border-top: 1px solid ${primaryColor};
-`;
-const InputMessage = styled.div`
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    width: 100%;
-    textarea.ant-input {
-        font-size: 15px;
-        font-weight: 400;
-        border: none;
-    }
-    .ant-input,
-    .ant-input:focus,
-    .ant-input:hover{
-        border: none;
-        box-shadow: none;
-    }
-    #chat_input{
-        border-color: transparent;
-        box-shadow: none;
-        
-    }
-`;
-const IconMessage = styled.div`
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
 `;
 
 const StyledModal = styled(Modal)`
@@ -719,14 +626,6 @@ const StyledBorder = styled.div`
     position: absolute;
     bottom: 264px;
     left: 0;
-`
-const StyledEmojiPicker = styled(EmojiPicker)`
-        width: 200px;
-
-    .EmojiPickerReact.epr-main{
-        width: 200px;
-        
-    }
 `
 
 const StyledUpload = styled(Upload)`
