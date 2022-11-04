@@ -24,8 +24,7 @@ import { AvatarDefault, URL } from '~/utils/constant';
 import { ContentAbout, ContentName, HeaderIcon, IconItemInput, ItemContent } from '~/utils/Layout';
 import FriendChat from './frient-chat/FriendChat';
 import MyChat from './my-chat/MyChat';
-
-
+import ScrollToBottom, { useScrollToBottom, useSticky } from 'react-scroll-to-bottom';
 
 function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
     // Click change layout
@@ -39,10 +38,7 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
     const [isOpenInFor, setIsOpenInFor] = useState(false);
     const [isOpenRename, setIsOpenRename] = useState(false);
     const [fileList, setFileList] = useState([]);
-    const inputRef = useRef();
     const [message, setMessage] = useState('');
-    const [showEmojis, setShowEmojis] = useState();
-    const [cursorPosition, setCursorPosition] = useState();
     const { user } = useSelector(state => state.user)
     //use your link here
     const sock = new SockJS(`${URL}/ws`);
@@ -52,7 +48,6 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
     function handleOnEnter(text) {
         console.log('enter', text)
     }
-
 
     const users = [{
         _id: '1',
@@ -111,10 +106,6 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
     }
 
     const pickEmoji = ({ emoji }) => {
-        // const ref = inputRef.current;
-        // const start = message.substring(0, ref.);
-        // const end = message.substring(ref.selectiselectionStartonStart, ref.selectionStart - 1);
-        // const text = start + emoji + end;
 
         const formChat = document.getElementById('chatForm')
         formChat.value += emoji;
@@ -191,7 +182,7 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
 
         // 1. Limit the number of uploaded files
         // Only to show two recent uploaded files, and old ones will be replaced by the new
-        newFileList = newFileList.slice(-2);
+        newFileList = newFileList.slice(-4);
 
         // 2. Read from response and show file link
         newFileList = newFileList.map((file) => {
@@ -209,8 +200,18 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
         multiple: true,
     };
 
-    //upload image
+    //Scroll To Bottom
+    const messageEl = useRef(null);
+    const [messages, setMessages] = useState([]);
 
+    useEffect(() => {
+        if (messageEl) {
+            messageEl.current.addEventListener('DOMNodeInserted', event => {
+                const { currentTarget: target } = event;
+                target.scroll({ top: target.scrollHeight, behavior: 'smooth' });
+            });
+        }
+    }, [])
     return (
         <Wrapper isShowAbout={isShowAbout}>
             <HeaderWrapper>
@@ -247,18 +248,20 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
                 </ContentHeaderChat>
             </HeaderWrapper>
             {/* Body Chat */}
-            <BodyChat >
+            <BodyChat ref={messageEl}>
                 {
                     chat.content?.map(message =>
                         message.senderId === user.id ?
                             <MyChat message={message} /> : <FriendChat message={message} />
                     )
                 }
+                {/* <div /> */}
+
             </BodyChat>
 
             <IconInput>
                 <IconItemInput>
-                    <StyledUpload {...props} fileList={fileList} maxCount={2}>
+                    <StyledUpload {...props} fileList={fileList}>
                         <FileAddOutlined />
                     </StyledUpload>
                 </IconItemInput>
@@ -271,49 +274,22 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
                 <IconItemInput>
                     <FileExclamationOutlined />
                 </IconItemInput>
-
             </IconInput>
             <InputEmoji
                 id='chatForm'
-                value={text}
+                // value={text}
                 // onChange={setText}
                 cleanOnEnter
                 onEnter={sendChat}
                 placeholder="Type a message"
             />
-            {/* <FormChat onFinish={sendChat} form={form}>
-                <Form.Item name="contentChat" style={{ width: '100%', margin: 0 }}>
-                    <InputMessage>
-                        <Input
-                            id='chatForm'
-                            placeholder="Nhập nội dung"
-                        // cách 1 icon.
-                        // value={inputStr}
-                        // onChange={e => setInputStr(e.target.value)}
-                        // value={message   }
-                        // onChange={e => setMessage(e.target.value)}
-                        // ref={inputRef}
-                        >
+            < StyledModal title="Tạo nhóm" open={isOpen} onCancel={handleCancelModalCreatGroup} onOk={handleOKModalCreatGroup}
+                footer={
+                    [
+                        <Button key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalCreatGroup}>Hủy</Button>,
+                        <Button key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalCreatGroup} type="primary">Đồng ý</Button>
 
-                        </Input>
-
-                    </InputMessage>
-                </Form.Item>
-                <IconMessage>
-                    <IconItemInput>
-                        <LikeOutlined />
-                    </IconItemInput>
-                    <Button id="send" htmlType='submit' type="primary">
-                        Gửi
-                    </Button>
-                </IconMessage>
-            </FormChat> */}
-            <StyledModal title="Tạo nhóm" open={isOpen} onCancel={handleCancelModalCreatGroup} onOk={handleOKModalCreatGroup}
-                footer={[
-                    <Button key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalCreatGroup}>Hủy</Button>,
-                    <Button key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalCreatGroup} type="primary">Đồng ý</Button>
-
-                ]}>
+                    ]} >
                 <StyledForm name="basic" labelCol={{ span: 8 }} wrapperCol={{ span: 24 }} initialValues={{ remember: false }}
                     // onFinish={onFinish} onFinishFailed={onFinishFailed} 
                     autoComplete="off">
@@ -460,8 +436,9 @@ const IconContent = styled.div`
 `;
 /* Body Chat */
 const BodyChat = styled.div`
-    display: flex;
+    /* display: flex; */
     flex-direction: column;
+    /* justify-content: flex-end; */
     width: 100%;
     height: calc(100% - 169px);
     background-color: ${bodyChat};
@@ -484,7 +461,6 @@ const BodyChat = styled.div`
         height: 350px !important;
     }
 `;
-
 /* Icon Chat */
 const IconInput = styled.div`
     display: flex;
@@ -645,5 +621,12 @@ const StyledUpload = styled(Upload)`
         background: #fff;
         border-radius: 4px;
         line-height: 30px;
+        margin-top: 4px;
+    }
+    .ant-tooltip-placement-top{
+        display: none;
+    }
+    .ant-upload-list {
+        z-index: 1;
     }
 `

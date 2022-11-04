@@ -1,14 +1,15 @@
 import styled from 'styled-components';
 import React, { useState } from 'react';
-import { Avatar, Button, message } from 'antd';
 import { textAbout, itemHover, border, textTitle } from '../../../utils/color';
 import { ItemContent, ContentName, ContentAbout } from '../../../utils/Layout';
 import { AvatarDefault, URL } from '~/utils/constant';
 import axios from 'axios';
 import { getToken } from '~/utils/function';
 import { UserAddOutlined } from '@ant-design/icons';
+import { Button, Avatar } from "antd";
 
-function AvatarAddFriend({ name, content, avatar, curentUser, id }) {
+
+function AvatarAddFriend({ name, content, avatar, userCurrentId, id, isAdmin, handleRemoveConversation, handleUpdateAdminGroup }) {
     return (
         <Wrapper>
             <ItemContent>
@@ -16,18 +17,35 @@ function AvatarAddFriend({ name, content, avatar, curentUser, id }) {
             </ItemContent>
             <Content>
                 <TitleContent>
-                    <ContentName>{name}</ContentName>
+                    <ContentName>
+                        <CustomName>
+                            {name}{isAdmin && id === userCurrentId && <HeadGroup>Trưởng nhóm</HeadGroup>}
+                        </CustomName></ContentName>
                     <ContentAbout style={{ justifyContent: 'flex-end' }}></ContentAbout>
                 </TitleContent>
-                <MoreContent>
-                    <Button type='primary'>Đuổi ra</Button>
-                </MoreContent>
+                {
+                    isAdmin && id !== userCurrentId && <MoreContent>
+                        <Button type='primary' onClick={() => handleUpdateAdminGroup(id)}>Thay TN</Button>
+                    </MoreContent>
+                }
+                {
+                    isAdmin && id !== userCurrentId && <MoreContent>
+                        <Button type='default' onClick={() => handleRemoveConversation(id)}>Đuổi ra</Button>
+                    </MoreContent>
+                }
             </Content>
         </Wrapper>
     );
 }
 
 export default AvatarAddFriend;
+
+const HeadGroup = styled.span`
+    font-size: 12px;
+    color: #3d96c9;
+    line-height: 30px;
+`
+
 const Wrapper = styled.div`
     display: flex;
     justify-content: flex-start;
@@ -41,6 +59,11 @@ const Wrapper = styled.div`
         background-color: ${itemHover};
     }
 `;
+
+const CustomName = styled.div`
+    display: flex;
+    flex-direction: column
+`
 
 const Content = styled.div`
         width: 100%;

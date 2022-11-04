@@ -10,7 +10,7 @@ import { ChatItem } from 'react-chat-elements';
 import { AvatarDefault } from '~/utils/constant';
 import moment from 'moment';
 
-function AvatarItem({ name, listMember = [], avatar, type, userIdCurrent, id, lastMessage, isLoading }) {
+function AvatarItem({ name, listMember = [], avatar, type, userIdCurrent, id, lastMessage, isLoading, adminId }) {
 
     const dispatch = useDispatch()
     const getNameConversation = () => {
@@ -27,7 +27,8 @@ function AvatarItem({ name, listMember = [], avatar, type, userIdCurrent, id, la
                 name: getNameConversation(),
                 listMember,
                 avatar,
-                type
+                type,
+                isAdmin: adminId === userIdCurrent,
             }
         }))
     }

@@ -1,40 +1,29 @@
-import styled from 'styled-components';
-import React, { useEffect, useRef, useState } from 'react';
-import BackToUp from '@uiw/react-back-to-top';
-import { border, primaryColor, bgborder, textTitle, borderInfor } from '~/utils/color';
-import MenuIcon from './MenuIcon';
-import AvatarImg from './content/AvatarImg';
-import { HeaderIcon } from '../../utils/Layout';
-import { Button, Divider, Form, Input, Menu, Modal, Skeleton, Radio, Space, Tabs, Upload } from 'antd';
 import {
-    MessageOutlined,
-    ContactsOutlined,
-    CheckSquareOutlined,
-    CloudOutlined,
-    OneToOneOutlined,
-    SettingOutlined,
-    AudioOutlined,
-    UserAddOutlined,
-    UsergroupAddOutlined,
-    VideoCameraOutlined,
-    LogoutOutlined,
-    PlusOutlined,
-    EditOutlined,
+    AudioOutlined, CloudOutlined, ContactsOutlined, LogoutOutlined, MessageOutlined, PlusOutlined, UserAddOutlined,
+    UsergroupAddOutlined
 } from '@ant-design/icons';
-import AvatarItem from './content/AvatarItem';
-import AvatarItemNoHours from './content/AvatarItemNoHours';
-import AvatarItemListAddFriend from './content/AvatarItemListAddFriend';
-import AvatarItemListGroup from './content/AvatarItemListGroup';
-import { logout } from '~/redux/slices/UserSlice';
+import { Button, Checkbox, Divider, Form, Input, Menu, Modal, Radio, Skeleton, Space, Tabs, Upload } from 'antd';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Router, useNavigate, useRoutes } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
 import { getConversationAllByToken } from '~/redux/slices/ConversationSlice';
 import { saveUserChat } from '~/redux/slices/UserChatSlice';
-import axios from 'axios';
-import { getHeaders, URL } from '~/utils/constant';
+import { logout } from '~/redux/slices/UserSlice';
+import { bgborder, border, borderInfor, primaryColor } from '~/utils/color';
+import { beforeUpload, getBase64, URL } from '~/utils/constant';
 import { getToken } from '~/utils/function';
-import AvatarItemListCheckedUsers from './content/AvatarItemListCheckedUsers';
+import { HeaderIcon } from '../../utils/Layout';
 import AvatarAddFriend from './content/AvatarAddFriend';
+import AvatarImg from './content/AvatarImg';
+import AvatarItem from './content/AvatarItem';
+import AvatarItemListAddFriend from './content/AvatarItemListAddFriend';
+import AvatarItemListCheckedUsers from './content/AvatarItemListCheckedUsers';
+import AvatarItemNoHours from './content/AvatarItemNoHours';
+import MenuIcon from './MenuIcon';
+
+const CheckboxGroup = Checkbox.Group;
 
 function MenuBar() {
     const [friend, setFriend] = useState(false);
@@ -51,10 +40,34 @@ function MenuBar() {
     const { userChat } = useSelector(state => state.userChat)
 
     const [findFriend, setFindFriend] = useState();
+    const [findMyFriends, setFindMyFriends] = useState([]);
     const [friendInvited, setFriendInvited] = useState();
     const [isLoading, setIsLoading] = useState(false);
+    const [imageUrl, setImageUrl] = useState(null);
+    const [nameGroup, setNameGroup] = useState("");
+    const [listChecked, setListChecked] = useState([]);
+    const [isLoadingCreate, setIsLoadingCreate] = useState(false);
 
-    console.log(userId);
+    const handleChange = (info) => {
+        if (info.file.status === 'uploading') {
+            setIsLoading(true);
+            return;
+        }
+
+        if (info.file.status === 'removed') {
+            setImageUrl(null)
+            return;
+        }
+
+        // Get this url from response in real world.
+        getBase64(info.file.originFileObj, (url) => {
+            setIsLoading(false);
+            setImageUrl(url);
+        });
+
+
+    };
+
     // MenuIcon
     const renderItems2 = () => bottomItems.map((bottomItem, index) => <MenuIcon>{bottomItem.icon}</MenuIcon>);
 
@@ -73,6 +86,7 @@ function MenuBar() {
                 },
             })
             setFindFriend(data)
+            dispatch(getConversationAllByToken(accessToken))
         } catch (error) {
 
             setFindFriend({
@@ -103,6 +117,30 @@ function MenuBar() {
         }
         setIsLoading(false)
     };
+
+    const getMyFriends = async () => {
+        try {
+            setIsLoading(true)
+            const { data } = await axios.get(`${URL}/api/user/get-list-friend`, {
+                headers: {
+                    Authorization: `Bearer ${getToken()}`,
+                    Accept: 'application/json',
+                },
+            })
+
+            setFindMyFriends(data?.data)
+        } catch (error) {
+            setFindMyFriends({
+                code: 404,
+                message: "Không có bạn bè nào"
+            })
+        }
+        setIsLoading(false)
+    };
+
+    const handleChangeNameGroup = (text) => {
+        setNameGroup(text.target.value)
+    }
 
     const onFinishFailed = () => {
         console.log('Failed:');
@@ -141,10 +179,35 @@ function MenuBar() {
 
     const handleShowModalCreatGroup = () => {
         setIsOpen(true)
+        getMyFriends()
     }
 
-    const handleOKModalCreatGroup = () => {
-        setIsOpen(false)
+    const handleOKModalCreatGroup = async () => {
+        try {
+            setIsLoadingCreate(true)
+            const { data } = await axios.post(`${URL}/api/conversation/create-group`, {
+                avatar: imageUrl,
+                listMemberId: listChecked,
+                name: nameGroup,
+            }, {
+                headers: {
+                    Authorization: `Bearer ${getToken()}`,
+                    Accept: 'application/json',
+                },
+            })
+
+            if (data?.code === 200) {
+                dispatch(getConversationAllByToken(accessToken))
+                setImageUrl(null)
+            }
+
+            setIsLoadingCreate(false)
+            setIsOpen(false)
+        } catch (error) {
+            setIsLoadingCreate(false)
+            setIsOpen(false)
+            setImageUrl(null)
+        }
     }
 
     const handleCancelModalCreatGroup = () => {
@@ -161,6 +224,10 @@ function MenuBar() {
 
     const handleCancelModalInfor = () => {
         setIsOpenInFor(false)
+    }
+
+    const onChangeAddToGroup = (list) => {
+        setListChecked(list)
     }
 
     useEffect(() => {
@@ -186,55 +253,6 @@ function MenuBar() {
     );
     const onSearch = (value) => console.log(value);
 
-    // All User
-    const users = [
-        {
-            _id: '1',
-            name: 'Minh Châu',
-            content: 'Hi Tuan!!',
-            avatar: 'https://s120-ava-talk.zadn.vn/4/8/3/5/51/120/3a1cf7ea2e80a0262202104db962090e.jpg',
-        },
-
-        {
-            _id: '4',
-            name: 'Cloud của tôi',
-            content: 'Hi Chau!!',
-            avatar: 'https://res-zalo.zadn.vn/upload/media/2021/6/4/2_1622800570007_369788.jpg',
-        },
-
-        {
-            _id: '2',
-            name: 'Duy Khang',
-            content: 'Hi Chau!!',
-            avatar: 'https://s120-ava-talk.zadn.vn/b/f/3/a/3/120/4ae7bbb88211e3fdd33873839ba6a1d8.jpg',
-        },
-        {
-            _id: '2',
-            name: 'Duy Khang',
-            content: 'Hi Chau!!',
-            avatar: 'https://s120-ava-talk.zadn.vn/b/f/3/a/3/120/4ae7bbb88211e3fdd33873839ba6a1d8.jpg',
-        },
-        {
-            _id: '1',
-            name: 'Minh Châu',
-            content: 'Hi Tuan!!',
-            avatar: 'https://s120-ava-talk.zadn.vn/4/8/3/5/51/120/3a1cf7ea2e80a0262202104db962090e.jpg',
-        },
-
-        {
-            _id: '2',
-            name: 'Lê Tuấn',
-            content: 'Hi Chau!!',
-            avatar: 'https://s120-ava-talk.zadn.vn/c/f/3/5/20/120/e83b009221d944ac707d41f4da3e138e.jpg',
-        },
-        {
-            _id: '1',
-            name: 'Minh Châu',
-            content: 'Hi Tuan!!',
-            avatar: 'https://s120-ava-talk.zadn.vn/4/8/3/5/51/120/3a1cf7ea2e80a0262202104db962090e.jpg',
-        },
-    ];
-
     //  Tab Menu
     const tabMenu = () => {
         return (
@@ -249,11 +267,12 @@ function MenuBar() {
                                 key={index}
                                 index={conversation.id}
                                 userIdCurrent={userId}
+                                adminId={conversation.adminId}
                                 {...conversation}
                             />
                         ))}
                 </Tabs.TabPane>
-                <Tabs.TabPane tab="Chưa đọc" key="2">
+                {/* <Tabs.TabPane tab="Chưa đọc" key="2">
                     {users.map((user, index) => (
                         <AvatarItem
                             isLoading={isLoading}
@@ -264,7 +283,7 @@ function MenuBar() {
                             avatar={user.avatar}
                         />
                     ))}
-                </Tabs.TabPane>
+                </Tabs.TabPane> */}
             </StyledTabs>
         );
     };
@@ -301,7 +320,7 @@ function MenuBar() {
                 </StyledGroup>
                 <StyledGroup style={{ height: '60px', lineHeight: '60px', paddingLeft: '10px', borderTop: '1px solid #e5e7eb', flexDirection: 'column' }}>
                     <h3>Danh sách bạn bè</h3>
-                    {users.map((user, index) => (
+                    {findMyFriends?.map((user, index) => (
                         <AvatarItemNoHours key={index}
                             index={user._id}
                             name={user.name}
@@ -330,7 +349,6 @@ function MenuBar() {
         },
     ];
 
-    console.log(isLoading);
     return (
         <Wrapper>
             <StartWrapper>
@@ -442,32 +460,34 @@ function MenuBar() {
                 </StyledResultAddFriend>
             </StyledModal>
 
-            {/* <StyledModal title="Xác nhận" open={logOut} onCancel={handleShowModalCancelLogOut} onOk={handleShowModalOKLogOut}
-                footer={[
-                    <Button key="back" style={{ fontWeight: 700 }} onClick={handleShowModalCancelLogOut}>Hủy</Button>,
-                    <Button key="submit" style={{ fontWeight: 700 }} type="primary" onClick={handleShowModalOKLogOut}>Đồng ý</Button>
-                ]}>
-                
-                <StyledText>Bạn có muốn thoát ứng dụng không ?</StyledText>
-            </StyledModal> */}
-
-            <StyledModal centered title="Tạo nhóm" open={isOpen} onCancel={handleCancelModalCreatGroup} onOk={handleOKModalCreatGroup}
+            <StyledModal centered title="Tạo nhóm" open={isOpen}
                 footer={[
                     <Button key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalCreatGroup}>Hủy</Button>,
-                    <Button key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalCreatGroup} type="primary">Đồng ý</Button>
+                    <Button key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalCreatGroup} type="primary" loading={isLoadingCreate}>Tạo nhóm</Button>
 
-                ]}>
+                ]}
+                destroyOnClose
+                onCancel={handleCancelModalCreatGroup}
+            >
                 <StyledForm name="basic" labelCol={{ span: 8 }} wrapperCol={{ span: 24 }} initialValues={{ remember: false }}
                     // onFinish={onFinish} onFinishFailed={onFinishFailed} 
-                    autoComplete="off">
-                    <Form.Item valuePropName="fileList">
-                        <Upload action="/upload.do" listType="picture-card">
-                            <div>
+                    autoComplete="off"
+                >
+
+                    <Form.Item >
+                        <Upload action="/" listType="picture-card"
+                            beforeUpload={beforeUpload}
+                            onChange={handleChange}
+                            maxCount={1}
+                        >
+                            {!imageUrl && <div>
                                 <PlusOutlined />
                                 <div style={{ marginTop: 8 }}>Upload</div>
-                            </div>
+                            </div>}
                         </Upload>
-                        <Input placeholder='Nhập tên nhóm' />
+                    </Form.Item>
+                    <Form.Item >
+                        <Input placeholder='Nhập tên nhóm' onChange={handleChangeNameGroup} />
                     </Form.Item>
                     <Form.Item>
                         <StyledText style={{ fontWeight: 600 }}>Thêm bạn vào nhóm</StyledText>
@@ -478,17 +498,17 @@ function MenuBar() {
                     <StyledListRecentlyChat>
                         <Form.Item>
                             <Menu>
-                                <StyledRadioGroup>
-                                    {users.map((user, index) => (
-                                        <StyledRadio value={index}>
+                                <CheckboxGroup onChange={onChangeAddToGroup}>
+                                    {findMyFriends?.map((user, index) => (
+                                        <Checkbox value={user.id} style={{ margin: 0 }}>
                                             <AvatarItemListCheckedUsers key={index}
-                                                index={user._id}
+                                                index={user.id}
                                                 name={user.name}
                                                 avatar={user.avatar}
                                             />
-                                        </StyledRadio>
+                                        </Checkbox>
                                     ))}
-                                </StyledRadioGroup>
+                                </CheckboxGroup>
                             </Menu>
 
                         </Form.Item>
@@ -533,7 +553,7 @@ function MenuBar() {
                     </Form.Item>
                 </StyledForm>
             </StyledModal>
-        </Wrapper>
+        </Wrapper >
     );
 }
 

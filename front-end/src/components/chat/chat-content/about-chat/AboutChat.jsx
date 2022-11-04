@@ -5,41 +5,53 @@ import { Header, Content } from 'antd/lib/layout/layout';
 import { EditOutlined, BellOutlined, UsergroupAddOutlined, PushpinOutlined, SettingOutlined, PlusOutlined, CaretRightOutlined } from '@ant-design/icons';
 import { useState } from 'react';
 import Modal from 'antd/lib/modal/Modal';
-import { Button, Collapse, Divider, Form, Menu, Radio, Upload } from 'antd';
+import { Button, Collapse, Divider, Form, Menu, Radio, Upload, message, Checkbox } from 'antd';
 import Input from 'antd/lib/input/Input';
 import MenuItem from 'antd/lib/menu/MenuItem';
 import AvatarItemListCheckedUsers from '~/components/menu/content/AvatarItemListCheckedUsers';
 import AvatarMember from '~/components/menu/content/AvatarMember';
 import { type } from '@testing-library/user-event/dist/type';
 import { useSelector } from 'react-redux';
+import { AvatarDefault, URL } from '~/utils/constant';
+import { getToken } from '~/utils/function';
+import axios from 'axios';
+
+const CheckboxGroup = Checkbox.Group;
+
 function AboutChat() {
     const [isOpen1, setIsOpen1] = useState(false);
     const [isOpen2, setIsOpen2] = useState(false);
     const [isOpenInfor, setIsOpenInFor] = useState(false);
     const [isOpenRename, setIsOpenRename] = useState(false);
     const [isOpenMember, setIsOpenMember] = useState(false);
+    const [isAddMemberInGroup, setIsAddMemberInGroup] = useState(false);
     const { Panel } = Collapse;
     const { user } = useSelector(state => state.user)
+    const { userChat } = useSelector(state => state.userChat)
+    const [isLoading, setIsLoading] = useState(false);
+    const [findMyFriends, setFindMyFriends] = useState([]);
+    const [listChecked, setListChecked] = useState([]);
 
-    const users = [{
-        _id: '1',
-        name: 'Minh Châu',
-        content: 'Hi Tuan!!',
-        avatar: 'https://s120-ava-talk.zadn.vn/4/8/3/5/51/120/3a1cf7ea2e80a0262202104db962090e.jpg',
-    },
-    {
-        _id: '2',
-        name: 'Duy Khang',
-        content: 'Hi Chau!!',
-        avatar: 'https://s120-ava-talk.zadn.vn/b/f/3/a/3/120/4ae7bbb88211e3fdd33873839ba6a1d8.jpg',
-    },
-    {
-        _id: '3',
-        name: 'Lê Tuấn',
-        content: 'Hi Chau!!',
-        avatar: 'https://s120-ava-talk.zadn.vn/c/f/3/5/20/120/e83b009221d944ac707d41f4da3e138e.jpg',
-    },
-    ]
+    const getMyFriends = async () => {
+        try {
+            setIsLoading(true)
+            const { data } = await axios.get(`${URL}/api/user/get-list-friend`, {
+                headers: {
+                    Authorization: `Bearer ${getToken()}`,
+                    Accept: 'application/json',
+                },
+            })
+
+            setFindMyFriends(data?.data)
+        } catch (error) {
+            setFindMyFriends({
+                code: 404,
+                message: "Không có bạn bè nào"
+            })
+        }
+        setIsLoading(false)
+    };
+
 
     const handleShowModalTurnOffMess = () => {
         setIsOpen1(true)
@@ -54,6 +66,7 @@ function AboutChat() {
     }
 
     const handleShowModalCreatGroup = () => {
+        getMyFriends()
         setIsOpen2(true)
     }
 
@@ -100,15 +113,79 @@ function AboutChat() {
     const handleCancelModalMember = () => {
         setIsOpenMember(false)
     }
-    console.log(user);
+    // them thanh vien
+    const handleShowModalAddMemberInGroup = () => {
+        getMyFriends()
+        setIsAddMemberInGroup(true)
+    }
+    const handleCancelModalAddMemberInGroup = () => {
+        setIsAddMemberInGroup(false)
+    }
+    const handleOKModalAddMemberInGroup = async () => {
+        const { data } = await axios.post(`${URL}/api/conversation/add-member-conversation-group`, {
+            conversationId: userChat.id,
+            memberId: listChecked[0]
+        }, {
+            headers: {
+                Authorization: `Bearer ${getToken()}`,
+                Accept: 'application/json',
+            },
+        })
+
+        message.success('Thêm thành công')
+
+        setIsAddMemberInGroup(false)
+    }
+
+    const onChangeAddToGroup = (list) => {
+        setListChecked(list)
+    }
+
+    const handleRemoveConversation = async (user_id_remove) => {
+        try {
+            const { data } = await axios.post(`${URL}/api/conversation/remove-member-conversation-group`, {
+                conversationId: userChat.id,
+                memberId: user_id_remove,
+            }, {
+                headers: {
+                    Authorization: `Bearer ${getToken()}`,
+                    Accept: 'application/json',
+                },
+            })
+            message.success('Đuổi thành công')
+        } catch (error) {
+            message.error('Đuổi thất bại')
+        }
+    }
+
+    const handleUpdateAdminGroup = async (user_id_admin) => {
+        try {
+            const { data } = await axios.post(`${URL}/api/conversation/change-admin-conversation-group`, {
+                conversationId: userChat.id,
+                adminId: user_id_admin,
+            }, {
+                headers: {
+                    Authorization: `Bearer ${getToken()}`,
+                    Accept: 'application/json',
+                },
+            })
+            message.success('Cập nhật trưởng nhóm thành công')
+        } catch (error) {
+            message.error('Cập nhật trưởng nhóm thất bại')
+        }
+    }
+
     return (<StyledSection>
         <StyledHeader>
             <h3>Thông tin hội thoại</h3>
         </StyledHeader>
         <StyledContent>
-            <StyledAvatar onClick={handleShowModalInfor}></StyledAvatar>
+            <StyledAvatar onClick={handleShowModalInfor}
+                src={userChat?.avatar || AvatarDefault}
+
+            ></StyledAvatar>
             <StyledNameEdit className='name-user-about-chat'>
-                <StyledName>{user.name}</StyledName>
+                <StyledName>{userChat.name}</StyledName>
                 <EditOutlined className='icon-edit' onClick={handleShowModalRename} />
             </StyledNameEdit>
             <StyledFunction>
@@ -133,10 +210,10 @@ function AboutChat() {
                 </StyledFunctionIcon>
                 <StyledFunctionIcon>
                     <StyledFunctionTurnOff onClick={handleShowModalMember}>
-                    <SettingOutlined />
-                    <StyledFunctionName>Quản lí nhóm</StyledFunctionName>
+                        <SettingOutlined />
+                        <StyledFunctionName>Quản lí nhóm</StyledFunctionName>
                     </StyledFunctionTurnOff>
-                    
+
                 </StyledFunctionIcon>
 
             </StyledFunction>
@@ -218,7 +295,7 @@ function AboutChat() {
                     <Form.Item>
                         <Menu>
                             <StyledRadioGroup>
-                                {users.map((user, index) => (
+                                {findMyFriends.filter(u => !userChat?.listMember.includes(u.id))?.map((user, index) => (
                                     <StyledRadio value={index}>
                                         <AvatarItemListCheckedUsers key={index}
                                             index={user._id}
@@ -296,21 +373,61 @@ function AboutChat() {
             </StyledForm>
         </StyledModal>
         <StyledModal centered title="Danh sách thành viên" open={isOpenMember} onCancel={handleCancelModalMember} onOk={handleOKModalMember}
-                footer={[
-                    <Button key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalMember}>Hủy</Button>,
-                    <Button key="submit" style={{ fontWeight: 700 }} type="primary" onClick={handleOKModalMember}>Đồng ý</Button>
-                ]}>
+            footer={[
+                <Button key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalMember}>Hủy</Button>,
+                <Button key="submit" style={{ fontWeight: 700 }} type="primary" onClick={handleOKModalMember}>Đồng ý</Button>
+            ]}>
+            <Button type='primary' style={{ marginRight: '8px' }} onClick={handleShowModalAddMemberInGroup}>Thêm thành viên mới</Button>
+            <Divider />
+            <StyledResultAddFriend>
+                {userChat?.listMember?.map((userMember, index) => (
+                    <AvatarMember
+                        key={index}
+                        index={userMember.id}
+                        id={userMember.id}
+                        userCurrentId={user.id}
+                        name={userMember.name}
+                        avatar={userMember.avatar}
+                        isAdmin={userChat.isAdmin}
+                        handleRemoveConversation={handleRemoveConversation}
+                        handleUpdateAdminGroup={handleUpdateAdminGroup}
+                    ></AvatarMember>
+                ))}
+            </StyledResultAddFriend>
+        </StyledModal>
+        <StyledModal centered title="Thêm thành viên mới vào nhóm" open={isAddMemberInGroup} onCancel={handleCancelModalAddMemberInGroup} onOk={handleOKModalAddMemberInGroup}
+            footer={[
+                <Button key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalAddMemberInGroup}>Hủy</Button>,
+                <Button key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalAddMemberInGroup} type="primary">Đồng ý</Button>
 
-                <StyledResultAddFriend>
-                     {users.map((user, index) => (
-                        <AvatarMember
-                            key={index}
-                            index={user._id}
-                            name={user.name}
-                            avatar={user.avatar}
-                        ></AvatarMember>
-                    ))}
-                </StyledResultAddFriend>
+            ]}>
+            <StyledForm name="basic" labelCol={{ span: 8 }} wrapperCol={{ span: 24 }} initialValues={{ remember: false }}
+                autoComplete="off">
+                <Form.Item>
+                    <StyledText style={{ fontWeight: 600 }}>Tìm kiếm bạn bè</StyledText>
+                    <Input placeholder='Nhập tên, số điện thoại' style={{ borderRadius: '10px' }} />
+                </Form.Item>
+                <Divider style={{ margin: '16px 0 8px' }}></Divider>
+                <StyledText style={{ fontWeight: 600 }}>Trò chuyện gần đây</StyledText>
+                <StyledListRecentlyChat>
+                    <Form.Item>
+                        <Menu>
+                            <CheckboxGroup onChange={onChangeAddToGroup}>
+                                {findMyFriends.filter(u => !userChat?.listMember.find(x => x.id === u.id))?.map((user, index) => (
+                                    <Checkbox value={user.id}>
+                                        <AvatarItemListCheckedUsers key={index}
+                                            index={user.id}
+                                            name={user.name}
+                                            avatar={user.avatar}
+                                        />
+                                    </Checkbox>
+                                ))}
+                            </CheckboxGroup>
+                        </Menu>
+
+                    </Form.Item>
+                </StyledListRecentlyChat>
+            </StyledForm>
         </StyledModal>
     </StyledSection>);
 }

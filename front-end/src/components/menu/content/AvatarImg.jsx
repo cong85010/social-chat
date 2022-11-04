@@ -10,26 +10,9 @@ import moment from 'moment/moment';
 import { UserOutlined, CameraOutlined, LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
-import { AvatarDefault, URL } from '~/utils/constant';
+import { AvatarDefault, beforeUpload, getBase64, URL } from '~/utils/constant';
 import { getToken } from '~/utils/function';
 import { updateUser } from '~/redux/slices/UserSlice';
-
-const getBase64 = (img, callback) => {
-    const reader = new FileReader();
-    reader.addEventListener('load', () => callback(reader.result));
-    reader.readAsDataURL(img);
-};
-const beforeUpload = (file) => {
-    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-    if (!isJpgOrPng) {
-        message.error('You can only upload JPG/PNG file!');
-    }
-    const isLt2M = file.size / 1024 / 1024 < 2;
-    if (!isLt2M) {
-        message.error('Image must smaller than 2MB!');
-    }
-    return isJpgOrPng && isLt2M;
-};
 
 function AvatarImg() {
     const [isOpenInfor, setIsOpenInformation] = useState(false);
@@ -107,20 +90,8 @@ function AvatarImg() {
         </div>
     );
 
-    const beforeUpload = (file) => {
-        const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-        if (!isJpgOrPng) {
-            message.error('You can only upload JPG/PNG file!');
-        }
-        const isLt2M = file.size / 1024 / 1024 < 2;
-        if (!isLt2M) {
-            message.error('Image must smaller than 2MB!');
-        }
-        return isJpgOrPng && isLt2M;
-    };
-
     return (
-        <Wrapper style={{textAlign:'center'}}>
+        <Wrapper style={{ textAlign: 'center' }}>
             <Avatar onClick={handleShowModalInformation} size={48} src={user?.avatar || AvatarDefault} />
             <StyledModal destroyOnClose centered className='infor' title="Thông tin tài khoản" open={isOpenInfor} onCancel={handleCancelModalInformation} onOk={handleOKModalInformation}
                 footer={[
@@ -136,9 +107,9 @@ function AvatarImg() {
                     <Form.Item>
                         <StyledAvatar alt="Avatar" src={user?.avatar} style={{ display: 'initial', position: 'absolute', top: '-75px', left: '50%', border: '3px solid white', width: '80px', height: '80px' }}></StyledAvatar>
                     </Form.Item>
-                    <Form.Item wrapperCol={{span: 24}}>
+                    <Form.Item wrapperCol={{ span: 24 }}>
                         <StyledNameEdit eEdit>
-                            <StyledName style={{margin:'0 auto'}}>{user?.name || "Loading..."}</StyledName>
+                            <StyledName style={{ margin: '0 auto' }}>{user?.name || "Loading..."}</StyledName>
                         </StyledNameEdit>
                     </Form.Item>
                     <StyledBorder></StyledBorder>
