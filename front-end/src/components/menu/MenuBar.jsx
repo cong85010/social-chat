@@ -48,6 +48,15 @@ function MenuBar() {
     const [listChecked, setListChecked] = useState([]);
     const [isLoadingCreate, setIsLoadingCreate] = useState(false);
 
+    // search moi them
+    const [isLoaded, setIsLoaded] = useState(false);
+    const [items, setItems] = useState([]);
+    const [q, setQ] = useState("");
+    const [searchParam] = useState(["name"]);
+    const [filterParam, setFilterParam] = useState(["All"]);
+    //
+
+
     const handleChange = (info) => {
         if (info.file.status === 'uploading') {
             setIsLoading(true);
@@ -251,7 +260,48 @@ function MenuBar() {
             }}
         />
     );
-    const onSearch = (value) => console.log(value);
+    // search moi them
+    useEffect(() => {
+        fetch(
+            "https://raw.githubusercontent.com/iamspruce/search-filter-painate-reactjs/main/data/countries.json"
+        )
+            .then((res) => res.json())
+            .then(
+                (result) => {
+                    setIsLoaded(true);
+                    setItems(result);
+                },
+                (error) => {
+                    setIsLoaded(true);
+                    // setError(error);
+                }
+            );
+    }, []);
+    const data = Object.values(items);
+
+    function search(items) {
+        return items.filter((item) => {
+            if (item.name == filterParam) {
+                return searchParam.some((newItem) => {
+                    return (
+                        item[newItem]
+                            .toString()
+                            .toLowerCase()
+                            .indexOf(q.toLowerCase()) > -1
+                    );
+                });
+            } else if (filterParam == "All") {
+                return searchParam.some((newItem) => {
+                    return (
+                        item[newItem]
+                            .toString()
+                            .toLowerCase()
+                            .indexOf(q.toLowerCase()) > -1
+                    );
+                });
+            }
+        });
+    }
 
     //  Tab Menu
     const tabMenu = () => {
@@ -271,6 +321,17 @@ function MenuBar() {
                                 {...conversation}
                             />
                         ))}
+                        {/* search moi them */}
+                    {search(data).map((conversation, index) => (
+                        <AvatarItem
+                            isLoading={isLoading}
+                            key={index}
+                            index={conversation.id}
+                            userIdCurrent={userId}
+                            adminId={conversation.adminId}
+                            {...conversation}
+                        />
+                    ))}
                 </Tabs.TabPane>
                 {/* <Tabs.TabPane tab="Chưa đọc" key="2">
                     {users.map((user, index) => (
@@ -372,7 +433,8 @@ function MenuBar() {
             <EndWrapper>
                 <HeaderSearch>
                     <Space direction="horizontal">
-                        <Search placeholder="Tìm Kiếm" allowClear onSearch={onSearch} />
+                        <Search placeholder="Tìm Kiếm" allowClear value={q}
+                            onChange={(e) => setQ(e.target.value)} />
                     </Space>
                     <HeaderIcon onClick={handleShowModalAddFriend} >
                         <UserAddOutlined />
