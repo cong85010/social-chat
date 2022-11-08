@@ -450,7 +450,7 @@ function MenuBar() {
             {/* Modal Add friend */}
             <StyledModal title="Tìm bạn bè" open={friend} onCancel={handleShowModalCancelAddFriend} onOk={handleShowModalOKAddFriend}
                 footer={[
-                    <Button key="back" style={{ fontWeight: 700 }} onClick={handleShowModalCancelAddFriend}>Hủy</Button>,
+                    <Button loading={isLoading} key="back" style={{ fontWeight: 700 }} onClick={handleShowModalCancelAddFriend}>Hủy</Button>,
                     // <Button key="submit" style={{ fontWeight: 700 }} type="primary" htmlType='submit' >Tìm kiếm</Button>
                 ]}>
                 <StyledForm
@@ -487,8 +487,8 @@ function MenuBar() {
             {/* Modal show dsach loi moi ket ban */}
             <StyledModal centered title="Danh sách kết bạn" open={listAdd} onCancel={handleShowModalCancelListAdd} onOk={handleShowModalOKListAdd}
                 footer={[
-                    <Button key="back" style={{ fontWeight: 700 }} onClick={handleShowModalCancelListAdd}>Hủy</Button>,
-                    <Button key="submit" style={{ fontWeight: 700 }} type="primary" onClick={handleShowModalOKListAdd}>Đồng ý</Button>
+                    <Button loading={isLoading} key="back" style={{ fontWeight: 700 }} onClick={handleShowModalCancelListAdd}>Hủy</Button>,
+                    <Button loading={isLoading} key="submit" style={{ fontWeight: 700 }} type="primary" onClick={handleShowModalOKListAdd}>Đồng ý</Button>
                 ]}>
 
                 <StyledResultAddFriend>
@@ -506,8 +506,8 @@ function MenuBar() {
 
             <StyledModal centered title="Danh sách nhóm" open={listGroup} onCancel={handleShowModalCancelListGroup} onOk={handleShowModalOKListGroup}
                 footer={[
-                    <Button key="back" style={{ fontWeight: 700 }} onClick={handleShowModalCancelListGroup}>Hủy</Button>,
-                    <Button key="submit" style={{ fontWeight: 700 }} type="primary" onClick={handleShowModalOKListGroup}>Đồng ý</Button>
+                    <Button loading={isLoading} key="back" style={{ fontWeight: 700 }} onClick={handleShowModalCancelListGroup}>Hủy</Button>,
+                    <Button loading={isLoading} key="submit" style={{ fontWeight: 700 }} type="primary" onClick={handleShowModalOKListGroup}>Đồng ý</Button>
                 ]}>
 
                 <StyledResultAddFriend>
@@ -524,7 +524,7 @@ function MenuBar() {
 
             <StyledModal centered title="Tạo nhóm" open={isOpen}
                 footer={[
-                    <Button key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalCreatGroup}>Hủy</Button>,
+                    <Button loading={isLoading} key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalCreatGroup}>Hủy</Button>,
                     <Button key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalCreatGroup} type="primary" loading={isLoadingCreate}>Tạo nhóm</Button>
 
                 ]}
@@ -579,8 +579,8 @@ function MenuBar() {
             </StyledModal>
             <StyledModal centered title="Thông tin tài khoản" open={isOpenInfor} onCancel={handleCancelModalInfor} onOk={handleOKModalInfor}
                 footer={[
-                    <Button key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalInfor}>Hủy</Button>,
-                    <Button key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalInfor} type="primary">Đồng ý</Button>
+                    <Button loading={isLoading} key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalInfor}>Hủy</Button>,
+                    <Button loading={isLoading} key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalInfor} type="primary">Đồng ý</Button>
 
                 ]}>
                 <StyledForm name="basic" labelCol={{ span: 8 }} wrapperCol={{ span: 18 }} initialValues={{ remember: false }}
