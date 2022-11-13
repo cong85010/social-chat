@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { useState } from 'react';
 import { Avatar, DatePicker, Input, message, Row } from 'antd';
 
-import { border, borderInfor, text } from '~/utils/color';
+import { border, borderInfor, primaryColor, text } from '~/utils/color';
 import Modal from 'antd/lib/modal/Modal';
 import { Button, Collapse, Divider, Form, Menu, Radio, Upload } from 'antd';
 import moment from 'moment/moment';
@@ -68,14 +68,21 @@ function AvatarImg() {
 
     const [loading, setLoading] = useState(false);
     const [imageUrl, setImageUrl] = useState(user.avatar);
+
     const handleChange = (info) => {
         if (info.file.status === 'uploading') {
-            setLoading(true);
+            setIsLoading(true);
             return;
         }
+
+        if (info.file.status === 'removed') {
+            setImageUrl(null)
+            return;
+        }
+
         // Get this url from response in real world.
         getBase64(info.file.originFileObj, (url) => {
-            setLoading(false);
+            setIsLoading(false);
             setImageUrl(url);
         });
     };
@@ -103,11 +110,13 @@ function AvatarImg() {
                 ]}>
                 <StyledForm name="basic" labelCol={{ span: 8 }} wrapperCol={{ span: 18 }} initialValues={{ remember: false }}
                     autoComplete="off">
-                    <Form.Item>
+                    {/* <Form.Item>
                         <StyledAvatarNen></StyledAvatarNen>
-                    </Form.Item>
+                    </Form.Item> */}
+                    <StyledAvatarNen></StyledAvatarNen>
+
                     <Form.Item>
-                        <StyledAvatar alt="Avatar" src={user?.avatar} style={{ display: 'initial', position: 'absolute', top: '-75px', left: '50%', border: '3px solid white', width: '80px', height: '80px' }}></StyledAvatar>
+                        <StyledAvatar alt="Avatar" src={user?.avatar || AvatarDefault} style={{ display: 'initial', position: 'absolute', top: '-75px', left: '50%', border: '3px solid white', width: '80px', height: '80px' }}></StyledAvatar>
                     </Form.Item>
                     <Form.Item wrapperCol={{ span: 24 }}>
                         <StyledNameEdit eEdit>
@@ -162,7 +171,7 @@ function AvatarImg() {
                     form={formProfile}
                     name="signup"
                     labelCol={{ span: 8 }}
-                    wrapperCol={{ span: 16 }}
+                    wrapperCol={{ span: 24 }}
                     autoComplete="off"
                     initialValues={{
                         name: user.name,
@@ -172,24 +181,33 @@ function AvatarImg() {
                     onFinish={handleUpdateProfile}
                     in
                 >
-                    <Form.Item>
-                        <StyledAvatarNen src={imageUrl} />
-                    </Form.Item>
-                    <Form.Item >
-                        {/* <StyledAvatar style={{ display: 'initial', position: 'absolute', top: '-75px', left: '63%', border: '3px solid white', width: '80px', height: '80px' }}></StyledAvatar>
-                        <CameraOutlined className='cameraUpdate' /> */}
-                        <Upload Upload
+
+                    <StyledAvatarNen src={imageUrl} />
+                    <Form.Item style={{ textAlign: 'center'}}>
+                        <Upload
                             name="avatar"
+                            action="/"
                             listType="picture-card"
                             className="avatar-uploader"
-                            // showUploadList={false}
-                            // action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
                             beforeUpload={beforeUpload}
                             onChange={handleChange}
+                            maxCount={1}
                         >
                             {imageUrl ? <img src={imageUrl} width="100" height="100" /> : uploadButton}
                         </Upload>
                     </Form.Item>
+                    {/* <Form.Item style={{ textAlign: 'center' }}>
+                        <Upload action="/" listType="picture-card"
+                            beforeUpload={beforeUpload}
+                            onChange={handleChange}
+                            maxCount={1}
+                        >
+                            {!imageUrl && <div>
+                                <PlusOutlined />
+                                <div style={{ marginTop: 8 }}>Upload</div>
+                            </div>}
+                        </Upload>
+                    </Form.Item> */}
                     <Form.Item
                         label="Tên hiển thị"
                         name="name"
@@ -253,6 +271,9 @@ const StyledForm = styled(Form)`
         background-color: #fff;
         border: 3px solid #fff;
         box-shadow: 0 0 0 1px #ccc;
+    }
+    .ant-upload-list-picture-card .ant-upload-list-item-error{
+        border-color: ${primaryColor};
     }
     
 `

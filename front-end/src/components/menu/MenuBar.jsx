@@ -552,7 +552,7 @@ function MenuBar() {
                     autoComplete="off"
                 >
 
-                    <Form.Item >
+                    <Form.Item style={{textAlign:'center'}}>
                         <Upload action="/" listType="picture-card"
                             beforeUpload={beforeUpload}
                             onChange={handleChange}
@@ -781,6 +781,9 @@ const StyledForm = styled(Form)`
     }
     input{
         margin-top: 8px;
+    }
+    .ant-upload-list-picture-card .ant-upload-list-item-error{
+        border-color: ${primaryColor};
     }
 `
 
