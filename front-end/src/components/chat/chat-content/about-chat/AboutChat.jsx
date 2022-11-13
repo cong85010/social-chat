@@ -221,10 +221,10 @@ function AboutChat() {
                 </Panel>
 
                 <StyledBorder style={{ width: '100%', position: 'relative', backgroundColor: '#fffcfc00', top: 0 }}></StyledBorder>
-                <Panel header="Thiếp lập bảo mật" key="4" className="site-collapse-custom-panel" style={{position:'relative'}}>
-                    <StyledButton className='btn-top' key="submit" 
+                <Panel header="Thiếp lập bảo mật" key="4" className="site-collapse-custom-panel" >
+                    <StyledButton className='btn-top' key="submit"
                         loading={isLoading}>Xóa kết bạn</StyledButton>
-                    <StyledButton className='btn-bottom' loading={isLoading} key="submit" style={{ top: '32px', backgroundColor: 'transparent', color: 'red', width: 'auto' }}>Rời khỏi nhóm trò chuyện</StyledButton>
+                    <StyledButton className='btn-bottom' loading={isLoading} key="submit" style={{ top: '8px', backgroundColor: 'transparent', color: 'red', width: 'auto' }}>Rời khỏi nhóm trò chuyện</StyledButton>
                 </Panel>
             </StyledCollapse>
         </StyledContent>
@@ -376,10 +376,25 @@ export default AboutChat;
 const StyledSection = styled.div`
     width: 100%;
     height: 100%;
-    overflow-y: auto;
+    overflow-y: scroll;
+    overflow-x: hidden;
     border-left: 1px solid ${border};
+    &::-webkit-scrollbar {
+        position: relative;
+        width: 6px;
+        background-color: #ffff;
+    }
+    &::-webkit-scrollbar-track {
+        position: absolute;
+    }
+    &::-webkit-scrollbar-thumb {
+        position: absolute;
+        background-color: ${border};
+    }
 `
 const StyledHeader = styled(Header)`
+    text-align: center;
+    line-height: 64px;
     background-color: transparent;
     border-bottom: 1px solid ${border};
     h3{
@@ -551,13 +566,11 @@ const StyledButton = styled(Button)`
     width:120px;
     background-color: transparent;
     border-radius: 4px;
-    position: absolute;
     &.btn-top{
         margin: 0 120px;
     }
     &.btn-bottom{
         margin: 0 80px;
-
     }
 `
 const StyledBorder = styled.div`

@@ -264,7 +264,6 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
 
     //Scroll To Bottom
     const messageEl = useRef(null);
-    const [messages, setMessages] = useState([]);
 
     useEffect(() => {
         if (messageEl) {
@@ -318,11 +317,8 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
                             <MyChat message={message} /> : <FriendChat message={message} />
                     )
                 }
-                {/* <div /> */}
-
             </BodyChat>
-
-            <IconInput>
+            <IconInput >
                 <IconItemInput>
                     <StyledUpload {...props} fileList={fileList}>
                         <FileAddOutlined />
@@ -344,7 +340,9 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
                 // onChange={setText}
                 cleanOnEnter
                 onEnter={sendChat}
-                placeholder="Type a message"
+                placeholder="Nhập nội dung..."
+                onResize
+                maxLength="500"        
             />
             < StyledModal title="Tạo nhóm" open={isOpen} onCancel={handleCancelModalCreatGroup} onOk={handleOKModalCreatGroup}
                 footer={
@@ -507,6 +505,7 @@ const BodyChat = styled.div`
     height: calc(100% - 169px);
     background-color: ${bodyChat};
     overflow-y: scroll;
+    padding-top: 490px;
     &::-webkit-scrollbar {
         position: relative;
         width: 6px;
