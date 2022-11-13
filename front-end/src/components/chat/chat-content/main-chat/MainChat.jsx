@@ -40,6 +40,7 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
     const [fileList, setFileList] = useState([]);
     const [message, setMessage] = useState('');
     const { user } = useSelector(state => state.user)
+    const [isLoading, setIsLoading] = useState(false);
     //use your link here
     const sock = new SockJS(`${URL}/ws`);
     const stompClient = Stomp.over(sock);
@@ -286,8 +287,8 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
             < StyledModal title="Tạo nhóm" open={isOpen} onCancel={handleCancelModalCreatGroup} onOk={handleOKModalCreatGroup}
                 footer={
                     [
-                        <Button key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalCreatGroup}>Hủy</Button>,
-                        <Button key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalCreatGroup} type="primary">Đồng ý</Button>
+                        <Button loading={isLoading} key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalCreatGroup}>Hủy</Button>,
+                        <Button loading={isLoading} key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalCreatGroup} type="primary">Đồng ý</Button>
 
                     ]} >
                 <StyledForm name="basic" labelCol={{ span: 8 }} wrapperCol={{ span: 24 }} initialValues={{ remember: false }}
@@ -330,8 +331,8 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
             </StyledModal>
             <StyledModal className='infor' title="Thông tin tài khoản" open={isOpenInFor} onCancel={handleCancelModalInfor} onOk={handleOKModalInfor}
                 footer={[
-                    <Button key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalInfor}>Hủy</Button>,
-                    <Button key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalInfor} type="primary">Đồng ý</Button>
+                    <Button loading={isLoading} key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalInfor}>Hủy</Button>,
+                    <Button loading={isLoading} key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalInfor} type="primary">Đồng ý</Button>
 
                 ]}>
                 <StyledForm name="basic" labelCol={{ span: 8 }} wrapperCol={{ span: 18 }} initialValues={{ remember: false }}
@@ -349,9 +350,9 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
                         </StyledNameEdit>
                     </Form.Item>
                     <Form.Item>
-                        <StyledButton key="back" style={{ left: '20px' }}>Nhắn tin</StyledButton>,
-                        <StyledButton key="submit" style={{ left: '70px' }} >Gọi điện</StyledButton>
-                    </Form.Item>
+                        <StyledButton loading={isLoading} onkey="back" style={{ left: '20px' }}>Nhắn tin</StyledButton>,
+                        <StyledButton loading={isLoading} key="submit" style={{ left: '70px' }} >Gọi điện</StyledButton>
+                    </Form.Item> 
                     <StyledBorder></StyledBorder>
                     <Form.Item>
                         <StyledContainInfor>
@@ -374,8 +375,8 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
             </StyledModal>
             <StyledModal title="Đặt tên gợi nhớ" open={isOpenRename} onCancel={handleCancelModalRename} onOk={handleOKModalRename}
                 footer={[
-                    <Button key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalRename}>Hủy</Button>,
-                    <Button key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalRename} type="primary">Đồng ý</Button>
+                    <Button loading={isLoading} key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalRename}>Hủy</Button>,
+                    <Button loading={isLoading} key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalRename} type="primary">Đồng ý</Button>
 
                 ]}>
                 <StyledForm name="basic" labelCol={{ span: 8 }} wrapperCol={{ span: 24 }} initialValues={{ remember: false }}

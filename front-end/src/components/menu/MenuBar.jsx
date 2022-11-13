@@ -48,6 +48,15 @@ function MenuBar() {
     const [listChecked, setListChecked] = useState([]);
     const [isLoadingCreate, setIsLoadingCreate] = useState(false);
 
+    // search moi them
+    const [isLoaded, setIsLoaded] = useState(false);
+    const [items, setItems] = useState([]);
+    const [q, setQ] = useState("");
+    const [searchParam] = useState(["name"]);
+    const [filterParam, setFilterParam] = useState(["All"]);
+    //
+
+
     const handleChange = (info) => {
         if (info.file.status === 'uploading') {
             setIsLoading(true);
@@ -251,7 +260,48 @@ function MenuBar() {
             }}
         />
     );
-    const onSearch = (value) => console.log(value);
+    // search moi them
+    useEffect(() => {
+        fetch(
+            "https://raw.githubusercontent.com/iamspruce/search-filter-painate-reactjs/main/data/countries.json"
+        )
+            .then((res) => res.json())
+            .then(
+                (result) => {
+                    setIsLoaded(true);
+                    setItems(result);
+                },
+                (error) => {
+                    setIsLoaded(true);
+                    // setError(error);
+                }
+            );
+    }, []);
+    const data = Object.values(items);
+
+    function search(items) {
+        return items.filter((item) => {
+            if (item.name == filterParam) {
+                return searchParam.some((newItem) => {
+                    return (
+                        item[newItem]
+                            .toString()
+                            .toLowerCase()
+                            .indexOf(q.toLowerCase()) > -1
+                    );
+                });
+            } else if (filterParam == "All") {
+                return searchParam.some((newItem) => {
+                    return (
+                        item[newItem]
+                            .toString()
+                            .toLowerCase()
+                            .indexOf(q.toLowerCase()) > -1
+                    );
+                });
+            }
+        });
+    }
 
     //  Tab Menu
     const tabMenu = () => {
@@ -271,6 +321,17 @@ function MenuBar() {
                                 {...conversation}
                             />
                         ))}
+                        {/* search moi them */}
+                    {search(data).map((conversation, index) => (
+                        <AvatarItem
+                            isLoading={isLoading}
+                            key={index}
+                            index={conversation.id}
+                            userIdCurrent={userId}
+                            adminId={conversation.adminId}
+                            {...conversation}
+                        />
+                    ))}
                 </Tabs.TabPane>
                 {/* <Tabs.TabPane tab="Chưa đọc" key="2">
                     {users.map((user, index) => (
@@ -372,7 +433,8 @@ function MenuBar() {
             <EndWrapper>
                 <HeaderSearch>
                     <Space direction="horizontal">
-                        <Search placeholder="Tìm Kiếm" allowClear onSearch={onSearch} />
+                        <Search placeholder="Tìm Kiếm" allowClear value={q}
+                            onChange={(e) => setQ(e.target.value)} />
                     </Space>
                     <HeaderIcon onClick={handleShowModalAddFriend} >
                         <UserAddOutlined />
@@ -388,7 +450,7 @@ function MenuBar() {
             {/* Modal Add friend */}
             <StyledModal title="Tìm bạn bè" open={friend} onCancel={handleShowModalCancelAddFriend} onOk={handleShowModalOKAddFriend}
                 footer={[
-                    <Button key="back" style={{ fontWeight: 700 }} onClick={handleShowModalCancelAddFriend}>Hủy</Button>,
+                    <Button loading={isLoading} key="back" style={{ fontWeight: 700 }} onClick={handleShowModalCancelAddFriend}>Hủy</Button>,
                     // <Button key="submit" style={{ fontWeight: 700 }} type="primary" htmlType='submit' >Tìm kiếm</Button>
                 ]}>
                 <StyledForm
@@ -425,8 +487,8 @@ function MenuBar() {
             {/* Modal show dsach loi moi ket ban */}
             <StyledModal centered title="Danh sách kết bạn" open={listAdd} onCancel={handleShowModalCancelListAdd} onOk={handleShowModalOKListAdd}
                 footer={[
-                    <Button key="back" style={{ fontWeight: 700 }} onClick={handleShowModalCancelListAdd}>Hủy</Button>,
-                    <Button key="submit" style={{ fontWeight: 700 }} type="primary" onClick={handleShowModalOKListAdd}>Đồng ý</Button>
+                    <Button loading={isLoading} key="back" style={{ fontWeight: 700 }} onClick={handleShowModalCancelListAdd}>Hủy</Button>,
+                    <Button loading={isLoading} key="submit" style={{ fontWeight: 700 }} type="primary" onClick={handleShowModalOKListAdd}>Đồng ý</Button>
                 ]}>
 
                 <StyledResultAddFriend>
@@ -444,8 +506,8 @@ function MenuBar() {
 
             <StyledModal centered title="Danh sách nhóm" open={listGroup} onCancel={handleShowModalCancelListGroup} onOk={handleShowModalOKListGroup}
                 footer={[
-                    <Button key="back" style={{ fontWeight: 700 }} onClick={handleShowModalCancelListGroup}>Hủy</Button>,
-                    <Button key="submit" style={{ fontWeight: 700 }} type="primary" onClick={handleShowModalOKListGroup}>Đồng ý</Button>
+                    <Button loading={isLoading} key="back" style={{ fontWeight: 700 }} onClick={handleShowModalCancelListGroup}>Hủy</Button>,
+                    <Button loading={isLoading} key="submit" style={{ fontWeight: 700 }} type="primary" onClick={handleShowModalOKListGroup}>Đồng ý</Button>
                 ]}>
 
                 <StyledResultAddFriend>
@@ -462,7 +524,7 @@ function MenuBar() {
 
             <StyledModal centered title="Tạo nhóm" open={isOpen}
                 footer={[
-                    <Button key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalCreatGroup}>Hủy</Button>,
+                    <Button loading={isLoading} key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalCreatGroup}>Hủy</Button>,
                     <Button key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalCreatGroup} type="primary" loading={isLoadingCreate}>Tạo nhóm</Button>
 
                 ]}
@@ -517,8 +579,8 @@ function MenuBar() {
             </StyledModal>
             <StyledModal centered title="Thông tin tài khoản" open={isOpenInfor} onCancel={handleCancelModalInfor} onOk={handleOKModalInfor}
                 footer={[
-                    <Button key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalInfor}>Hủy</Button>,
-                    <Button key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalInfor} type="primary">Đồng ý</Button>
+                    <Button loading={isLoading} key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalInfor}>Hủy</Button>,
+                    <Button loading={isLoading} key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalInfor} type="primary">Đồng ý</Button>
 
                 ]}>
                 <StyledForm name="basic" labelCol={{ span: 8 }} wrapperCol={{ span: 18 }} initialValues={{ remember: false }}
