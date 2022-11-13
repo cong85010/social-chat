@@ -9,7 +9,7 @@ import { UserAddOutlined } from '@ant-design/icons';
 import { Button, Avatar } from "antd";
 
 
-function AvatarAddFriend({ name, content, avatar, userCurrentId, id, isAdmin, handleRemoveConversation, handleUpdateAdminGroup }) {
+function AvatarAddFriend({ name, content, avatar, userCurrentId, id, isAdmin,adminId, handleRemoveConversation, handleUpdateAdminGroup }) {
     return (
         <Wrapper>
             <ItemContent>
@@ -19,7 +19,7 @@ function AvatarAddFriend({ name, content, avatar, userCurrentId, id, isAdmin, ha
                 <TitleContent>
                     <ContentName>
                         <CustomName>
-                            {name}{isAdmin && id === userCurrentId && <HeadGroup>Trưởng nhóm</HeadGroup>}
+                            {name}{isAdmin && id === adminId && <HeadGroup>Trưởng nhóm</HeadGroup>}
                         </CustomName></ContentName>
                     <ContentAbout style={{ justifyContent: 'flex-end' }}></ContentAbout>
                 </TitleContent>

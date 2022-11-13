@@ -43,7 +43,7 @@ const ChatSlice = createSlice({
         updateContentChat: (state, action) => {
             console.log(action);
             state.chat.content = [...state.chat.content, action.payload];
-        }
+        },
     },
     extraReducers: (builder) => {
         builder.addCase(getChatByConversationID.fulfilled, (state, { payload }) => {

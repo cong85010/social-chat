@@ -29,6 +29,7 @@ function AvatarItem({ name, listMember = [], avatar, type, userIdCurrent, id, la
                 avatar,
                 type,
                 isAdmin: adminId === userIdCurrent,
+                adminId,
             }
         }))
     }

@@ -1,6 +1,6 @@
 import { Avatar, Image } from 'antd';
 import axios from 'axios';
-import React, { useEffect ,useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { bgColor } from '~/utils/color';
@@ -36,7 +36,7 @@ function FriendChat({ avatar, message, status }) {
                 {/* Avatar */}
                 <Avatar
                     size={40}
-                    src={user?.avatar || AvatarDefault}
+                    src={avatar || AvatarDefault}
                 />
             </ItemContent>
             {/* Mesage */}
@@ -54,7 +54,7 @@ function FriendChat({ avatar, message, status }) {
                             <StyledHeartOutlined/> */}
                         </div>
                         {
-                        hoverEmoji && <FacebookSelector/>
+                            hoverEmoji && <FacebookSelector />
                         }
                     </MessageItem>
                 </MessageContent>

@@ -11,10 +11,12 @@ import MenuItem from 'antd/lib/menu/MenuItem';
 import AvatarItemListCheckedUsers from '~/components/menu/content/AvatarItemListCheckedUsers';
 import AvatarMember from '~/components/menu/content/AvatarMember';
 import { type } from '@testing-library/user-event/dist/type';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { AvatarDefault, URL } from '~/utils/constant';
 import { getToken } from '~/utils/function';
 import axios from 'axios';
+import { updateUserChat } from '~/redux/slices/UserChatSlice';
+import { getConversationAllByToken } from '~/redux/slices/ConversationSlice';
 
 const CheckboxGroup = Checkbox.Group;
 
@@ -31,6 +33,7 @@ function AboutChat() {
     const [isLoading, setIsLoading] = useState(false);
     const [findMyFriends, setFindMyFriends] = useState([]);
     const [listChecked, setListChecked] = useState([]);
+    const dispatch = useDispatch();
 
     const getMyFriends = async () => {
         try {
@@ -124,7 +127,7 @@ function AboutChat() {
     const handleOKModalAddMemberInGroup = async () => {
         const { data } = await axios.post(`${URL}/api/conversation/add-member-conversation-group`, {
             conversationId: userChat.id,
-            memberId: listChecked[0]
+            listMemberId: listChecked
         }, {
             headers: {
                 Authorization: `Bearer ${getToken()}`,
@@ -152,7 +155,11 @@ function AboutChat() {
                     Accept: 'application/json',
                 },
             })
+            dispatch(updateUserChat(data.data))
+            dispatch(getConversationAllByToken(getToken()))
+            handleCancelModalMember()
             message.success('Đuổi thành công')
+            handleCancelModalMember()
         } catch (error) {
             message.error('Đuổi thất bại')
         }
@@ -169,6 +176,9 @@ function AboutChat() {
                     Accept: 'application/json',
                 },
             })
+            dispatch(updateUserChat(data.data))
+            dispatch(getConversationAllByToken(getToken()))
+
             message.success('Cập nhật trưởng nhóm thành công')
         } catch (error) {
             message.error('Cập nhật trưởng nhóm thất bại')
@@ -389,6 +399,7 @@ function AboutChat() {
                         name={userMember.name}
                         avatar={userMember.avatar}
                         isAdmin={userChat.isAdmin}
+                        adminId={userChat.adminId}
                         handleRemoveConversation={handleRemoveConversation}
                         handleUpdateAdminGroup={handleUpdateAdminGroup}
                     ></AvatarMember>
