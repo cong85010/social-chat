@@ -3,10 +3,12 @@ import React, { useState } from 'react';
 import { Button } from 'antd';
 import { primaryColor } from '~/utils/color';
 
+
 function MenuIcon({ children }) {
+    const [isLoading, setIsLoading] = useState(false);
     return (
         <Wrapper>
-            <Button type="primary">{children}</Button>
+            <Button loading={isLoading} type="primary">{children}</Button>
         </Wrapper>
     );
 }

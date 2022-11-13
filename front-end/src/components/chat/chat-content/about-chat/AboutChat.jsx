@@ -225,23 +225,27 @@ function AboutChat() {
             >
                 <StyledBorder style={{ width: '100%', position: 'relative', backgroundColor: '#fffcfc00', top: 0 }}></StyledBorder>
                 <Panel header="Ảnh/Video" key="1" className="site-collapse-custom-panel">
-                    <StyledButton key="submit" style={{ top: '-10px', left: '38%' }} >Xem tất cả</StyledButton>
+                    <StyledButton key="submit" style={{ top: '-10px', left: '38%' }}
+                        loading={isLoading} >Xem tất cả</StyledButton>
                 </Panel>
 
                 <StyledBorder style={{ width: '100%', position: 'relative', backgroundColor: '#fffcfc00', top: 0 }}></StyledBorder>
                 <Panel header="File" key="2" className="site-collapse-custom-panel">
-                    <StyledButton key="submit" style={{ top: '-10px', left: '38%' }} >Xem tất cả</StyledButton>
+                    <StyledButton key="submit" style={{ top: '-10px', left: '38%' }}
+                        loading={isLoading} >Xem tất cả</StyledButton>
                 </Panel>
 
                 <StyledBorder style={{ width: '100%', position: 'relative', backgroundColor: '#fffcfc00', top: 0 }}></StyledBorder>
                 <Panel header="Link" key="3" className="site-collapse-custom-panel">
-                    <StyledButton key="submit" style={{ top: '-10px', left: '38%' }} >Xem tất cả</StyledButton>
+                    <StyledButton key="submit" style={{ top: '-10px', left: '38%' }}
+                        loading={isLoading} >Xem tất cả</StyledButton>
                 </Panel>
 
                 <StyledBorder style={{ width: '100%', position: 'relative', backgroundColor: '#fffcfc00', top: 0 }}></StyledBorder>
                 <Panel header="Thiếp lập bảo mật" key="4" className="site-collapse-custom-panel">
-                    <StyledButton key="submit" style={{ top: '-10px', left: '36%' }} >Xóa kết bạn</StyledButton>
-                    <StyledButton key="submit" style={{ top: '32px', backgroundColor: 'transparent', color: 'red', width: 'auto' }}>Rời khỏi nhóm trò chuyện</StyledButton>
+                    <StyledButton key="submit" style={{ top: '-10px', left: '36%' }}
+                        loading={isLoading}>Xóa kết bạn</StyledButton>
+                    <StyledButton loading={isLoading} key="submit" style={{ top: '32px', backgroundColor: 'transparent', color: 'red', width: 'auto' }}>Rời khỏi nhóm trò chuyện</StyledButton>
                 </Panel>
             </StyledCollapse>
         </StyledContent>
@@ -249,8 +253,8 @@ function AboutChat() {
         </StyledFunction>
         <StyledModal title="Xác nhận" open={isOpen1} onCancel={handleCancelModalTurnOffMess} onOk={handleOKModalTurnOffMess}
             footer={[
-                <Button key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalTurnOffMess}>Hủy</Button>,
-                <Button key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalTurnOffMess} type="primary">Đồng ý</Button>
+                <Button loading={isLoading} key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalTurnOffMess}>Hủy</Button>,
+                <Button loading={isLoading} key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalTurnOffMess} type="primary">Đồng ý</Button>
 
             ]}>
             <StyledForm name="basic" labelCol={{ span: 8 }} wrapperCol={{ span: 18 }} initialValues={{ remember: false }}
@@ -269,8 +273,8 @@ function AboutChat() {
         </StyledModal>
         <StyledModal title="Tạo nhóm" open={isOpen2} onCancel={handleCancelModalCreatGroup} onOk={handleOKModalCreatGroup}
             footer={[
-                <Button key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalCreatGroup}>Hủy</Button>,
-                <Button key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalCreatGroup} type="primary">Đồng ý</Button>
+                <Button loading={isLoading} key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalCreatGroup}>Hủy</Button>,
+                <Button loading={isLoading} key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalCreatGroup} type="primary">Đồng ý</Button>
 
             ]}>
             <StyledForm name="basic" labelCol={{ span: 8 }} wrapperCol={{ span: 24 }} initialValues={{ remember: false }}
@@ -313,8 +317,8 @@ function AboutChat() {
         </StyledModal>
         <StyledModal centered className='infor' title="Thông tin tài khoản" open={isOpenInfor} onCancel={handleCancelModalInfor} onOk={handleOKModalInfor}
             footer={[
-                <Button key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalInfor}>Hủy</Button>,
-                <Button key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalInfor} type="primary">Đồng ý</Button>
+                <Button loading={isLoading} key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalInfor}>Hủy</Button>,
+                <Button loading={isLoading} key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalInfor} type="primary">Đồng ý</Button>
 
             ]}>
             <StyledForm name="basic" labelCol={{ span: 8 }} wrapperCol={{ span: 18 }} initialValues={{ remember: false }}
@@ -333,8 +337,8 @@ function AboutChat() {
                     </StyledNameEdit>
                 </Form.Item>
                 <Form.Item>
-                    <StyledButton key="back" style={{ left: '20px' }}>Nhắn tin</StyledButton>,
-                    <StyledButton key="submit" style={{ left: '70px' }} >Gọi điện</StyledButton>
+                    <StyledButton loading={isLoading} key="back" style={{ left: '20px' }}>Nhắn tin</StyledButton>,
+                    <StyledButton loading={isLoading} key="submit" style={{ left: '70px' }} >Gọi điện</StyledButton>
                 </Form.Item>
                 <StyledBorder></StyledBorder>
                 <Form.Item>
@@ -358,8 +362,8 @@ function AboutChat() {
         </StyledModal>
         <StyledModal centered title="Đặt tên gợi nhớ" open={isOpenRename} onCancel={handleCancelModalRename} onOk={handleOKModalRename}
             footer={[
-                <Button key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalRename}>Hủy</Button>,
-                <Button key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalRename} type="primary">Đồng ý</Button>
+                <Button loading={isLoading} key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalRename}>Hủy</Button>,
+                <Button loading={isLoading} key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalRename} type="primary">Đồng ý</Button>
 
             ]}>
             <StyledForm name="basic" labelCol={{ span: 8 }} wrapperCol={{ span: 24 }} initialValues={{ remember: false }}
@@ -374,10 +378,10 @@ function AboutChat() {
         </StyledModal>
         <StyledModal centered title="Danh sách thành viên" open={isOpenMember} onCancel={handleCancelModalMember} onOk={handleOKModalMember}
             footer={[
-                <Button key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalMember}>Hủy</Button>,
-                <Button key="submit" style={{ fontWeight: 700 }} type="primary" onClick={handleOKModalMember}>Đồng ý</Button>
+                <Button loading={isLoading} key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalMember}>Hủy</Button>,
+                <Button loading={isLoading} key="submit" style={{ fontWeight: 700 }} type="primary" onClick={handleOKModalMember}>Đồng ý</Button>
             ]}>
-            <Button type='primary' style={{ marginRight: '8px' }} onClick={handleShowModalAddMemberInGroup}>Thêm thành viên mới</Button>
+            <Button loading={isLoading} type='primary' style={{ marginRight: '8px' }} onClick={handleShowModalAddMemberInGroup}>Thêm thành viên mới</Button>
             <Divider />
             <StyledResultAddFriend>
                 {userChat?.listMember?.map((userMember, index) => (
@@ -397,8 +401,8 @@ function AboutChat() {
         </StyledModal>
         <StyledModal centered title="Thêm thành viên mới vào nhóm" open={isAddMemberInGroup} onCancel={handleCancelModalAddMemberInGroup} onOk={handleOKModalAddMemberInGroup}
             footer={[
-                <Button key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalAddMemberInGroup}>Hủy</Button>,
-                <Button key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalAddMemberInGroup} type="primary">Đồng ý</Button>
+                <Button loading={isLoading} key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalAddMemberInGroup}>Hủy</Button>,
+                <Button loading={isLoading} key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalAddMemberInGroup} type="primary">Đồng ý</Button>
 
             ]}>
             <StyledForm name="basic" labelCol={{ span: 8 }} wrapperCol={{ span: 24 }} initialValues={{ remember: false }}
