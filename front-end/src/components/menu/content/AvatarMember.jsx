@@ -10,6 +10,8 @@ import { Button, Avatar } from "antd";
 
 
 function AvatarAddFriend({ name, content, avatar, userCurrentId, id, isAdmin, handleRemoveConversation, handleUpdateAdminGroup }) {
+    const [isLoading, setIsLoading] = useState(false);
+    
     return (
         <Wrapper>
             <ItemContent>
@@ -25,12 +27,12 @@ function AvatarAddFriend({ name, content, avatar, userCurrentId, id, isAdmin, ha
                 </TitleContent>
                 {
                     isAdmin && id !== userCurrentId && <MoreContent>
-                        <Button type='primary' onClick={() => handleUpdateAdminGroup(id)}>Thay TN</Button>
+                        <Button loading={isLoading} type='primary' onClick={() => handleUpdateAdminGroup(id)}>Thay TN</Button>
                     </MoreContent>
                 }
                 {
                     isAdmin && id !== userCurrentId && <MoreContent>
-                        <Button type='default' onClick={() => handleRemoveConversation(id)}>Đuổi ra</Button>
+                        <Button loading={isLoading} type='default' onClick={() => handleRemoveConversation(id)}>Đuổi ra</Button>
                     </MoreContent>
                 }
             </Content>

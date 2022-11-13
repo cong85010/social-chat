@@ -15,6 +15,8 @@ function MyChat({ avatar, message, status }) {
     const { user } = useSelector(state => state.user)
     const [hover, setHover] = useState(false);
     const [hoverEmoji, setHoverEmoji] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+
     const MessageTypFile = () => {
 
         return <div>
@@ -25,7 +27,7 @@ function MyChat({ avatar, message, status }) {
 
     const MENU = () => {
         return <div>
-            <Button size='small'>Thu hồi</Button>
+            <Button loading={isLoading} size='small'>Thu hồi</Button>
         </div>
     }
     return (

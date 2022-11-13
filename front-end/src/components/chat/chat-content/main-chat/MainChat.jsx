@@ -352,7 +352,7 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
                     <Form.Item>
                         <StyledButton loading={isLoading} onkey="back" style={{ left: '20px' }}>Nhắn tin</StyledButton>,
                         <StyledButton loading={isLoading} key="submit" style={{ left: '70px' }} >Gọi điện</StyledButton>
-                    </Form.Item> 
+                    </Form.Item>
                     <StyledBorder></StyledBorder>
                     <Form.Item>
                         <StyledContainInfor>
@@ -437,9 +437,9 @@ const IconContent = styled.div`
 `;
 /* Body Chat */
 const BodyChat = styled.div`
-    /* display: flex; */
+    display: flex;
     flex-direction: column;
-    /* justify-content: flex-end; */
+    justify-content: flex-end;
     width: 100%;
     height: calc(100% - 169px);
     background-color: ${bodyChat};

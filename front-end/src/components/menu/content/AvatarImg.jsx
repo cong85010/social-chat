@@ -20,6 +20,8 @@ function AvatarImg() {
     const [formProfile] = Form.useForm()
     const user = useSelector(state => state.user.user)
     const dispatch = useDispatch()
+    const [isLoading, setIsLoading] = useState(false);
+
 
     const handleShowModalInformation = () => {
         setIsOpenInformation(true)
@@ -95,8 +97,8 @@ function AvatarImg() {
             <Avatar onClick={handleShowModalInformation} size={48} src={user?.avatar || AvatarDefault} />
             <StyledModal destroyOnClose centered className='infor' title="Thông tin tài khoản" open={isOpenInfor} onCancel={handleCancelModalInformation} onOk={handleOKModalInformation}
                 footer={[
-                    <Button key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalInformation}>Hủy</Button>,
-                    <Button key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalInformation} type="primary">Đồng ý</Button>
+                    <Button loading={isLoading} key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalInformation}>Hủy</Button>,
+                    <Button loading={isLoading} key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalInformation} type="primary">Đồng ý</Button>
 
                 ]}>
                 <StyledForm name="basic" labelCol={{ span: 8 }} wrapperCol={{ span: 18 }} initialValues={{ remember: false }}
@@ -141,10 +143,10 @@ function AvatarImg() {
                 open={isOpen}
                 onCancel={handleCancelModalUpdateInformation}
                 footer={[
-                    <Button key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalUpdateInformation}>
+                    <Button loading={isLoading} key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalUpdateInformation}>
                         Hủy
                     </Button>,
-                    <Button
+                    <Button loading={isLoading}
                         type="primary"
                         icon={<UserOutlined />}
                         style={{ fontWeight: 700 }}
