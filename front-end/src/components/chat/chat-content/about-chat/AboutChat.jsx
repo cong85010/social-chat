@@ -271,9 +271,9 @@ function AboutChat() {
                         <EditOutlined className='icon-edit' onClick={handleShowModalRename} />
                     </StyledNameEdit>
                 </Form.Item>
-                <Form.Item>
-                    <StyledButton loading={isLoading} key="back" style={{ left: '20px' }}>Nhắn tin</StyledButton>,
-                    <StyledButton loading={isLoading} key="submit" style={{ left: '70px' }} >Gọi điện</StyledButton>
+                <Form.Item style={{ position: 'relative' }}>
+                    <StyledButton className='btn-call' loading={isLoading} key="back" style={{ left: '20px' }}>Nhắn tin</StyledButton>,
+                    <StyledButton className='btn-mess' loading={isLoading} key="submit" style={{ left: '70px' }} >Gọi điện</StyledButton>
                 </Form.Item>
                 <StyledBorder></StyledBorder>
                 <Form.Item>
@@ -566,6 +566,12 @@ const StyledButton = styled(Button)`
     width:120px;
     background-color: transparent;
     border-radius: 4px;
+    &.btn-call{
+        top: -45px;
+    }
+    &.btn-mess{
+        top: -45px;
+    }
     &.btn-top{
         margin: 0 120px;
     }
