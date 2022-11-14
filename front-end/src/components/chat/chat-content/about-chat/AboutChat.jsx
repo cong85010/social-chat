@@ -20,7 +20,6 @@ const CheckboxGroup = Checkbox.Group;
 
 function AboutChat() {
     const [isOpen1, setIsOpen1] = useState(false);
-    const [isOpen2, setIsOpen2] = useState(false);
     const [isOpenInfor, setIsOpenInFor] = useState(false);
     const [isOpenRename, setIsOpenRename] = useState(false);
     const [isOpenMember, setIsOpenMember] = useState(false);
@@ -63,19 +62,6 @@ function AboutChat() {
 
     const handleCancelModalTurnOffMess = () => {
         setIsOpen1(false)
-    }
-
-    const handleShowModalCreatGroup = () => {
-        getMyFriends()
-        setIsOpen2(true)
-    }
-
-    const handleOKModalCreatGroup = () => {
-        setIsOpen2(false)
-    }
-
-    const handleCancelModalCreatGroup = () => {
-        setIsOpen2(false)
     }
 
     const handleShowModalInfor = () => {
@@ -202,13 +188,6 @@ function AboutChat() {
                     </StyledFunctionTurnOff>
                 </StyledFunctionIcon>
                 <StyledFunctionIcon>
-                    <StyledFunctionTurnOff onClick={handleShowModalCreatGroup}>
-                        <UsergroupAddOutlined />
-                        <StyledFunctionName>Tạo nhóm trò chuyện</StyledFunctionName>
-                    </StyledFunctionTurnOff>
-
-                </StyledFunctionIcon>
-                <StyledFunctionIcon>
                     <StyledFunctionTurnOff onClick={handleShowModalMember}>
                         <SettingOutlined />
                         <StyledFunctionName>Quản lí nhóm</StyledFunctionName>
@@ -242,10 +221,10 @@ function AboutChat() {
                 </Panel>
 
                 <StyledBorder style={{ width: '100%', position: 'relative', backgroundColor: '#fffcfc00', top: 0 }}></StyledBorder>
-                <Panel header="Thiếp lập bảo mật" key="4" className="site-collapse-custom-panel">
-                    <StyledButton key="submit" style={{ top: '-10px', left: '36%' }}
+                <Panel header="Thiếp lập bảo mật" key="4" className="site-collapse-custom-panel" >
+                    <StyledButton className='btn-top' key="submit"
                         loading={isLoading}>Xóa kết bạn</StyledButton>
-                    <StyledButton loading={isLoading} key="submit" style={{ top: '32px', backgroundColor: 'transparent', color: 'red', width: 'auto' }}>Rời khỏi nhóm trò chuyện</StyledButton>
+                    <StyledButton className='btn-bottom' loading={isLoading} key="submit" style={{ top: '8px', backgroundColor: 'transparent', color: 'red', width: 'auto' }}>Rời khỏi nhóm trò chuyện</StyledButton>
                 </Panel>
             </StyledCollapse>
         </StyledContent>
@@ -271,50 +250,6 @@ function AboutChat() {
                 </Form.Item>
             </StyledForm>
         </StyledModal>
-        <StyledModal title="Tạo nhóm" open={isOpen2} onCancel={handleCancelModalCreatGroup} onOk={handleOKModalCreatGroup}
-            footer={[
-                <Button loading={isLoading} key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalCreatGroup}>Hủy</Button>,
-                <Button loading={isLoading} key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalCreatGroup} type="primary">Đồng ý</Button>
-
-            ]}>
-            <StyledForm name="basic" labelCol={{ span: 8 }} wrapperCol={{ span: 24 }} initialValues={{ remember: false }}
-                // onFinish={onFinish} onFinishFailed={onFinishFailed} 
-                autoComplete="off">
-                <Form.Item valuePropName="fileList">
-                    <Upload action="/upload.do" listType="picture-card">
-                        <div>
-                            <PlusOutlined />
-                            <div style={{ marginTop: 8 }}>Upload</div>
-                        </div>
-                    </Upload>
-                    <Input placeholder='Nhập tên nhóm' />
-                </Form.Item>
-                <Form.Item>
-                    <StyledText style={{ fontWeight: 600 }}>Thêm bạn vào nhóm</StyledText>
-                    <Input placeholder='Nhập tên, số điện thoại' style={{ borderRadius: '10px' }} />
-                </Form.Item>
-                <Divider style={{ margin: '16px 0 8px' }}></Divider>
-                <StyledText style={{ fontWeight: 600 }}>Trò chuyện gần đây</StyledText>
-                <StyledListRecentlyChat>
-                    <Form.Item>
-                        <Menu>
-                            <StyledRadioGroup>
-                                {findMyFriends.filter(u => !userChat?.listMember.includes(u.id))?.map((user, index) => (
-                                    <StyledRadio value={index}>
-                                        <AvatarItemListCheckedUsers key={index}
-                                            index={user._id}
-                                            name={user.name}
-                                            avatar={user.avatar}
-                                        />
-                                    </StyledRadio>
-                                ))}
-                            </StyledRadioGroup>
-                        </Menu>
-
-                    </Form.Item>
-                </StyledListRecentlyChat>
-            </StyledForm>
-        </StyledModal>
         <StyledModal centered className='infor' title="Thông tin tài khoản" open={isOpenInfor} onCancel={handleCancelModalInfor} onOk={handleOKModalInfor}
             footer={[
                 <Button loading={isLoading} key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalInfor}>Hủy</Button>,
@@ -336,9 +271,9 @@ function AboutChat() {
                         <EditOutlined className='icon-edit' onClick={handleShowModalRename} />
                     </StyledNameEdit>
                 </Form.Item>
-                <Form.Item>
-                    <StyledButton loading={isLoading} key="back" style={{ left: '20px' }}>Nhắn tin</StyledButton>,
-                    <StyledButton loading={isLoading} key="submit" style={{ left: '70px' }} >Gọi điện</StyledButton>
+                <Form.Item style={{ position: 'relative' }}>
+                    <StyledButton className='btn-call' loading={isLoading} key="back" style={{ left: '20px' }}>Nhắn tin</StyledButton>,
+                    <StyledButton className='btn-mess' loading={isLoading} key="submit" style={{ left: '70px' }} >Gọi điện</StyledButton>
                 </Form.Item>
                 <StyledBorder></StyledBorder>
                 <Form.Item>
@@ -441,10 +376,25 @@ export default AboutChat;
 const StyledSection = styled.div`
     width: 100%;
     height: 100%;
-    overflow-y: auto;
+    overflow-y: scroll;
+    overflow-x: hidden;
     border-left: 1px solid ${border};
+    &::-webkit-scrollbar {
+        position: relative;
+        width: 6px;
+        background-color: #ffff;
+    }
+    &::-webkit-scrollbar-track {
+        position: absolute;
+    }
+    &::-webkit-scrollbar-thumb {
+        position: absolute;
+        background-color: ${border};
+    }
 `
 const StyledHeader = styled(Header)`
+    text-align: center;
+    line-height: 64px;
     background-color: transparent;
     border-bottom: 1px solid ${border};
     h3{
@@ -614,9 +564,20 @@ const StyledAvatarNen = styled.img`
 const StyledButton = styled(Button)`
     font-weight: 700;
     width:120px;
-    top:-46px;
     background-color: transparent;
     border-radius: 4px;
+    &.btn-call{
+        top: -45px;
+    }
+    &.btn-mess{
+        top: -45px;
+    }
+    &.btn-top{
+        margin: 0 120px;
+    }
+    &.btn-bottom{
+        margin: 0 80px;
+    }
 `
 const StyledBorder = styled.div`
     border-bottom: 8px solid ${borderInfor};

@@ -52,7 +52,7 @@ function MenuBar() {
     const [isLoaded, setIsLoaded] = useState(false);
     const [items, setItems] = useState([]);
     const [q, setQ] = useState("");
-    const [searchParam] = useState(["name"]);
+    const [searchParam] = useState(["name","listMember"]);
     const [filterParam, setFilterParam] = useState(["All"]);
     //
 
@@ -281,23 +281,35 @@ function MenuBar() {
 
     function search(items) {
         return items.filter((item) => {
-            if (item.name == filterParam) {
+            var text= null;
+            if(item.name == null){
+                text= item.listMember.find(m => m.id !== userId)?.name;
+            } else if(item.name){
+                text = item.name 
+            }else{
+                text = "chua xac dinh"
+            }
+            console.log("TEXT"+text);
+
+            if (text== filterParam) {
                 return searchParam.some((newItem) => {
-                    return (
-                        item[newItem]
-                            .toString()
-                            .toLowerCase()
-                            .indexOf(q.toLowerCase()) > -1
-                    );
+                    console.log("abc",item[newItem]);
+                    // return (
+                    //     item[newItem]
+                    //         .toString()
+                    //         .toLowerCase()
+                    //         .indexOf(q.toLowerCase()) > -1
+                    // );
                 });
             } else if (filterParam == "All") {
                 return searchParam.some((newItem) => {
-                    return (
-                        item[newItem]
-                            .toString()
-                            .toLowerCase()
-                            .indexOf(q.toLowerCase()) > -1
-                    );
+                    console.log("def",item[newItem]);
+                    // return (
+                    //     item[newItem]
+                    //         .toString()
+                    //         .toLowerCase()
+                    //         .indexOf(q.toLowerCase()) > -1
+                    // );
                 });
             }
         });
@@ -311,8 +323,9 @@ function MenuBar() {
 
                     {isLoadingConversations ?
                         [1, 2, 4, 5, 6].map(x => <div style={{ padding: '10px' }}> <Skeleton avatar paragraph={{ rows: 1 }} /></div>) :
-                        conversations.map((conversation, index) => (
-                            <AvatarItem
+                        conversations.map((conversation, index) => {
+                            console.log("conversations o day ne", conversation);
+                            return <AvatarItem
                                 isLoading={isLoading}
                                 key={index}
                                 index={conversation.id}
@@ -320,18 +333,21 @@ function MenuBar() {
                                 adminId={conversation.adminId}
                                 {...conversation}
                             />
-                        ))}
-                        {/* search moi them */}
-                    {search(data).map((conversation, index) => (
-                        <AvatarItem
-                            isLoading={isLoading}
-                            key={index}
-                            index={conversation.id}
-                            userIdCurrent={userId}
-                            adminId={conversation.adminId}
-                            {...conversation}
-                        />
-                    ))}
+                        })}
+
+                    {/* search moi them */}
+                    {search(conversations).map((conversation, index) => {
+                        console.log("conversation", conversation);
+                        return (
+                            <AvatarItem
+                                isLoading={isLoading}
+                                key={index}
+                                index={conversation.id}
+                                userIdCurrent={userId}
+                                adminId={conversation.adminId}
+                                {...conversation}
+                            />)
+                    })}
                 </Tabs.TabPane>
                 {/* <Tabs.TabPane tab="Chưa đọc" key="2">
                     {users.map((user, index) => (
@@ -536,7 +552,7 @@ function MenuBar() {
                     autoComplete="off"
                 >
 
-                    <Form.Item >
+                    <Form.Item style={{textAlign:'center'}}>
                         <Upload action="/" listType="picture-card"
                             beforeUpload={beforeUpload}
                             onChange={handleChange}
@@ -765,6 +781,9 @@ const StyledForm = styled(Form)`
     }
     input{
         margin-top: 8px;
+    }
+    .ant-upload-list-picture-card .ant-upload-list-item-error{
+        border-color: ${primaryColor};
     }
 `
 
