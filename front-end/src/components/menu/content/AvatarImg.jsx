@@ -47,6 +47,20 @@ function AvatarImg() {
         setIsOpen(false)
     }
 
+    // doi mat khau moi
+    const [isShowModalNewPassword, setIsShowModalNewPassword] = useState(false);
+    const handleShowModalNewPassword = () => {
+        setIsShowModalNewPassword(true);
+    };
+
+    const handleOkModalNewPassword = () => {
+        setIsShowModalNewPassword(false);
+    };
+
+    const handleCancelModalNewPassword = () => {
+        setIsShowModalNewPassword(false);
+    };
+
     const handleUpdateProfile = (values) => {
 
         axios.put(`${URL}/api/user/update`, {
@@ -102,7 +116,11 @@ function AvatarImg() {
     return (
         <Wrapper style={{ textAlign: 'center' }}>
             <Avatar onClick={handleShowModalInformation} size={48} src={user?.avatar || AvatarDefault} />
-            <StyledModal destroyOnClose centered className='infor' title="Thông tin tài khoản" open={isOpenInfor} onCancel={handleCancelModalInformation} onOk={handleOKModalInformation}
+            {/* thông tin tài khoản */}
+            <StyledModal destroyOnClose centered className='infor' title="Thông tin tài khoản"
+                open={isOpenInfor}
+                onCancel={handleCancelModalInformation}
+                onOk={handleOKModalInformation}
                 footer={[
                     <Button loading={isLoading} key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalInformation}>Hủy</Button>,
                     <Button loading={isLoading} key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalInformation} type="primary">Đồng ý</Button>
@@ -124,9 +142,9 @@ function AvatarImg() {
                         </StyledNameEdit>
                     </Form.Item>
                     <StyledBorder></StyledBorder>
-                    <Form.Item>
+                    <Form.Item wrapperCol={{ span: 24 }} style={{ height: '100px' }}>
                         <StyledContainInfor>
-                            <StyledText style={{ top: '-30px' }}><h3>Thông tin cá nhân</h3></StyledText>
+                            <StyledText style={{ top: '-30px' }}><h3 style={{ fontWeight: 500, fontSize: '16px' }}>Thông tin cá nhân</h3></StyledText>
                             <StyledDetailInfor>
                                 <StyledText>Số điện thoại</StyledText>
                                 <StyledText>{user.phoneNumber || "Loading..."}</StyledText>
@@ -142,8 +160,10 @@ function AvatarImg() {
                         </StyledContainInfor>
                     </Form.Item>
                 </StyledForm>
-                <StyledButton type='default' onClick={handleShowModalUpdateInformation}>Cập nhật thông tin</StyledButton>
+                <StyledButton type='ghost' className='btn-doi-mk' onClick={handleShowModalUpdateInformation}>Cập nhật thông tin</StyledButton>
+                <StyledButton type='primary' onClick={handleShowModalNewPassword}>Đổi mật khẩu</StyledButton>
             </StyledModal>
+            {/* Cập nhật tài khoản */}
             <StyledModal
                 destroyOnClose
                 centered
@@ -183,7 +203,7 @@ function AvatarImg() {
                 >
 
                     <StyledAvatarNen src={imageUrl} />
-                    <Form.Item style={{ textAlign: 'center'}}>
+                    <Form.Item style={{ textAlign: 'center' }}>
                         <Upload
                             name="avatar"
                             action="/"
@@ -232,6 +252,68 @@ function AvatarImg() {
 
                 </StyledForm>
             </StyledModal >
+            {/* Đổi mật khẩu */}
+            <StyledModal
+                title="Đổi mật khẩu mới"
+                open={isShowModalNewPassword}
+                onCancel={handleCancelModalNewPassword}
+                onOk={handleOkModalNewPassword}
+                footer={[
+                    <Button loading={isLoading} key="back" onClick={handleCancelModalNewPassword}>
+                        Hủy
+                    </Button>,
+                    <Button loading={isLoading} key="submit" onClick={handleOkModalNewPassword} type="primary">
+                        Đồng ý
+                    </Button>,
+                ]}
+            >
+                <StyledForm
+                    name="basic"
+                    labelCol={{ span: 12 }}
+                    wrapperCol={{ span: 12 }}
+                    initialValues={{ remember: false }}
+                    autoComplete="off"
+                >
+                    <Form.Item label="Nhập mật khẩu hiện tại" name="oldPassword"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Nhập mật khẩu hiện tại của bạn!',
+                            },
+                        ]}>
+                        <Input.Password />
+                    </Form.Item>
+                    <Form.Item label="Nhập mật khẩu mới"
+                        name="newPassword"
+                        rules={[{
+                            required: true,
+                            message: 'Nhập mật khẩu hiện tại của bạn!'
+                        }]}>
+                        <Input.Password />
+
+                    </Form.Item>
+                    <Form.Item label="Xác nhận mật khẩu mới"
+                        name="reNewPassword"
+                        dependencies={['newPassword']}
+                        hasFeedback
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Nhập mật khẩu xác nhận của bạn!',
+                            },
+                            ({ getFieldValue }) => ({
+                                validator(_, value) {
+                                    if (!value || getFieldValue('newPassword') === value) {
+                                        return Promise.resolve();
+                                    }
+                                    return Promise.reject(new Error('Chưa khớp'));
+                                },
+                            }),
+                        ]}>
+                        <Input.Password />
+                    </Form.Item>
+                </StyledForm>
+            </StyledModal>
         </Wrapper >
     );
 }
@@ -250,13 +332,13 @@ const StyledModal = styled(Modal)`
     &.infor{
         width: 380px !important;
     }
+    .ant-form-item-label>label{
+        font-size: 15px;
+    }
 `
 const StyledForm = styled(Form)`
     .ant-form-item{
         margin: 0 0 10px;
-    }
-    input{
-        margin-top: 8px;
     }
     #signup_name,
     #signup_dateOfBirth{
@@ -330,28 +412,31 @@ const StyledName = styled.h2`
     margin: 0 8px;
 `
 const StyledButton = styled(Button)`
+
     font-weight: 700;
     width:175px;
     left: 50%;
     transform: translateX(-50%);
-    background-color: ${borderInfor};
     border-radius: 4px;
+    &.btn-doi-mk{
+        margin-bottom:8px;
+    }
 `
 const StyledBorder = styled.div`
     border-bottom: 8px solid ${borderInfor};
     width: 380px;
     position: absolute;
-    bottom: 294px;
+    bottom: 270px;
     left: 0;
 `
 const StyledContainInfor = styled.div`
     position: relative;
-    top: -30px;
+    top: -50px;
 `
 const StyledDetailInfor = styled.div`
     display: flex;
     justify-content: space-between;
-    width: 132%;
+    width: 100%;
 `
 const StyledInforPerson = styled.div`
     font-size: 20px;
