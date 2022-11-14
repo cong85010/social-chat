@@ -1,7 +1,7 @@
 import { getHeaders, URL } from '~/utils/constant';
 import { getToken } from '~/utils/function';
 
-const { createSlice, createAsyncThunk } = require('@reduxjs/toolkit');
+const { createSlice, createAsyncThunk, current } = require('@reduxjs/toolkit');
 const { default: axios } = require('axios');
 
 export const getChatByConversationID = createAsyncThunk('chat/getChat', async (ConversationID, thunkAPI) => {
@@ -36,13 +36,28 @@ const initialState = {
     isError: false,
 };
 
+const groupBy = function (xs) {
+    const data = xs.reduce(function (rv, x) {
+        (rv[x] = rv[x] || []).push(x);
+        return rv;
+    }, {});
+
+    return Object.entries(data).map(x => { return { type: x[0], counter: x[1].length } }).filter(x => x.counter !== 0)
+};
+
 const ChatSlice = createSlice({
     name: 'chat',
     initialState,
     reducers: {
         updateContentChat: (state, action) => {
-            console.log(action);
-            state.chat.content = [...state.chat.content, action.payload];
+            const list = current(state)
+            const chatIndex = list.chat.content.findIndex(c => c.id === action.payload.id)
+            if (chatIndex !== -1) {
+                state.chat.content[chatIndex] = { ...action.payload, reactList: groupBy(action.payload.reactList) }
+
+            } else {
+                state.chat.content = [...state.chat.content, action.payload];
+            }
         },
     },
     extraReducers: (builder) => {

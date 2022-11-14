@@ -6,10 +6,10 @@ import styled from 'styled-components';
 import { bgColor } from '~/utils/color';
 import { URL } from '~/utils/constant';
 import { AvatarDefault } from '~/utils/constant';
-import { DeleteOutlined, HeartOutlined } from '@ant-design/icons';
+import { DeleteOutlined, HeartFilled, HeartOutlined } from '@ant-design/icons';
 import { FacebookSelector } from 'react-reactions/lib/components/facebook/FacebookSelector';
 
-function FriendChat({ avatar, message, status }) {
+function FriendChat({ avatar, message, status, handleReaction }) {
     const { user } = useSelector(state => state.user)
     const [hover, setHover] = useState(false);
     const [hoverEmoji, setHoverEmoji] = useState(false);
@@ -30,6 +30,30 @@ function FriendChat({ avatar, message, status }) {
         </div>
     }
 
+    const handleReactionChange = (type) => {
+
+        handleReaction(message.id, type)
+    }
+
+
+    const ReactionIcon = ({ react }) => {
+
+        switch (react.type) {
+            case 0: return <>
+                <HeartFilled />
+                {react.counter}
+            </>
+
+                break;
+
+            default: return <>
+                <HeartFilled />
+                {react.counter}
+            </>
+        }
+
+    }
+
     return (
         <Wrapper>
             <ItemContent>
@@ -47,15 +71,15 @@ function FriendChat({ avatar, message, status }) {
                             {message.type === 1 ? <MessageTypFile id={message?.id} /> :
                                 message.content[0]}
                         </MessageText>
-                        <div className='react-icon' style={{ display: 'flex' }}>
-                            {hover && <StyledDeleteOutlined />}
-                            {hover && <StyledHeartOutlined onMouseEnter={() => { setHoverEmoji(true) }} onMouseLeave={() => { setHoverEmoji(false) }} />}
-                            {/* <StyledDeleteOutlined/>
-                            <StyledHeartOutlined/> */}
-                        </div>
-                        {
-                            hoverEmoji && <FacebookSelector />
-                        }
+                        <Reaction>
+                            {
+                                message.reactList.map(react => <ReactionIcon react={react} />)
+                            }
+                            <HeartOutlined style={{ color: '#f23', marginRight: '10px' }} />
+                            <FacebookSelector onSelect={handleReactionChange} />
+                        </Reaction>
+
+
                     </MessageItem>
                 </MessageContent>
             </MessageContainer>
@@ -65,6 +89,18 @@ function FriendChat({ avatar, message, status }) {
 }
 
 export default FriendChat;
+
+const Reaction = styled.div`
+    display: flex;
+    align-items: flex-end;
+    padding: 0 10px;
+    > div {
+        display: none !important;
+    }
+    &:hover  > div {
+        display: flex !important;
+    }
+`
 
 const Wrapper = styled.div`
     display: flex;

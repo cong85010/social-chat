@@ -38,6 +38,7 @@ function MenuBar() {
     const { id: userId, accessToken } = useSelector(state => state.user.user)
     const { conversations, isLoading: isLoadingConversations } = useSelector(state => state.conversation)
     const { userChat } = useSelector(state => state.userChat)
+    const [conversationsFilleter, setConversationsFilleter] = useState([]);
 
     const [findFriend, setFindFriend] = useState();
     const [findMyFriends, setFindMyFriends] = useState([]);
@@ -49,13 +50,21 @@ function MenuBar() {
     const [isLoadingCreate, setIsLoadingCreate] = useState(false);
 
     // search moi them
-    const [isLoaded, setIsLoaded] = useState(false);
-    const [items, setItems] = useState([]);
     const [q, setQ] = useState("");
-    const [searchParam] = useState(["name"]);
-    const [filterParam, setFilterParam] = useState(["All"]);
-    //
 
+    useEffect(() => {
+        if (q) {
+            const data = conversations.filter(conv => conv?.name?.toLowerCase().includes(q?.toLowerCase())
+                || conv.listMember.find(mem => mem?.name?.toLowerCase().includes(q?.toLowerCase())))
+            setConversationsFilleter(data)
+        } else {
+            setConversationsFilleter(conversations)
+        }
+    }, [q])
+
+    useEffect(() => {
+        setConversationsFilleter(conversations)
+    }, [conversations])
 
     const handleChange = (info) => {
         if (info.file.status === 'uploading') {
@@ -73,8 +82,6 @@ function MenuBar() {
             setIsLoading(false);
             setImageUrl(url);
         });
-
-
     };
 
     // MenuIcon
@@ -194,10 +201,13 @@ function MenuBar() {
     const handleOKModalCreatGroup = async () => {
         try {
             setIsLoadingCreate(true)
+            const listUser = findMyFriends.filter(x => listChecked.includes(x.id))
+            console.log(listUser);
+            const nameGroupTemp = listUser.reduce((sum, cur) => sum += cur.name + ", ", "")
             const { data } = await axios.post(`${URL}/api/conversation/create-group`, {
                 avatar: imageUrl,
                 listMemberId: listChecked,
-                name: nameGroup,
+                name: nameGroup || nameGroupTemp,
             }, {
                 headers: {
                     Authorization: `Bearer ${getToken()}`,
@@ -252,58 +262,7 @@ function MenuBar() {
 
     //  Search
     const { Search } = Input;
-    const suffix = (
-        <AudioOutlined
-            style={{
-                fontSize: 16,
-                color: '#1890ff',
-            }}
-        />
-    );
-    // search moi them
-    useEffect(() => {
-        fetch(
-            "https://raw.githubusercontent.com/iamspruce/search-filter-painate-reactjs/main/data/countries.json"
-        )
-            .then((res) => res.json())
-            .then(
-                (result) => {
-                    setIsLoaded(true);
-                    setItems(result);
-                },
-                (error) => {
-                    setIsLoaded(true);
-                    // setError(error);
-                }
-            );
-    }, []);
-    const data = Object.values(items);
-
-    function search(items) {
-        return items.filter((item) => {
-            if (item.name == filterParam) {
-                return searchParam.some((newItem) => {
-                    return (
-                        item[newItem]
-                            .toString()
-                            .toLowerCase()
-                            .indexOf(q.toLowerCase()) > -1
-                    );
-                });
-            } else if (filterParam == "All") {
-                return searchParam.some((newItem) => {
-                    return (
-                        item[newItem]
-                            .toString()
-                            .toLowerCase()
-                            .indexOf(q.toLowerCase()) > -1
-                    );
-                });
-            }
-        });
-    }
-
-    //  Tab Menu
+     //  Tab Menu
     const tabMenu = () => {
         return (
             <StyledTabs defaultActiveKey="1">
@@ -311,7 +270,7 @@ function MenuBar() {
 
                     {isLoadingConversations ?
                         [1, 2, 4, 5, 6].map(x => <div style={{ padding: '10px' }}> <Skeleton avatar paragraph={{ rows: 1 }} /></div>) :
-                        conversations.map((conversation, index) => (
+                        conversationsFilleter.map((conversation, index) => (
                             <AvatarItem
                                 isLoading={isLoading}
                                 key={index}
@@ -321,17 +280,6 @@ function MenuBar() {
                                 {...conversation}
                             />
                         ))}
-                        {/* search moi them */}
-                    {search(data).map((conversation, index) => (
-                        <AvatarItem
-                            isLoading={isLoading}
-                            key={index}
-                            index={conversation.id}
-                            userIdCurrent={userId}
-                            adminId={conversation.adminId}
-                            {...conversation}
-                        />
-                    ))}
                 </Tabs.TabPane>
                 {/* <Tabs.TabPane tab="Chưa đọc" key="2">
                     {users.map((user, index) => (
@@ -395,6 +343,8 @@ function MenuBar() {
 
     };
 
+    console.log(conversationsFilleter);
+
     const bottomItems = [
         {
             title: 'message',
@@ -433,7 +383,7 @@ function MenuBar() {
             <EndWrapper>
                 <HeaderSearch>
                     <Space direction="horizontal">
-                        <Search placeholder="Tìm Kiếm" allowClear value={q}
+                        <Search placeholder="Tìm tên nhóm, thành viên..." allowClear value={q}
                             onChange={(e) => setQ(e.target.value)} />
                     </Space>
                     <HeaderIcon onClick={handleShowModalAddFriend} >
@@ -531,12 +481,13 @@ function MenuBar() {
                 destroyOnClose
                 onCancel={handleCancelModalCreatGroup}
             >
-                <StyledForm name="basic" labelCol={{ span: 8 }} wrapperCol={{ span: 24 }} initialValues={{ remember: false }}
+                <StyledForm name="basic" initialValues={{ remember: false }}
                     // onFinish={onFinish} onFinishFailed={onFinishFailed} 
                     autoComplete="off"
+                    layout="vertical"
                 >
 
-                    <Form.Item >
+                    <Form.Item label="Avatar nhóm" style={{ display: 'flex', justifyContent: 'center' }}>
                         <Upload action="/" listType="picture-card"
                             beforeUpload={beforeUpload}
                             onChange={handleChange}
@@ -548,13 +499,13 @@ function MenuBar() {
                             </div>}
                         </Upload>
                     </Form.Item>
-                    <Form.Item >
+                    <Form.Item label="Tên nhóm">
                         <Input placeholder='Nhập tên nhóm' onChange={handleChangeNameGroup} />
                     </Form.Item>
-                    <Form.Item>
+                    {/* <Form.Item>
                         <StyledText style={{ fontWeight: 600 }}>Thêm bạn vào nhóm</StyledText>
                         <Input placeholder='Nhập tên, số điện thoại' style={{ borderRadius: '10px' }} />
-                    </Form.Item>
+                    </Form.Item> */}
                     <Divider style={{ margin: '16px 0 8px' }}></Divider>
                     <StyledText style={{ fontWeight: 600 }}>Trò chuyện gần đây</StyledText>
                     <StyledListRecentlyChat>

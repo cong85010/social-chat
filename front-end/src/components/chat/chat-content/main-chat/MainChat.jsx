@@ -44,11 +44,6 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
     //use your link here
     const sock = new SockJS(`${URL}/ws`);
     const stompClient = Stomp.over(sock);
-    const [text, setText] = useState('')
-
-    function handleOnEnter(text) {
-        console.log('enter', text)
-    }
 
     const users = [{
         _id: '1',
@@ -106,12 +101,6 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
         setIsOpenRename(false)
     }
 
-    const pickEmoji = ({ emoji }) => {
-
-        const formChat = document.getElementById('chatForm')
-        formChat.value += emoji;
-    }
-
     const sendChat = (text) => {
 
         let isFile = false
@@ -159,6 +148,34 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
         dispatch(updateSortConversations(userChat.id))
     };
 
+    const revertChat = (messageId) => {
+        const chatMessage = {
+            messageId,
+            accessToken: user.accessToken
+        };
+        stompClient.send("/app/chat.revertMessage", {}, JSON.stringify(chatMessage));
+    }
+
+
+    const handleReaction = (messageId, type) => {
+
+        const action = [
+            'like',
+            'love',
+            'haha',
+            'sad',
+            'angry'
+        ]
+
+        const chatMessage = {
+            messageId,
+            type: action.indexOf(type),
+            accessToken: user.accessToken
+        };
+        
+        stompClient.send("/app/chat.reactMessage", {}, JSON.stringify(chatMessage));
+    }
+
     useEffect(() => {
 
         if (!isConnected) {
@@ -168,6 +185,7 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
 
             stompClient.connect({}, function (frame) {
                 stompClient.subscribe(`/user/${user.id}/chat`, function (chat) {
+                    console.log(chat);
                     const message = JSON.parse(chat.body)
                     dispatch(updateContentChat(message))
                     form.resetFields()
@@ -203,7 +221,6 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
 
     //Scroll To Bottom
     const messageEl = useRef(null);
-    const [messages, setMessages] = useState([]);
 
     useEffect(() => {
         if (messageEl) {
@@ -213,6 +230,7 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
             });
         }
     }, [])
+
     return (
         <Wrapper isShowAbout={isShowAbout}>
             <HeaderWrapper>
@@ -253,7 +271,7 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
                 {
                     chat.content?.map(message =>
                         message.senderId === user.id ?
-                            <MyChat message={message} /> : <FriendChat message={message} />
+                            <MyChat message={message} revertChat={revertChat} /> : <FriendChat handleReaction={handleReaction} message={message} revertChat={revertChat} />
                     )
                 }
                 {/* <div /> */}
@@ -352,7 +370,7 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
                     <Form.Item>
                         <StyledButton loading={isLoading} onkey="back" style={{ left: '20px' }}>Nhắn tin</StyledButton>,
                         <StyledButton loading={isLoading} key="submit" style={{ left: '70px' }} >Gọi điện</StyledButton>
-                    </Form.Item> 
+                    </Form.Item>
                     <StyledBorder></StyledBorder>
                     <Form.Item>
                         <StyledContainInfor>
@@ -437,9 +455,9 @@ const IconContent = styled.div`
 `;
 /* Body Chat */
 const BodyChat = styled.div`
-    /* display: flex; */
+    display: flex;
     flex-direction: column;
-    /* justify-content: flex-end; */
+    justify-content: flex-end;
     width: 100%;
     height: calc(100% - 169px);
     background-color: ${bodyChat};

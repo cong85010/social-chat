@@ -5,7 +5,7 @@ import { Header, Content } from 'antd/lib/layout/layout';
 import { EditOutlined, BellOutlined, UsergroupAddOutlined, PushpinOutlined, SettingOutlined, PlusOutlined, CaretRightOutlined } from '@ant-design/icons';
 import { useState } from 'react';
 import Modal from 'antd/lib/modal/Modal';
-import { Button, Collapse, Divider, Form, Menu, Radio, Upload, message, Checkbox } from 'antd';
+import { Button, Collapse, Divider, Form, Menu, Radio, Upload, message, Checkbox, Space, Row, Popconfirm } from 'antd';
 import Input from 'antd/lib/input/Input';
 import MenuItem from 'antd/lib/menu/MenuItem';
 import AvatarItemListCheckedUsers from '~/components/menu/content/AvatarItemListCheckedUsers';
@@ -184,6 +184,30 @@ function AboutChat() {
             message.error('Cập nhật trưởng nhóm thất bại')
         }
     }
+
+
+    const confirm = async () => {
+        if (userChat.adminId === user.id) {
+            return;
+        }
+
+        try {
+            const { data } = await axios.post(`${URL}/api/conversation/out-conversation-group/${userChat.id}`, {}, {
+                headers: {
+                    Authorization: `Bearer ${getToken()}`,
+                    Accept: 'application/json',
+                },
+            })
+            dispatch(updateUserChat(data.data))
+            dispatch(getConversationAllByToken(getToken()))
+            handleCancelModalMember()
+            message.success('Rời nhóm thành công')
+        } catch (error) {
+            message.error('Rời nhóm thất bại')
+            handleCancelModalMember()
+        }
+    };
+
 
     return (<StyledSection>
         <StyledHeader>
@@ -391,7 +415,26 @@ function AboutChat() {
                 <Button loading={isLoading} key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalMember}>Hủy</Button>,
                 <Button loading={isLoading} key="submit" style={{ fontWeight: 700 }} type="primary" onClick={handleOKModalMember}>Đồng ý</Button>
             ]}>
-            <Button loading={isLoading} type='primary' style={{ marginRight: '8px' }} onClick={handleShowModalAddMemberInGroup}>Thêm thành viên mới</Button>
+            <Row justify="space-between">
+                <Button loading={isLoading} type='primary' style={{ marginRight: '8px' }} onClick={handleShowModalAddMemberInGroup}>Thêm thành viên mới</Button>
+                <Popconfirm
+                    placement="topRight"
+                    title={userChat.adminId === user.id ? 'Bạn cần thay trưởng nhóm trước khi rời nhóm' : "Xác nhận rời nhóm"}
+                    onConfirm={confirm}
+                    okText="Xác nhận"
+                    cancelText="Huỷ"
+                >
+                    <Button
+                        danger
+                        loading={isLoading}
+                        type='primary'
+                        style={{ marginRight: '8px' }}
+                    >
+                        Rời nhóm
+                    </Button>
+                </Popconfirm>
+
+            </Row>
             <Divider />
             <StyledResultAddFriend>
                 {userChat?.listMember?.map((userMember, index) => (

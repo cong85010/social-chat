@@ -9,7 +9,7 @@ import { UserAddOutlined } from '@ant-design/icons';
 import { Button, Avatar } from "antd";
 
 
-function AvatarAddFriend({ name, content, avatar, userCurrentId, id, isAdmin,adminId, handleRemoveConversation, handleUpdateAdminGroup }) {
+function AvatarAddFriend({ name, content, avatar, userCurrentId, id, isAdmin, adminId, handleRemoveConversation, handleUpdateAdminGroup }) {
     return (
         <Wrapper>
             <ItemContent>
@@ -20,8 +20,8 @@ function AvatarAddFriend({ name, content, avatar, userCurrentId, id, isAdmin,adm
                     <ContentName>
                         <CustomName>
                             {name}{isAdmin && id === adminId && <HeadGroup>Trưởng nhóm</HeadGroup>}
-                        </CustomName></ContentName>
-                    <ContentAbout style={{ justifyContent: 'flex-end' }}></ContentAbout>
+                        </CustomName>
+                    </ContentName>
                 </TitleContent>
                 {
                     isAdmin && id !== userCurrentId && <MoreContent>
@@ -29,8 +29,8 @@ function AvatarAddFriend({ name, content, avatar, userCurrentId, id, isAdmin,adm
                     </MoreContent>
                 }
                 {
-                    isAdmin && id !== userCurrentId && <MoreContent>
-                        <Button type='default' onClick={() => handleRemoveConversation(id)}>Đuổi ra</Button>
+                    isAdmin && id !== userCurrentId && <MoreContent style={{ marginLeft: '10px' }}>
+                        <Button type='default' onClick={() => handleRemoveConversation(id)}>Mời rời nhóm</Button>
                     </MoreContent>
                 }
             </Content>
@@ -73,7 +73,7 @@ const Content = styled.div`
         flex-direction: row;
     `;
 const TitleContent = styled.div`
-    width: 100%;
+    width: 150px;
     display: flex;
     justify-content: space-between;
     align-items: center;

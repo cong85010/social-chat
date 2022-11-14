@@ -1,5 +1,5 @@
 import { EllipsisOutlined } from '@ant-design/icons';
-import { Avatar, Button, Image, Popover } from 'antd';
+import { Avatar, Button, Image, Popconfirm, Popover } from 'antd';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
@@ -11,7 +11,7 @@ import { useState } from 'react';
 import { FacebookSelector } from 'react-reactions';
 
 
-function MyChat({ avatar, message, status }) {
+function MyChat({ message, revertChat }) {
     const { user } = useSelector(state => state.user)
     const [hover, setHover] = useState(false);
     const [hoverEmoji, setHoverEmoji] = useState(false);
@@ -48,7 +48,14 @@ function MyChat({ avatar, message, status }) {
 
                         <div className='react-icon' style={{ display: 'flex' }}>
                             {hover && <StyledHeartOutlined onMouseEnter={() => { setHoverEmoji(true) }} onMouseLeave={() => { setHoverEmoji(false) }} />}
-                            {hover && <StyledDeleteOutlined />}
+                            {hover && <Popconfirm
+                                placement="topRight"
+                                title={"Xác nhận thu hồi tin nhắn"}
+                                onConfirm={() => revertChat(message.id)}
+                                okText="Xác nhận"
+                                cancelText="Huỷ"
+                            ><StyledDeleteOutlined />
+                            </Popconfirm>}
 
                         </div>
                         {
