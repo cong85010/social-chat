@@ -319,7 +319,7 @@ function Login() {
                                 <Button loading={isLoading} key="back" onClick={handleCancelModalRegisterOTP}>
                                     Hủy
                                 </Button>,
-                                <Button loading={isLoading}  key="submit" onClick={handleShowModal} type="primary">
+                                <Button loading={isLoading} key="submit" onClick={handleShowModal} type="primary">
                                     Đồng ý
                                 </Button>,
                             ]}
@@ -349,7 +349,8 @@ function Login() {
                                         numInputs={6}
                                         separator={<span style={{ width: '8px' }}></span>}
                                     />
-                                    <StyledText className='abc'
+                                    <StyledText
+                                        className="abc"
                                         style={{
                                             textAlign: 'center',
                                             margin: '6px 0',
@@ -372,7 +373,12 @@ function Login() {
                                 <Button loading={isLoading} key="back" onClick={handleCancelModalResetPasswordOTP}>
                                     Hủy
                                 </Button>,
-                                <Button loading={isLoading} key="submit" onClick={handleShowModalNewPassword} type="primary">
+                                <Button
+                                    loading={isLoading}
+                                    key="submit"
+                                    onClick={handleShowModalNewPassword}
+                                    type="primary"
+                                >
                                     Đồng ý
                                 </Button>,
                             ]}
@@ -499,7 +505,12 @@ function Login() {
                                 <Button loading={isLoading} key="back" onClick={handleCancelModalForgetPassword}>
                                     Hủy
                                 </Button>,
-                                <Button loading={isLoading} key="submit" onClick={handleShowModalResetPasswordOTP} type="primary">
+                                <Button
+                                    loading={isLoading}
+                                    key="submit"
+                                    onClick={handleShowModalResetPasswordOTP}
+                                    type="primary"
+                                >
                                     Đồng ý
                                 </Button>,
                             ]}
@@ -511,18 +522,18 @@ function Login() {
                                 initialValues={{ remember: false }}
                                 autoComplete="off"
                             >
-                                <Form.Item>
-                                    <StyledText
-                                        style={{
-                                            display: 'flex',
-                                            justifyContent: 'center',
-                                            margin: '6px 0',
-                                            fontSize: '16px',
-                                            fontWeight: 500,
-                                        }}
-                                    >
-                                        Số điện thoại
-                                    </StyledText>
+                                <Form.Item 
+                                    label="Số điện thoại"
+                                    name="phoneNumber"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            pattern: /^0[0-9]{9}$/,
+                                            message: 'Vui lòng nhập số điện thoại của bạn!',
+                                        },
+                                    ]}
+                                    style={{margin:0}}
+                                >
                                     <Input />
                                 </Form.Item>
                             </StyledForm>
@@ -537,7 +548,12 @@ function Login() {
                                 <Button loading={isLoading} key="back" onClick={handleCancelModalNewPassword}>
                                     Hủy
                                 </Button>,
-                                <Button loading={isLoading} key="submit" onClick={handleOkModalNewPassword} type="primary">
+                                <Button
+                                    loading={isLoading}
+                                    key="submit"
+                                    onClick={handleOkModalNewPassword}
+                                    type="primary"
+                                >
                                     Đồng ý
                                 </Button>,
                             ]}
@@ -549,11 +565,39 @@ function Login() {
                                 initialValues={{ remember: false }}
                                 autoComplete="off"
                             >
-                                <Form.Item label="Nhập khẩu mới" name="newPassword">
-                                    <Input />
+                                <Form.Item
+                                    label="Nhập mật khẩu mới"
+                                    name="newPassword"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Nhập mật khẩu hiện tại của bạn!',
+                                        },
+                                    ]}
+                                >
+                                    <Input.Password />
                                 </Form.Item>
-                                <Form.Item label="Xác nhận mật khẩu mới" name="reNewPassword">
-                                    <Input />
+                                <Form.Item
+                                    label="Xác nhận mật khẩu mới"
+                                    name="reNewPassword"
+                                    dependencies={['newPassword']}
+                                    hasFeedback
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Nhập mật khẩu xác nhận của bạn!',
+                                        },
+                                        ({ getFieldValue }) => ({
+                                            validator(_, value) {
+                                                if (!value || getFieldValue('newPassword') === value) {
+                                                    return Promise.resolve();
+                                                }
+                                                return Promise.reject(new Error('Chưa khớp'));
+                                            },
+                                        }),
+                                    ]}
+                                >
+                                    <Input.Password />
                                 </Form.Item>
                             </StyledForm>
                         </StyledModal>

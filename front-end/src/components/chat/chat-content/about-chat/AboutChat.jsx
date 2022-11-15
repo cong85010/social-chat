@@ -236,13 +236,13 @@ function AboutChat() {
                 <Button loading={isLoading} key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalTurnOffMess} type="primary">Đồng ý</Button>
 
             ]}>
-            <StyledForm name="basic" labelCol={{ span: 8 }} wrapperCol={{ span: 18 }} initialValues={{ remember: false }}
+            <StyledForm name="basic" labelCol={{ span: 8 }} wrapperCol={{ span: 24 }} initialValues={{ remember: false }}
                 // onFinish={onFinish} onFinishFailed={onFinishFailed} 
                 autoComplete="off">
                 <Form.Item>
                     <StyledText>Bạn có chắc chắn muốn tắt thông báo hội thoại này:</StyledText>
                     <StyledRadioGroup>
-                        <StyledRadio value="option1">Trong 1 giờ</StyledRadio>
+                        <StyledRadio value="option1" >Trong 1 giờ</StyledRadio>
                         <StyledRadio value="option2">Trong 4 giờ</StyledRadio>
                         <StyledRadio value="option3">Trong 8 giờ</StyledRadio>
                         <StyledRadio value="option4">Đến khi tôi bật lại</StyledRadio>
@@ -522,10 +522,14 @@ const StyledRadio = styled(Radio)`
     &.ant-menu-item-selected{
         background-color: transparent;
     }
+    span{
+       font-size: 16px;
+    }
 `
 const StyledListRecentlyChat = styled.div`
     max-height: 26vh;
     overflow-y: scroll;
+    overflow-x: hidden;
     &::-webkit-scrollbar{
         position: relative;
         width: 6px;

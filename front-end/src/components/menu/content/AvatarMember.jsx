@@ -11,7 +11,8 @@ import { Button, Avatar } from "antd";
 
 function AvatarAddFriend({ name, content, avatar, userCurrentId, id, isAdmin, handleRemoveConversation, handleUpdateAdminGroup }) {
     const [isLoading, setIsLoading] = useState(false);
-    
+
+
     return (
         <Wrapper>
             <ItemContent>
@@ -22,8 +23,8 @@ function AvatarAddFriend({ name, content, avatar, userCurrentId, id, isAdmin, ha
                     <ContentName>
                         <CustomName>
                             {name}{isAdmin && id === userCurrentId && <HeadGroup>Trưởng nhóm</HeadGroup>}
-                        </CustomName></ContentName>
-                    <ContentAbout style={{ justifyContent: 'flex-end' }}></ContentAbout>
+                        </CustomName>
+                    </ContentName>
                 </TitleContent>
                 {
                     isAdmin && id !== userCurrentId && <MoreContent>
