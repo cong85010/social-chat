@@ -145,17 +145,7 @@ function Login() {
         <StyledContainer>
             <StyledHeader>
                 <ImgTitle>
-                    <StyledImg
-                        src="https://image.bnews.vn/MediaUpload/Org/2022/08/05/1200x600wa-20220805120828.png"
-                        alt=""
-                        style={{ left: '0' }}
-                    />
-                    <StyledImg
-                        src="https://stc-zaloid.zdn.vn/zaloid/client/images/zlogo.png"
-                        alt=""
-                        srcset=""
-                        style={{ right: '-40px' }}
-                    />
+                    <StyledImg src="/front-end/src/components/img/Logo.png" alt="" style={{ left: '0' }} />
                 </ImgTitle>
                 <StyledContact>
                     <span className="contact numPhone">
@@ -164,7 +154,7 @@ function Login() {
                     </span>
                     <span className="contact mail">
                         <MailOutlined />
-                        zalo@gmail.com
+                        bingchiling@gmail.com
                     </span>
                 </StyledContact>
             </StyledHeader>
@@ -522,7 +512,7 @@ function Login() {
                                 initialValues={{ remember: false }}
                                 autoComplete="off"
                             >
-                                <Form.Item 
+                                <Form.Item
                                     label="Số điện thoại"
                                     name="phoneNumber"
                                     rules={[
@@ -532,7 +522,7 @@ function Login() {
                                             message: 'Vui lòng nhập số điện thoại của bạn!',
                                         },
                                     ]}
-                                    style={{margin:0}}
+                                    style={{ margin: 0 }}
                                 >
                                     <Input />
                                 </Form.Item>
@@ -607,19 +597,19 @@ function Login() {
             <StyledFooter>
                 <FooterTitleLink>Dùng tài khoản Zalo để truy cập các ứng dụng mạng xã hội khác</FooterTitleLink>
                 <FooterLinkSocials>
-                    <a href="">
+                    <a href="https://www.instagram.com/">
                         <InstagramOutlined className="icon" />
                     </a>
-                    <a href="">
+                    <a href="https://www.facebook.com/">
                         <FacebookOutlined className="icon" />
                     </a>
-                    <a href="">
+                    <a href="https://www.youtube.com/">
                         <YoutubeOutlined className="icon" />
                     </a>
-                    <a href="">
+                    <a href="https://twitter.com/">
                         <TwitterOutlined className="icon" />
                     </a>
-                    <a href="">
+                    <a href="https://www.linkedin.com/">
                         <LinkedinOutlined className="icon" />
                     </a>
                 </FooterLinkSocials>
@@ -710,7 +700,7 @@ const StyledContact = styled.div`
     position: absolute;
     display: flex;
     justify-content: space-between;
-    width: 400px;
+    width: 470px;
     right: 70px;
     .contact {
         font-size: 20px;
