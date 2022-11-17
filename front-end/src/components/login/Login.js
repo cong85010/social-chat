@@ -22,6 +22,10 @@ import { SignInUser, SignUpUser } from '~/redux/slices/UserSlice';
 import { text } from '~/utils/color';
 import { URL } from '~/utils/constant';
 import background from '../img/background.jpg';
+import logo from '../img/Logo1.PNG';
+import title from '../img/Logo.png';
+
+
 import OtpInput from 'react-otp-input';
 
 function Login() {
@@ -145,7 +149,10 @@ function Login() {
         <StyledContainer>
             <StyledHeader>
                 <ImgTitle>
-                    <StyledImg src="/front-end/src/components/img/Logo.png" alt="" style={{ left: '0' }} />
+                    <StyledImg style={{ left: '0' }} />
+                </ImgTitle>
+                <ImgTitle>
+                    <StyledImg1 style={{ left: '75px' }} />
                 </ImgTitle>
                 <StyledContact>
                     <span className="contact numPhone">
@@ -282,8 +289,9 @@ function Login() {
                                     </Form.Item>
 
                                     <p style={{ textAlign: 'center' }}>
-                                        Bằng việc đăng kí, bạn đã đồng ý với Zalo về <a href="">Điều khoản dịch vụ</a> &{' '}
-                                        <a href="">Chính sách bảo mật</a>
+                                        Bằng việc đăng kí, bạn đã đồng ý với Bing Chiling về <a href=""> <br/>
+                                        Điều khoản dịch vụ</a> &
+                                        <a href=""> Chính sách bảo mật</a>
                                     </p>
                                     <br />
                                     <Row justify="center">
@@ -595,7 +603,7 @@ function Login() {
                 </BodyContentRight>
             </StyledContent>
             <StyledFooter>
-                <FooterTitleLink>Dùng tài khoản Zalo để truy cập các ứng dụng mạng xã hội khác</FooterTitleLink>
+                <FooterTitleLink>Dùng tài khoản Bing Chiling để truy cập các ứng dụng mạng xã hội khác</FooterTitleLink>
                 <FooterLinkSocials>
                     <a href="https://www.instagram.com/">
                         <InstagramOutlined className="icon" />
@@ -690,11 +698,27 @@ const ImgTitle = styled.div`
     padding: 0 50px;
 `;
 
-const StyledImg = styled.img`
+const StyledImg = styled.div`
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    width: 100px;
+    width: 66px;
+    height: 100%;
+    background-image: url(${logo});
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+`;
+const StyledImg1 = styled.div`
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 120%;
+    height: 100%;
+    background-image: url(${title});
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
 `;
 const StyledContact = styled.div`
     position: absolute;
