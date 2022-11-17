@@ -505,6 +505,7 @@ const BodyChat = styled.div`
     height: calc(100% - 169px);
     background-color: ${bodyChat};
     overflow-y: scroll;
+    overflow-x: hidden;
     padding-top: 490px;
     &::-webkit-scrollbar {
         position: relative;
