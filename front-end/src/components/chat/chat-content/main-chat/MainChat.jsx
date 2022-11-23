@@ -7,7 +7,7 @@ import {
     PhoneOutlined, PlusOutlined,
     SmileOutlined, UsergroupAddOutlined, VideoCameraOutlined
 } from '@ant-design/icons';
-import { Avatar, Button, Divider, Form, Input, Menu, Modal, Popover, Radio, Upload } from 'antd';
+import { Avatar, Button, Checkbox, Divider, Form, Input, Menu, Modal, Popover, Radio, Upload } from 'antd';
 import axios from 'axios';
 import { ObjectID } from 'bson';
 import React, { useEffect, useRef, useState } from 'react';
@@ -17,19 +17,22 @@ import SockJS from 'sockjs-client';
 import Stomp from 'stompjs';
 import styled from 'styled-components';
 import AvatarItemListCheckedUsers from '~/components/menu/content/AvatarItemListCheckedUsers';
-import { updateContentChat } from '~/redux/slices/ChatSlice';
-import { updateSortConversations } from '~/redux/slices/ConversationSlice';
+import { actionReact, updateContentChat } from '~/redux/slices/ChatSlice';
+import { getConversationAllByToken, updateSortConversations } from '~/redux/slices/ConversationSlice';
 import { bodyChat, border, borderInfor, primaryColor } from '~/utils/color';
 import { AvatarDefault, URL } from '~/utils/constant';
 import { ContentAbout, ContentName, HeaderIcon, IconItemInput, ItemContent } from '~/utils/Layout';
 import FriendChat from './frient-chat/FriendChat';
 import MyChat from './my-chat/MyChat';
 import ScrollToBottom, { useScrollToBottom, useSticky } from 'react-scroll-to-bottom';
+import { getToken } from '~/utils/function';
+
+const CheckboxGroup = Checkbox.Group;
 
 function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
     // Click change layout
     const [form] = Form.useForm();
-
+    const { id: userId, accessToken } = useSelector(state => state.user.user)
     const { userChat } = useSelector(state => state.userChat)
     const { chat } = useSelector(state => state.chat)
     const dispatch = useDispatch()
@@ -41,6 +44,13 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
     const [message, setMessage] = useState('');
     const { user } = useSelector(state => state.user)
     const [isLoading, setIsLoading] = useState(false);
+    const [listChecked, setListChecked] = useState([]);
+    const [findMyFriends, setFindMyFriends] = useState([]);
+    const [isLoadingCreate, setIsLoadingCreate] = useState(false);
+    const [imageUrl, setImageUrl] = useState(null);
+    const [nameGroup, setNameGroup] = useState("");
+
+
     //use your link here
     const sock = new SockJS(`${URL}/ws`);
     const stompClient = Stomp.over(sock);
@@ -67,10 +77,36 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
 
     const handleShowModalCreatGroup = () => {
         setIsOpen(true)
+        getMyFriends()
+
     }
 
-    const handleOKModalCreatGroup = () => {
-        setIsOpen(false)
+    const handleOKModalCreatGroup = async () => {
+        try {
+            setIsLoadingCreate(true)
+            const { data } = await axios.post(`${URL}/api/conversation/create-group`, {
+                avatar: imageUrl,
+                listMemberId: listChecked,
+                name: nameGroup,
+            }, {
+                headers: {
+                    Authorization: `Bearer ${getToken()}`,
+                    Accept: 'application/json',
+                },
+            })
+
+            if (data?.code === 200) {
+                dispatch(getConversationAllByToken(accessToken))
+                setImageUrl(null)
+            }
+
+            setIsLoadingCreate(false)
+            setIsOpen(false)
+        } catch (error) {
+            setIsLoadingCreate(false)
+            setIsOpen(false)
+            setImageUrl(null)
+        }
     }
 
     const handleCancelModalCreatGroup = () => {
@@ -100,6 +136,31 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
     const handleCancelModalRename = () => {
         setIsOpenRename(false)
     }
+    const getMyFriends = async () => {
+        try {
+            setIsLoading(true)
+            const { data } = await axios.get(`${URL}/api/user/get-list-friend`, {
+                headers: {
+                    Authorization: `Bearer ${getToken()}`,
+                    Accept: 'application/json',
+                },
+            })
+
+            setFindMyFriends(data?.data)
+        } catch (error) {
+            setFindMyFriends({
+                code: 404,
+                message: "Không có bạn bè nào"
+            })
+        }
+        setIsLoading(false)
+    };
+
+    const onChangeAddToGroup = (list) => {
+        setListChecked(list)
+    }
+
+
 
     const sendChat = (text) => {
 
@@ -159,20 +220,12 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
 
     const handleReaction = (messageId, type) => {
 
-        const action = [
-            'like',
-            'love',
-            'haha',
-            'sad',
-            'angry'
-        ]
-
         const chatMessage = {
             messageId,
-            type: action.indexOf(type),
+            typeReact: actionReact.indexOf(type),
             accessToken: user.accessToken
         };
-        
+
         stompClient.send("/app/chat.reactMessage", {}, JSON.stringify(chatMessage));
     }
 
@@ -230,7 +283,6 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
             });
         }
     }, [])
-
     return (
         <Wrapper isShowAbout={isShowAbout}>
             <HeaderWrapper>
@@ -274,11 +326,8 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
                             <MyChat message={message} revertChat={revertChat} /> : <FriendChat handleReaction={handleReaction} message={message} revertChat={revertChat} />
                     )
                 }
-                {/* <div /> */}
-
             </BodyChat>
-
-            <IconInput>
+            <IconInput >
                 <IconItemInput>
                     <StyledUpload {...props} fileList={fileList}>
                         <FileAddOutlined />
@@ -300,7 +349,9 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
                 // onChange={setText}
                 cleanOnEnter
                 onEnter={sendChat}
-                placeholder="Type a message"
+                placeholder="Nhập nội dung..."
+                onResize
+                maxLength="500"
             />
             < StyledModal title="Tạo nhóm" open={isOpen} onCancel={handleCancelModalCreatGroup} onOk={handleOKModalCreatGroup}
                 footer={
@@ -312,7 +363,7 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
                 <StyledForm name="basic" labelCol={{ span: 8 }} wrapperCol={{ span: 24 }} initialValues={{ remember: false }}
                     // onFinish={onFinish} onFinishFailed={onFinishFailed} 
                     autoComplete="off">
-                    <Form.Item valuePropName="fileList">
+                    <Form.Item valuePropName="fileList" style={{ textAlign: 'center' }}>
                         <Upload action="/upload.do" listType="picture-card">
                             <div>
                                 <PlusOutlined />
@@ -330,17 +381,17 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
                     <StyledListRecentlyChat>
                         <Form.Item>
                             <Menu>
-                                <StyledRadioGroup>
-                                    {users.map((user, index) => (
-                                        <StyledRadio value={index}>
+                                <CheckboxGroup onChange={onChangeAddToGroup}>
+                                    {findMyFriends?.map((user, index) => (
+                                        <Checkbox value={user.id} style={{ margin: 0 }}>
                                             <AvatarItemListCheckedUsers key={index}
-                                                index={user._id}
+                                                index={user.id}
                                                 name={user.name}
                                                 avatar={user.avatar}
                                             />
-                                        </StyledRadio>
+                                        </Checkbox>
                                     ))}
-                                </StyledRadioGroup>
+                                </CheckboxGroup>
                             </Menu>
 
                         </Form.Item>
@@ -455,13 +506,14 @@ const IconContent = styled.div`
 `;
 /* Body Chat */
 const BodyChat = styled.div`
-    display: flex;
+    /* display: flex; */
     flex-direction: column;
-    justify-content: flex-end;
+    /* justify-content: flex-end; */
     width: 100%;
     height: calc(100% - 169px);
     background-color: ${bodyChat};
     overflow-y: scroll;
+    padding-top: 490px;
     &::-webkit-scrollbar {
         position: relative;
         width: 6px;
@@ -514,6 +566,13 @@ const StyledForm = styled(Form)`
     }
     input{
         margin-top: 8px;
+    }
+    .ant-upload-list-picture-card .ant-upload-list-item-error{
+        border-color: ${primaryColor};
+    }
+    .ant-tooltip-inner,
+    .ant-tooltip-arrow{
+        display: none;
     }
 `
 const StyledText = styled.p`
@@ -647,5 +706,8 @@ const StyledUpload = styled(Upload)`
     }
     .ant-upload-list {
         z-index: 1;
+    }
+    .ant-upload-list-item-name{
+        color: ${primaryColor};
     }
 `

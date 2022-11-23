@@ -1,4 +1,4 @@
-import { Avatar, Image } from 'antd';
+import { Avatar, Badge, Image } from 'antd';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -6,8 +6,9 @@ import styled from 'styled-components';
 import { bgColor } from '~/utils/color';
 import { URL } from '~/utils/constant';
 import { AvatarDefault } from '~/utils/constant';
-import { DeleteOutlined, HeartFilled, HeartOutlined } from '@ant-design/icons';
+import { DeleteOutlined, HeartFilled, HeartOutlined, LikeFilled } from '@ant-design/icons';
 import { FacebookSelector } from 'react-reactions/lib/components/facebook/FacebookSelector';
+import { FacebookCounter, GithubCounter } from 'react-reactions';
 
 function FriendChat({ avatar, message, status, handleReaction }) {
     const { user } = useSelector(state => state.user)
@@ -30,29 +31,39 @@ function FriendChat({ avatar, message, status, handleReaction }) {
         </div>
     }
 
-    const handleReactionChange = (type) => {
-
-        handleReaction(message.id, type)
+    const handleReactionChange = () => {
+        handleReaction(message.id, 1)
     }
 
 
-    const ReactionIcon = ({ react }) => {
+    // const ReactionIcon = ({ reacts }) => {
+    //     console.log(reacts);
+    //     const react = reacts[0]
 
-        switch (react.type) {
-            case 0: return <>
-                <HeartFilled />
-                {react.counter}
-            </>
+    //     const getReact = ({ type, counter }) => {
+    //         switch (type) {
+    //             case 0: return <Badge count={counter}>
+    //                 <LikeFilled style={{ color: 'blue' }} />
+    //             </Badge>
+    //             case 1: return <Badge count={counter}>
+    //                 <HeartFilled style={{ color: 'red' }} />
+    //             </Badge>
+    //             case 2: return <Badge count={counter}>
+    //                 <HahaF style={{ color: 'red' }} />
+    //             </Badge>
+    //             case 3: return <Badge count={counter}>
+    //                 <HeartFilled style={{ color: 'red' }} />
+    //             </Badge>
+    //             default: return <></>
+    //         }
+    //     }
+    //     const list = []
+    //     reacts.map(cur => {
+    //         list.push(getReact(cur))
+    //     }, [])
 
-                break;
-
-            default: return <>
-                <HeartFilled />
-                {react.counter}
-            </>
-        }
-
-    }
+    //     return list;
+    // }
 
     return (
         <Wrapper>
@@ -68,15 +79,14 @@ function FriendChat({ avatar, message, status, handleReaction }) {
                 <MessageContent>
                     <MessageItem onMouseEnter={() => { setHover(true) }} onMouseLeave={() => { setHover(false) }}>
                         <MessageText >
-                            {message.type === 1 ? <MessageTypFile id={message?.id} /> :
-                                message.content[0]}
+                            {message?.type === 1 ? <MessageTypFile id={message?.id} /> :
+                                message?.content[0]}
                         </MessageText>
-                        <Reaction>
+                        <Reaction onClick={handleReactionChange}>
                             {
-                                message.reactList.map(react => <ReactionIcon react={react} />)
+                                message?.reactList ? <Heart><HeartFilled className='icon' style={{ color: '#f23', marginRight: '2px', fontSize: 20 }} /><span className='center'>{message?.reactList.length}</span></Heart> :
+                                    <HeartOutlined style={{ color: '#f23', marginRight: '10px', fontSize: 20 }} />
                             }
-                            <HeartOutlined style={{ color: '#f23', marginRight: '10px' }} />
-                            <FacebookSelector onSelect={handleReactionChange} />
                         </Reaction>
 
 
@@ -90,15 +100,24 @@ function FriendChat({ avatar, message, status, handleReaction }) {
 
 export default FriendChat;
 
+const Heart = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    position: relative;
+    background: #c9c9c9;
+    border-radius: 10px;
+    padding: 2px 4px;
+    border: 1px solid #321;
+`
+
 const Reaction = styled.div`
     display: flex;
     align-items: flex-end;
     padding: 0 10px;
     > div {
-        display: none !important;
-    }
-    &:hover  > div {
-        display: flex !important;
+
     }
 `
 

@@ -36,13 +36,24 @@ const initialState = {
     isError: false,
 };
 
+
+export const actionReact = [
+    'like',
+    'love',
+    'haha',
+    'wow',
+    'sad',
+    'angry'
+]
+
+
 const groupBy = function (xs) {
     const data = xs.reduce(function (rv, x) {
         (rv[x] = rv[x] || []).push(x);
         return rv;
     }, {});
 
-    return Object.entries(data).map(x => { return { type: x[0], counter: x[1].length } }).filter(x => x.counter !== 0)
+    return Object.entries(data).map(x => { return { emoji: actionReact[+x[0]] } }).filter(x => x.counter !== 0)
 };
 
 const ChatSlice = createSlice({
@@ -53,7 +64,7 @@ const ChatSlice = createSlice({
             const list = current(state)
             const chatIndex = list.chat.content.findIndex(c => c.id === action.payload.id)
             if (chatIndex !== -1) {
-                state.chat.content[chatIndex] = { ...action.payload, reactList: groupBy(action.payload.reactList) }
+                state.chat.content[chatIndex] = { ...action.payload }
 
             } else {
                 state.chat.content = [...state.chat.content, action.payload];
@@ -61,9 +72,14 @@ const ChatSlice = createSlice({
         },
     },
     extraReducers: (builder) => {
-        builder.addCase(getChatByConversationID.fulfilled, (state, { payload }) => {
-            state.chat = payload.data;
-            state.isLoading = false;
+        builder.addCase(getChatByConversationID.fulfilled, (state, action) => {
+            const temp = action.payload;
+            // temp.data.content = temp.data.content.map(content => ({
+            //     ...content,
+            //     reactList: groupBy(content.reactList)
+            // }))
+            console.log(temp.data);
+            state.chat = temp.data
             state.isSuccess = true;
             state.isError = false;
             state.message = 'Đăng nhập thành công';

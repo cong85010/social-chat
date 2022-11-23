@@ -8,6 +8,8 @@ import { getToken } from '~/utils/function';
 import { URL } from '~/utils/constant';
 
 function AvatarItemListAddFriend({ name, content, avatar, idFriend, closeModal }) {
+    const [isLoading, setIsLoading] = useState(false);
+    
     const updateStatus = async () => {
         await axios.post(`${URL}/api/friend-request/update-status`, {
             id: idFriend,
@@ -31,8 +33,8 @@ function AvatarItemListAddFriend({ name, content, avatar, idFriend, closeModal }
                     <ContentAbout>{content}</ContentAbout>
                 </TitleContent>
                 <MoreContent>
-                    <Button >Bỏ qua</Button>
-                    <Button type='primary' onClick={updateStatus}>Đồng ý</Button>
+                    <Button loading={isLoading} >Bỏ qua</Button>
+                    <Button loading={isLoading} type='primary' onClick={updateStatus}>Đồng ý</Button>
                 </MoreContent>
             </Content>
         </Wrapper>

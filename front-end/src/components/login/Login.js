@@ -316,10 +316,10 @@ function Login() {
                             onCancel={handleCancelModalRegisterOTP}
                             onOk={handleShowModal}
                             footer={[
-                                <Button key="back" onClick={handleCancelModalRegisterOTP}>
+                                <Button loading={isLoading} key="back" onClick={handleCancelModalRegisterOTP}>
                                     Hủy
                                 </Button>,
-                                <Button key="submit" onClick={handleShowModal} type="primary">
+                                <Button loading={isLoading}  key="submit" onClick={handleShowModal} type="primary">
                                     Đồng ý
                                 </Button>,
                             ]}
@@ -369,10 +369,10 @@ function Login() {
                             onCancel={handleCancelModalResetPasswordOTP}
                             onOk={handleShowModalNewPassword}
                             footer={[
-                                <Button key="back" onClick={handleCancelModalResetPasswordOTP}>
+                                <Button loading={isLoading} key="back" onClick={handleCancelModalResetPasswordOTP}>
                                     Hủy
                                 </Button>,
-                                <Button key="submit" onClick={handleShowModalNewPassword} type="primary">
+                                <Button loading={isLoading} key="submit" onClick={handleShowModalNewPassword} type="primary">
                                     Đồng ý
                                 </Button>,
                             ]}
@@ -420,7 +420,7 @@ function Login() {
                             open={isOpen}
                             onCancel={handleCancelModal}
                             footer={[
-                                <Button key="back" onClick={handleCancelModal}>
+                                <Button loading={isLoading} key="back" onClick={handleCancelModal}>
                                     Hủy
                                 </Button>,
                                 <Button
@@ -496,10 +496,10 @@ function Login() {
                             onCancel={handleCancelModalForgetPassword}
                             onOk={handleShowModalResetPasswordOTP}
                             footer={[
-                                <Button key="back" onClick={handleCancelModalForgetPassword}>
+                                <Button loading={isLoading} key="back" onClick={handleCancelModalForgetPassword}>
                                     Hủy
                                 </Button>,
-                                <Button key="submit" onClick={handleShowModalResetPasswordOTP} type="primary">
+                                <Button loading={isLoading} key="submit" onClick={handleShowModalResetPasswordOTP} type="primary">
                                     Đồng ý
                                 </Button>,
                             ]}
@@ -534,10 +534,10 @@ function Login() {
                             onCancel={handleCancelModalNewPassword}
                             onOk={handleOkModalNewPassword}
                             footer={[
-                                <Button key="back" onClick={handleCancelModalNewPassword}>
+                                <Button loading={isLoading} key="back" onClick={handleCancelModalNewPassword}>
                                     Hủy
                                 </Button>,
-                                <Button key="submit" onClick={handleOkModalNewPassword} type="primary">
+                                <Button loading={isLoading} key="submit" onClick={handleOkModalNewPassword} type="primary">
                                     Đồng ý
                                 </Button>,
                             ]}

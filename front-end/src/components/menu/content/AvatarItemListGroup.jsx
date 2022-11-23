@@ -6,6 +6,8 @@ import { ItemContent, ContentName, ContentAbout } from '../../../utils/Layout';
 import { AntDesignOutlined, UserOutlined } from '@ant-design/icons';
 
 function AvatarItemNoHours({ name, content, avatar, curentUser }) {
+    const [isLoading, setIsLoading] = useState(false);
+    
     return (
         <Wrapper>
             <ItemContent>
@@ -30,7 +32,7 @@ function AvatarItemNoHours({ name, content, avatar, curentUser }) {
                     <ContentAbout>{content}</ContentAbout>
                 </TitleContent>
                 <MoreContent>
-                    <Button type='primary'>Vào nhóm</Button>
+                    <Button loading={isLoading} type='primary'>Vào nhóm</Button>
                 </MoreContent>
             </Content>
 

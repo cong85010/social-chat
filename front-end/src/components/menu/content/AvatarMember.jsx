@@ -1,15 +1,14 @@
-import styled from 'styled-components';
+import { Avatar, Button } from "antd";
 import React, { useState } from 'react';
-import { textAbout, itemHover, border, textTitle } from '../../../utils/color';
-import { ItemContent, ContentName, ContentAbout } from '../../../utils/Layout';
-import { AvatarDefault, URL } from '~/utils/constant';
-import axios from 'axios';
-import { getToken } from '~/utils/function';
-import { UserAddOutlined } from '@ant-design/icons';
-import { Button, Avatar } from "antd";
+import styled from 'styled-components';
+import { AvatarDefault } from '~/utils/constant';
+import { itemHover, textTitle } from '../../../utils/color';
+import { ContentName, ItemContent } from '../../../utils/Layout';
 
 
 function AvatarAddFriend({ name, content, avatar, userCurrentId, id, isAdmin, adminId, handleRemoveConversation, handleUpdateAdminGroup }) {
+    const [isLoading, setIsLoading] = useState(false);
+
     return (
         <Wrapper>
             <ItemContent>
@@ -25,12 +24,12 @@ function AvatarAddFriend({ name, content, avatar, userCurrentId, id, isAdmin, ad
                 </TitleContent>
                 {
                     isAdmin && id !== userCurrentId && <MoreContent>
-                        <Button type='primary' onClick={() => handleUpdateAdminGroup(id)}>Thay TN</Button>
+                        <Button loading={isLoading} type='primary' onClick={() => handleUpdateAdminGroup(id)}>Thay TN</Button>
                     </MoreContent>
                 }
                 {
                     isAdmin && id !== userCurrentId && <MoreContent style={{ marginLeft: '10px' }}>
-                        <Button type='default' onClick={() => handleRemoveConversation(id)}>Mời rời nhóm</Button>
+                        <Button loading={isLoading} type='default' onClick={() => handleRemoveConversation(id)}>Mời rời nhóm</Button>
                     </MoreContent>
                 }
             </Content>

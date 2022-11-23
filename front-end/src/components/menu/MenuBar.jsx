@@ -717,6 +717,9 @@ const StyledForm = styled(Form)`
     input{
         margin-top: 8px;
     }
+    .ant-upload-list-picture-card .ant-upload-list-item-error{
+        border-color: ${primaryColor};
+    }
 `
 
 const StyledRadioGroup = styled(Radio.Group)`
