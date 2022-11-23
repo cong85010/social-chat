@@ -22,6 +22,10 @@ import { SignInUser, SignUpUser } from '~/redux/slices/UserSlice';
 import { text } from '~/utils/color';
 import { URL } from '~/utils/constant';
 import background from '../img/background.jpg';
+import logo from '../img/Logo1.PNG';
+import title from '../img/Logo.png';
+
+
 import OtpInput from 'react-otp-input';
 
 function Login() {
@@ -145,17 +149,10 @@ function Login() {
         <StyledContainer>
             <StyledHeader>
                 <ImgTitle>
-                    <StyledImg
-                        src="https://image.bnews.vn/MediaUpload/Org/2022/08/05/1200x600wa-20220805120828.png"
-                        alt=""
-                        style={{ left: '0' }}
-                    />
-                    <StyledImg
-                        src="https://stc-zaloid.zdn.vn/zaloid/client/images/zlogo.png"
-                        alt=""
-                        srcset=""
-                        style={{ right: '-40px' }}
-                    />
+                    <StyledImg style={{ left: '0' }} />
+                </ImgTitle>
+                <ImgTitle>
+                    <StyledImg1 style={{ left: '75px' }} />
                 </ImgTitle>
                 <StyledContact>
                     <span className="contact numPhone">
@@ -164,7 +161,7 @@ function Login() {
                     </span>
                     <span className="contact mail">
                         <MailOutlined />
-                        zalo@gmail.com
+                        bingchiling@gmail.com
                     </span>
                 </StyledContact>
             </StyledHeader>
@@ -292,8 +289,9 @@ function Login() {
                                     </Form.Item>
 
                                     <p style={{ textAlign: 'center' }}>
-                                        Bằng việc đăng kí, bạn đã đồng ý với Zalo về <a href="">Điều khoản dịch vụ</a> &{' '}
-                                        <a href="">Chính sách bảo mật</a>
+                                        Bằng việc đăng kí, bạn đã đồng ý với Bing Chiling về <a href=""> <br/>
+                                        Điều khoản dịch vụ</a> &
+                                        <a href=""> Chính sách bảo mật</a>
                                     </p>
                                     <br />
                                     <Row justify="center">
@@ -319,7 +317,7 @@ function Login() {
                                 <Button loading={isLoading} key="back" onClick={handleCancelModalRegisterOTP}>
                                     Hủy
                                 </Button>,
-                                <Button loading={isLoading}  key="submit" onClick={handleShowModal} type="primary">
+                                <Button loading={isLoading} key="submit" onClick={handleShowModal} type="primary">
                                     Đồng ý
                                 </Button>,
                             ]}
@@ -349,7 +347,8 @@ function Login() {
                                         numInputs={6}
                                         separator={<span style={{ width: '8px' }}></span>}
                                     />
-                                    <StyledText className='abc'
+                                    <StyledText
+                                        className="abc"
                                         style={{
                                             textAlign: 'center',
                                             margin: '6px 0',
@@ -372,7 +371,12 @@ function Login() {
                                 <Button loading={isLoading} key="back" onClick={handleCancelModalResetPasswordOTP}>
                                     Hủy
                                 </Button>,
-                                <Button loading={isLoading} key="submit" onClick={handleShowModalNewPassword} type="primary">
+                                <Button
+                                    loading={isLoading}
+                                    key="submit"
+                                    onClick={handleShowModalNewPassword}
+                                    type="primary"
+                                >
                                     Đồng ý
                                 </Button>,
                             ]}
@@ -499,7 +503,12 @@ function Login() {
                                 <Button loading={isLoading} key="back" onClick={handleCancelModalForgetPassword}>
                                     Hủy
                                 </Button>,
-                                <Button loading={isLoading} key="submit" onClick={handleShowModalResetPasswordOTP} type="primary">
+                                <Button
+                                    loading={isLoading}
+                                    key="submit"
+                                    onClick={handleShowModalResetPasswordOTP}
+                                    type="primary"
+                                >
                                     Đồng ý
                                 </Button>,
                             ]}
@@ -511,18 +520,18 @@ function Login() {
                                 initialValues={{ remember: false }}
                                 autoComplete="off"
                             >
-                                <Form.Item>
-                                    <StyledText
-                                        style={{
-                                            display: 'flex',
-                                            justifyContent: 'center',
-                                            margin: '6px 0',
-                                            fontSize: '16px',
-                                            fontWeight: 500,
-                                        }}
-                                    >
-                                        Số điện thoại
-                                    </StyledText>
+                                <Form.Item
+                                    label="Số điện thoại"
+                                    name="phoneNumber"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            pattern: /^0[0-9]{9}$/,
+                                            message: 'Vui lòng nhập số điện thoại của bạn!',
+                                        },
+                                    ]}
+                                    style={{ margin: 0 }}
+                                >
                                     <Input />
                                 </Form.Item>
                             </StyledForm>
@@ -537,7 +546,12 @@ function Login() {
                                 <Button loading={isLoading} key="back" onClick={handleCancelModalNewPassword}>
                                     Hủy
                                 </Button>,
-                                <Button loading={isLoading} key="submit" onClick={handleOkModalNewPassword} type="primary">
+                                <Button
+                                    loading={isLoading}
+                                    key="submit"
+                                    onClick={handleOkModalNewPassword}
+                                    type="primary"
+                                >
                                     Đồng ý
                                 </Button>,
                             ]}
@@ -549,11 +563,39 @@ function Login() {
                                 initialValues={{ remember: false }}
                                 autoComplete="off"
                             >
-                                <Form.Item label="Nhập khẩu mới" name="newPassword">
-                                    <Input />
+                                <Form.Item
+                                    label="Nhập mật khẩu mới"
+                                    name="newPassword"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Nhập mật khẩu hiện tại của bạn!',
+                                        },
+                                    ]}
+                                >
+                                    <Input.Password />
                                 </Form.Item>
-                                <Form.Item label="Xác nhận mật khẩu mới" name="reNewPassword">
-                                    <Input />
+                                <Form.Item
+                                    label="Xác nhận mật khẩu mới"
+                                    name="reNewPassword"
+                                    dependencies={['newPassword']}
+                                    hasFeedback
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Nhập mật khẩu xác nhận của bạn!',
+                                        },
+                                        ({ getFieldValue }) => ({
+                                            validator(_, value) {
+                                                if (!value || getFieldValue('newPassword') === value) {
+                                                    return Promise.resolve();
+                                                }
+                                                return Promise.reject(new Error('Chưa khớp'));
+                                            },
+                                        }),
+                                    ]}
+                                >
+                                    <Input.Password />
                                 </Form.Item>
                             </StyledForm>
                         </StyledModal>
@@ -561,21 +603,21 @@ function Login() {
                 </BodyContentRight>
             </StyledContent>
             <StyledFooter>
-                <FooterTitleLink>Dùng tài khoản Zalo để truy cập các ứng dụng mạng xã hội khác</FooterTitleLink>
+                <FooterTitleLink>Dùng tài khoản Bing Chiling để truy cập các ứng dụng mạng xã hội khác</FooterTitleLink>
                 <FooterLinkSocials>
-                    <a href="">
+                    <a href="https://www.instagram.com/">
                         <InstagramOutlined className="icon" />
                     </a>
-                    <a href="">
+                    <a href="https://www.facebook.com/">
                         <FacebookOutlined className="icon" />
                     </a>
-                    <a href="">
+                    <a href="https://www.youtube.com/">
                         <YoutubeOutlined className="icon" />
                     </a>
-                    <a href="">
+                    <a href="https://twitter.com/">
                         <TwitterOutlined className="icon" />
                     </a>
-                    <a href="">
+                    <a href="https://www.linkedin.com/">
                         <LinkedinOutlined className="icon" />
                     </a>
                 </FooterLinkSocials>
@@ -656,17 +698,33 @@ const ImgTitle = styled.div`
     padding: 0 50px;
 `;
 
-const StyledImg = styled.img`
+const StyledImg = styled.div`
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    width: 100px;
+    width: 66px;
+    height: 100%;
+    background-image: url(${logo});
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+`;
+const StyledImg1 = styled.div`
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 120%;
+    height: 100%;
+    background-image: url(${title});
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
 `;
 const StyledContact = styled.div`
     position: absolute;
     display: flex;
     justify-content: space-between;
-    width: 400px;
+    width: 470px;
     right: 70px;
     .contact {
         font-size: 20px;
