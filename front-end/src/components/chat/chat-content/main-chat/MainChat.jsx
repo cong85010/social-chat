@@ -7,14 +7,12 @@ import {
     PhoneOutlined, PlusOutlined,
     SmileOutlined, UsergroupAddOutlined, VideoCameraOutlined
 } from '@ant-design/icons';
-import { Avatar, Button, Checkbox, Divider, Form, Input, Menu, Modal, Popover, Radio, Upload } from 'antd';
+import { Avatar, Button, Checkbox, Divider, Form, Input, Menu, Modal, Popover, Radio, Row, Spin, Upload } from 'antd';
 import axios from 'axios';
 import { ObjectID } from 'bson';
 import React, { useEffect, useRef, useState } from 'react';
 import InputEmoji from 'react-input-emoji';
 import { useDispatch, useSelector } from 'react-redux';
-import SockJS from 'sockjs-client';
-import Stomp from 'stompjs';
 import styled from 'styled-components';
 import AvatarItemListCheckedUsers from '~/components/menu/content/AvatarItemListCheckedUsers';
 import { actionReact, updateContentChat } from '~/redux/slices/ChatSlice';
@@ -29,15 +27,15 @@ import { getToken } from '~/utils/function';
 
 const CheckboxGroup = Checkbox.Group;
 
-function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
+function MainChat({ isShowAbout, setIsShowAbout, selectedUser, stompClient }) {
     // Click change layout
     const [form] = Form.useForm();
     const { id: userId, accessToken } = useSelector(state => state.user.user)
     const { userChat } = useSelector(state => state.userChat)
-    const { chat } = useSelector(state => state.chat)
+    const { chat, isLoading: isLoadingChat } = useSelector(state => state.chat)
     const dispatch = useDispatch()
     const [isOpen, setIsOpen] = useState(false);
-    const [isConnected, setIsConected] = useState(false);
+    const [isConnected, setIsConnected] = useState(false);
     const [isOpenInFor, setIsOpenInFor] = useState(false);
     const [isOpenRename, setIsOpenRename] = useState(false);
     const [fileList, setFileList] = useState([]);
@@ -49,11 +47,6 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
     const [isLoadingCreate, setIsLoadingCreate] = useState(false);
     const [imageUrl, setImageUrl] = useState(null);
     const [nameGroup, setNameGroup] = useState("");
-
-
-    //use your link here
-    const sock = new SockJS(`${URL}/ws`);
-    const stompClient = Stomp.over(sock);
 
     const users = [{
         _id: '1',
@@ -84,6 +77,10 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
     const handleOKModalCreatGroup = async () => {
         try {
             setIsLoadingCreate(true)
+            if (listChecked.length <= 2) {
+                message.error('Thành viên nhóm ít nhất là 2!')
+                return;
+            }
             const { data } = await axios.post(`${URL}/api/conversation/create-group`, {
                 avatar: imageUrl,
                 listMemberId: listChecked,
@@ -163,7 +160,6 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
 
 
     const sendChat = (text) => {
-
         let isFile = false
         let _content = text;
         if (fileList.length) {
@@ -189,15 +185,17 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
                 data: bodyFormData,
                 headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${user.accessToken}`, },
             }).then(({ data }) => {
+                const type = (/\.(gif|jpe?g|tiff?|png|webp|bmp)$/i).test(fileList[0]?.name) ? 1 : 2;
+                console.log(data.data);
                 dispatch(updateContentChat({
                     ...data.data,
                     senderId: user.id,
-                    type: 1,
+                    type,
                 }))
                 const chatMessage = {
                     conversationId: userChat.id,
                     content: [data.data.url],
-                    type: isFile ? 1 : 0,
+                    type: isFile ? type : 0,
                     accessToken: user.accessToken
                 };
                 stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(chatMessage));
@@ -230,24 +228,25 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
     }
 
     useEffect(() => {
+        // console.log('====================================');
+        // console.log(stompClient);
+        // console.log('====================================');
+        // if (stompClient?.connected) {
+        //     sock.onopen = function () {
+        //         console.log('open');
+        //     }
 
-        if (!isConnected) {
-            sock.onopen = function () {
-                console.log('open');
-            }
+        //     stompClient.connect({}, function (frame) {
+        //         stompClient.subscribe(`/user/${user.id}/chat`, function (chat) {
+        //             const message = JSON.parse(chat.body)
+        //             dispatch(updateContentChat(message))
+        //             form.resetFields()
+        //         });
+        //     });
+        //     setIsConnected(true)
+        // }
 
-            stompClient.connect({}, function (frame) {
-                stompClient.subscribe(`/user/${user.id}/chat`, function (chat) {
-                    console.log(chat);
-                    const message = JSON.parse(chat.body)
-                    dispatch(updateContentChat(message))
-                    form.resetFields()
-                });
-            });
-            setIsConected(true)
-        }
-
-    }, [sock, isConnected, stompClient, user.id, dispatch, form])
+    }, [stompClient])
 
     const handleChange = (info) => {
         let newFileList = [...info.fileList];
@@ -283,6 +282,11 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
             });
         }
     }, [])
+
+    const getNameBySeederId = (seederID) => {
+        return userChat?.listMember?.find(x => x.id === seederID)?.name || "Chưa xác định"
+    }
+
     return (
         <Wrapper isShowAbout={isShowAbout}>
             <HeaderWrapper>
@@ -319,11 +323,12 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
                 </ContentHeaderChat>
             </HeaderWrapper>
             {/* Body Chat */}
+
             <BodyChat ref={messageEl}>
-                {
+                {isLoadingChat ? <Row justify='center'><Spin /> </Row> :
                     chat.content?.map(message =>
                         message.senderId === user.id ?
-                            <MyChat message={message} revertChat={revertChat} /> : <FriendChat handleReaction={handleReaction} message={message} revertChat={revertChat} />
+                            <MyChat message={message} revertChat={revertChat} /> : <FriendChat getNameBySeederId={getNameBySeederId} handleReaction={handleReaction} message={message} revertChat={revertChat} />
                     )
                 }
             </BodyChat>
@@ -333,7 +338,7 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
                         <FileAddOutlined />
                     </StyledUpload>
                 </IconItemInput>
-                <IconItemInput>
+                {/* <IconItemInput>
                     <StyledUpload action="https://www.mocky.io/v2/5cc8019d300000980a055e76" style={{ position: 'relative' }}
                         accept=".png,.jpg,.doc,.jpeg">
                         <FolderAddOutlined />
@@ -341,7 +346,7 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, userID }) {
                 </IconItemInput>
                 <IconItemInput>
                     <FileExclamationOutlined />
-                </IconItemInput>
+                </IconItemInput> */}
             </IconInput>
             <InputEmoji
                 id='chatForm'

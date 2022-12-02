@@ -3,17 +3,43 @@ import React, { useState } from 'react';
 import MenuBar from '../menu/MenuBar';
 import MainChat from './chat-content/main-chat/MainChat';
 import AboutChat from './chat-content/about-chat/AboutChat';
+
 import { useEffect } from 'react';
+import SockJS from 'sockjs-client';
+import Stomp from 'stompjs';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateContentChat } from '~/redux/slices/ChatSlice';
+import { URL } from '~/utils/constant';
+//use your link here
+const sock = new SockJS(`${URL}/ws`);
+const stompClient = Stomp.over(sock);
 
 function Chat() {
     const [isShowAbout, setIsShowAbout] = useState(false);
+    const { user } = useSelector(state => state.user)
+    const dispatch = useDispatch()
+
+    useEffect(() => {
+        sock.onopen = function () {
+            console.log('open');
+        }
+
+        stompClient.connect({}, function (frame) {
+            stompClient.subscribe(`/user/${user.id}/chat`, function (chat) {
+                const message = JSON.parse(chat.body)
+                dispatch(updateContentChat(message))
+            });
+        });
+
+    }, [stompClient, user?.id])
+
     return (
         <Wrapper>
             <MenuInner>
                 <MenuBar />
             </MenuInner>
             <SlideNav>
-                <MainChat {...{ isShowAbout, setIsShowAbout }} />
+                <MainChat {...{ isShowAbout, setIsShowAbout, stompClient }} />
                 {isShowAbout && <AboutChat />}
             </SlideNav>
         </Wrapper>

@@ -205,7 +205,7 @@ function AboutChat() {
 
             ></StyledAvatar>
             <StyledNameEdit className='name-user-about-chat'>
-                <StyledName>{userChat.name}</StyledName>
+                <StyledName style={{ textAlign: 'center' }}>{userChat.name}</StyledName>
                 <EditOutlined className='icon-edit' onClick={handleShowModalRename} />
             </StyledNameEdit>
             <StyledFunction>

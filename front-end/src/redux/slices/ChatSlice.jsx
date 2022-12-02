@@ -63,7 +63,7 @@ const ChatSlice = createSlice({
         updateContentChat: (state, action) => {
             const list = current(state)
             const chatIndex = list.chat.content.findIndex(c => c.id === action.payload.id)
-            if (chatIndex !== -1) {
+            if (chatIndex !== -1 && action.payload.id !== null) {
                 state.chat.content[chatIndex] = { ...action.payload }
 
             } else {
@@ -74,15 +74,11 @@ const ChatSlice = createSlice({
     extraReducers: (builder) => {
         builder.addCase(getChatByConversationID.fulfilled, (state, action) => {
             const temp = action.payload;
-            // temp.data.content = temp.data.content.map(content => ({
-            //     ...content,
-            //     reactList: groupBy(content.reactList)
-            // }))
-            console.log(temp.data);
             state.chat = temp.data
             state.isSuccess = true;
             state.isError = false;
             state.message = 'Đăng nhập thành công';
+            state.isLoading = false;
         });
         builder.addCase(getChatByConversationID.pending, (state, { payload }) => {
             state.isLoading = true;

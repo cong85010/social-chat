@@ -1,4 +1,4 @@
-import { EllipsisOutlined } from '@ant-design/icons';
+import { DownloadOutlined, EllipsisOutlined, FileOutlined, HeartFilled } from '@ant-design/icons';
 import { Avatar, Button, Image, Popconfirm, Popover } from 'antd';
 import React from 'react';
 import { useSelector } from 'react-redux';
@@ -17,11 +17,32 @@ function MyChat({ message, revertChat }) {
     const [hoverEmoji, setHoverEmoji] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
-    const MessageTypFile = () => {
+    if (!message) {
+        return <></>
+    }
+
+    const getFileName = message.content && message.content[0]?.slice(67);
+
+    const MessageTypeIMG = () => {
+        if (message.content && message.content[0] == 'Tin nhắn đã được thu hồi') {
+            return 'Tin nhắn đã được thu hồi'
+        }
 
         return <div>
-            {message.fileName}<br />
-            <Image src={message.url} alt="hinh anh" width={100} height={100} />
+            {getFileName}<br />
+            <Image src={message.url || message.content[0]} alt="hinh anh" width={100} height={100} />
+        </div>
+    }
+
+    const MessageTypeFile = () => {
+
+        if (message.content[0] == 'Tin nhắn đã được thu hồi') {
+            return 'Tin nhắn đã được thu hồi'
+        }
+
+        return <div>Tên: {getFileName}<br />
+            <img alt="hinhaanh" src="https://play-lh.googleusercontent.com/58sr3IvX1wiE8ei_BICqPgywKgZ5DPpmRL_2YuZINnFlz_9D2os9PmueeZPPtZno0zk" width={50} />
+            <a onClick={() => window.open(message.content && message.content[0])} href={message.content[0]} download target="_blank" rel="noreferrer"><DownloadOutlined style={{ fontSize: 25, marginLeft: 30 }} /></a>
         </div>
     }
 
@@ -44,13 +65,18 @@ function MyChat({ message, revertChat }) {
                 <MessageContent>
                     <MessageItem onMouseEnter={() => { setHover(true) }} onMouseLeave={() => { setHover(false) }}>
                         <MessageText >
-                            {message.type === 1 ? <MessageTypFile /> :
-                                message.content[0]}
+                            {message.type === 1 ? <MessageTypeIMG /> :
+                                message.type === 2 ? <MessageTypeFile /> :
+                                    message.content[0]}
                         </MessageText>
-
+                        <Reaction>
+                            {
+                                message?.reactList?.length > 0 ? <Heart><HeartFilled className='icon' style={{ color: '#f23', marginRight: '2px', fontSize: 15 }} /><span className='center'>{message?.reactList.length}</span></Heart> :
+                                    <></>
+                            }
+                        </Reaction>
                         <div className='react-icon' style={{ display: 'flex' }}>
-                            {hover && <StyledHeartOutlined onMouseEnter={() => { setHoverEmoji(true) }} onMouseLeave={() => { setHoverEmoji(false) }} />}
-                            {hover && <Popconfirm
+                            {hover && message.content && message.content[0] !== 'Tin nhắn đã được thu hồi' && <Popconfirm
                                 placement="topRight"
                                 title={"Xác nhận thu hồi tin nhắn"}
                                 onConfirm={() => revertChat(message.id)}
@@ -60,10 +86,6 @@ function MyChat({ message, revertChat }) {
                             </Popconfirm>}
 
                         </div>
-                        {
-                            hoverEmoji && <FacebookSelector />
-                            // <FacebookSelector />
-                        }
                     </MessageItem>
 
                 </MessageContent>
@@ -74,6 +96,26 @@ function MyChat({ message, revertChat }) {
 
 export default MyChat;
 
+const Reaction = styled.div`
+    display: flex;
+    align-items: flex-end;
+    padding: 0 10px;
+    > div {
+
+    }
+`
+
+const Heart = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    position: relative;
+    background: #c9c9c9;
+    border-radius: 10px;
+    padding: 2px 4px;
+    border: 1px solid #807e7c;
+`
 const Wrapper = styled.div`
     display: flex;
     justify-content: flex-start;

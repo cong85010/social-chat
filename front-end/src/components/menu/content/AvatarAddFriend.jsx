@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import React, { useState } from 'react';
-import { Avatar, message } from 'antd';
+import { Avatar, message, Spin } from 'antd';
 import { textAbout, itemHover, border, textTitle } from '../../../utils/color';
 import { ItemContent, ContentName, ContentAbout } from '../../../utils/Layout';
 import { AvatarDefault, URL } from '~/utils/constant';
@@ -8,15 +8,21 @@ import axios from 'axios';
 import { getToken } from '~/utils/function';
 import { UserAddOutlined } from '@ant-design/icons';
 function AvatarAddFriend({ name, content, avatar, curentUser, id }) {
+    const [isLoading, setIsLoading] = useState(false)
     const handleAddFriend = async () => {
+        setIsLoading(true)
         const data = await axios.post(`${URL}/api/friend-request/send-to-user/${id}`, {}, {
             headers: {
                 Authorization: `Bearer ${getToken()}`,
                 Accept: 'application/json',
             },
-        }).catch(err => message.error(err?.response?.data?.messageError))
+        }).catch(err => {
+            setIsLoading(false)
+            message.error(err?.response?.data?.messageError)
+        })
         if (data.code === 200)
             message.success("Gửi lời mời thành công")
+        setIsLoading(false)
     }
     return (
         <Wrapper>
@@ -26,7 +32,12 @@ function AvatarAddFriend({ name, content, avatar, curentUser, id }) {
             <Content>
                 <TitleContent>
                     <ContentName>{name}</ContentName>
-                    <ContentAbout style={{ justifyContent: 'flex-end' }}><UserAddOutlined style={{ fontSize: 30 }} onClick={handleAddFriend} /> </ContentAbout>
+                    <ContentAbout style={{ justifyContent: 'flex-end' }}>
+                        {
+                            isLoading ? <Spin /> : <UserAddOutlined style={{ fontSize: 30 }} onClick={handleAddFriend} />
+                        }
+
+                    </ContentAbout>
                 </TitleContent>
             </Content>
         </Wrapper>

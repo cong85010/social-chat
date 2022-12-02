@@ -1,8 +1,8 @@
 import {
-    AudioOutlined, CloudOutlined, ContactsOutlined, LogoutOutlined, MessageOutlined, PlusOutlined, UserAddOutlined,
+    AudioOutlined, CloudOutlined, ContactsOutlined, LogoutOutlined, MessageOutlined, PlusOutlined, ReloadOutlined, UserAddOutlined,
     UsergroupAddOutlined
 } from '@ant-design/icons';
-import { Button, Checkbox, Divider, Form, Input, Menu, Modal, Radio, Skeleton, Space, Tabs, Upload } from 'antd';
+import { Button, Checkbox, Divider, Empty, Form, Input, Menu, message, Modal, Radio, Row, Skeleton, Space, Spin, Tabs, Tooltip, Upload } from 'antd';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -48,6 +48,7 @@ function MenuBar() {
     const [nameGroup, setNameGroup] = useState("");
     const [listChecked, setListChecked] = useState([]);
     const [isLoadingCreate, setIsLoadingCreate] = useState(false);
+    const [reloadFlag, setReloadFlag] = useState(false);
 
     // search moi them
     const [q, setQ] = useState("");
@@ -60,11 +61,7 @@ function MenuBar() {
         } else {
             setConversationsFilleter(conversations)
         }
-    }, [q])
-
-    useEffect(() => {
-        setConversationsFilleter(conversations)
-    }, [conversations])
+    }, [q, conversations])
 
     const handleChange = (info) => {
         if (info.file.status === 'uploading') {
@@ -200,10 +197,14 @@ function MenuBar() {
 
     const handleOKModalCreatGroup = async () => {
         try {
+            if (listChecked.length < 2) {
+                message.error('Thành viên nhóm ít nhất là 2!')
+                return;
+            }
             setIsLoadingCreate(true)
             const listUser = findMyFriends.filter(x => listChecked.includes(x.id))
             console.log(listUser);
-            const nameGroupTemp = listUser.reduce((sum, cur) => sum += cur.name + ", ", "")
+            const nameGroupTemp = listUser.reduce((sum, cur) => sum += cur.name + ", ", "") + ' và bạn'
             const { data } = await axios.post(`${URL}/api/conversation/create-group`, {
                 avatar: imageUrl,
                 listMemberId: listChecked,
@@ -218,6 +219,7 @@ function MenuBar() {
             if (data?.code === 200) {
                 dispatch(getConversationAllByToken(accessToken))
                 setImageUrl(null)
+                message.success('Tạo nhóm thành công')
             }
 
             setIsLoadingCreate(false)
@@ -251,7 +253,8 @@ function MenuBar() {
 
     useEffect(() => {
         dispatch(getConversationAllByToken(accessToken))
-    }, [])
+        getMyFriends()
+    }, [reloadFlag])
 
     useEffect(() => {
         if (conversations.length) {
@@ -262,7 +265,7 @@ function MenuBar() {
 
     //  Search
     const { Search } = Input;
-     //  Tab Menu
+    //  Tab Menu
     const tabMenu = () => {
         return (
             <StyledTabs defaultActiveKey="1">
@@ -312,7 +315,7 @@ function MenuBar() {
                         <StyledText>Danh sách kết bạn</StyledText>
                     </StyledList>
                 </StyledGroup>
-                <StyledGroup onClick={handleShowModalListGroup}>
+                {/* <StyledGroup onClick={handleShowModalListGroup}>
                     <StyledList>
                         <StyleImg src='https://chat.zalo.me/assets/group@2x.2d184edd797db8782baa0d5c7a786ba0.png'></StyleImg>
                         <StyledText>Danh sách nhóm</StyledText>
@@ -326,7 +329,7 @@ function MenuBar() {
                         <StyleImg src='https://res-zalo.zadn.vn/upload/media/2021/6/4/2_1622800570007_369788.jpg' style={{ borderRadius: '50%' }}></StyleImg>
                         <StyledText>Cloud của tôi</StyledText>
                     </StyledList>
-                </StyledGroup>
+                </StyledGroup> */}
                 <StyledGroup style={{ height: '60px', lineHeight: '60px', paddingLeft: '10px', borderTop: '1px solid #e5e7eb', flexDirection: 'column' }}>
                     <h3>Danh sách bạn bè</h3>
                     {findMyFriends?.map((user, index) => (
@@ -342,8 +345,6 @@ function MenuBar() {
         );
 
     };
-
-    console.log(conversationsFilleter);
 
     const bottomItems = [
         {
@@ -370,6 +371,11 @@ function MenuBar() {
                     </MenuIcon>
                     <MenuIcon>
                         <ContactsOutlined onClick={() => setOption('contact')} />
+                    </MenuIcon>
+                    <MenuIcon>
+                        <Tooltip title="Làm mới">
+                            <ReloadOutlined onClick={() => setReloadFlag(!reloadFlag)} />
+                        </Tooltip>
                     </MenuIcon>
                     {/* <MenuIcon>
                         <CheckSquareOutlined onClick={() => setOption('check')} />
@@ -400,7 +406,7 @@ function MenuBar() {
             {/* Modal Add friend */}
             <StyledModal title="Tìm bạn bè" open={friend} onCancel={handleShowModalCancelAddFriend} onOk={handleShowModalOKAddFriend}
                 footer={[
-                    <Button loading={isLoading} key="back" style={{ fontWeight: 700 }} onClick={handleShowModalCancelAddFriend}>Hủy</Button>,
+                    <Button key="back" style={{ fontWeight: 700 }} onClick={handleShowModalCancelAddFriend}>Hủy</Button>,
                     // <Button key="submit" style={{ fontWeight: 700 }} type="primary" htmlType='submit' >Tìm kiếm</Button>
                 ]}>
                 <StyledForm
@@ -426,10 +432,11 @@ function MenuBar() {
                 <StyledResultAddFriend>
                     <StyledText>Kết quả tìm kiếm</StyledText>
                     {
-                        findFriend?.code === 200 ?
-                            <AvatarAddFriend
-                                {...findFriend?.data}
-                            ></AvatarAddFriend> : findFriend?.message
+                        isLoading ? <Row justify='center'> <Spin /> </Row> :
+                            findFriend?.code === 200 ?
+                                <AvatarAddFriend
+                                    {...findFriend?.data}
+                                ></AvatarAddFriend> : findFriend?.message
                     }
                 </StyledResultAddFriend>
             </StyledModal>
@@ -442,15 +449,16 @@ function MenuBar() {
                 ]}>
 
                 <StyledResultAddFriend>
-                    {friendInvited?.code === 200 ? friendInvited.data?.map((user, index) => (
-                        <AvatarItemListAddFriend
-                            key={index}
-                            index={user._id}
-                            idFriend={user.id}
-                            closeModal={handleShowModalCancelListAdd}
-                            {...user.fromUser}
-                        ></AvatarItemListAddFriend>
-                    )) : friendInvited?.message}
+                    {friendInvited?.code === 200 ? friendInvited.data.length === 0 ? <Empty /> :
+                        friendInvited.data?.map((user, index) => (
+                            <AvatarItemListAddFriend
+                                key={index}
+                                index={user._id}
+                                idFriend={user.id}
+                                closeModal={handleShowModalCancelListAdd}
+                                {...user.fromUser}
+                            ></AvatarItemListAddFriend>
+                        )) : friendInvited?.message}
                 </StyledResultAddFriend>
             </StyledModal>
 
@@ -475,7 +483,7 @@ function MenuBar() {
             <StyledModal centered title="Tạo nhóm" open={isOpen}
                 footer={[
                     <Button loading={isLoading} key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalCreatGroup}>Hủy</Button>,
-                    <Button key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalCreatGroup} type="primary" loading={isLoadingCreate}>Tạo nhóm</Button>
+                    <Button disabled={listChecked.length < 2} key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalCreatGroup} type="primary" loading={isLoadingCreate}>Tạo nhóm</Button>
 
                 ]}
                 destroyOnClose

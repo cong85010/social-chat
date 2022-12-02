@@ -1,4 +1,4 @@
-import { Avatar, Badge, Image } from 'antd';
+import { Avatar, Badge, Image, Spin } from 'antd';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -6,64 +6,55 @@ import styled from 'styled-components';
 import { bgColor } from '~/utils/color';
 import { URL } from '~/utils/constant';
 import { AvatarDefault } from '~/utils/constant';
-import { DeleteOutlined, HeartFilled, HeartOutlined, LikeFilled } from '@ant-design/icons';
+import { DeleteOutlined, DownloadOutlined, HeartFilled, HeartOutlined, LikeFilled } from '@ant-design/icons';
 import { FacebookSelector } from 'react-reactions/lib/components/facebook/FacebookSelector';
 import { FacebookCounter, GithubCounter } from 'react-reactions';
 
-function FriendChat({ avatar, message, status, handleReaction }) {
+function FriendChat({ avatar, message, status, handleReaction, getNameBySeederId }) {
     const { user } = useSelector(state => state.user)
     const [hover, setHover] = useState(false);
-    const [hoverEmoji, setHoverEmoji] = useState(false);
-    const MessageTypFile = (id) => {
-        // useEffect(() => {
-        //     axios({
-        //         method: "get",
-        //         url: `${URL}/api/message/get-message-file/${message.content[0]}`,
-        //         headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${user.accessToken}`, },
-        //     }).then(res => console.log(res))
-        // }, [id])
+    const [isLoading, setIsLoading] = useState(false);
+    if (!message) {
+        return <></>
+    }
 
-        console.log(message);
-        if (!message?.content?.length) return <></>
+    const handleReactionChange = async () => {
+        try {
+            setIsLoading(true)
+            await handleReaction(message.id, 1)
+            setTimeout(() => {
+                setIsLoading(false)
+            }, 300)
+        } catch (error) {
+            setIsLoading(false)
+        }
+    }
+
+    const getFileName = message?.content[0]?.slice(67);
+    const MessageTypeIMG = () => {
+        if (message?.content[0] == 'Tin nhắn đã được thu hồi') {
+            return 'Tin nhắn đã được thu hồi'
+        }
+
         return <div>
-            <Image src={message?.content[0]} alt="hinh anh" width={100} height={100} />
-            <p> {message?.fileName}</p>
+            {getFileName}<br />
+            <Image src={message?.url || message?.content[0]} alt="hinh anh" width={100} height={100} />
         </div>
     }
 
-    const handleReactionChange = () => {
-        handleReaction(message.id, 1)
+    const MessageTypeFile = () => {
+
+        if (message.content[0] == 'Tin nhắn đã được thu hồi') {
+            return 'Tin nhắn đã được thu hồi'
+        }
+
+
+        return <div>Tên: {getFileName}<br />
+            <img alt="hinhaanh" src="https://play-lh.googleusercontent.com/58sr3IvX1wiE8ei_BICqPgywKgZ5DPpmRL_2YuZINnFlz_9D2os9PmueeZPPtZno0zk" width={50} />
+            <a onClick={() => window.open(message.content && message.content[0])} href={message.url} download target="_blank" rel="noreferrer"><DownloadOutlined style={{ fontSize: 25, marginLeft: 30 }} /></a>
+        </div>
     }
 
-
-    // const ReactionIcon = ({ reacts }) => {
-    //     console.log(reacts);
-    //     const react = reacts[0]
-
-    //     const getReact = ({ type, counter }) => {
-    //         switch (type) {
-    //             case 0: return <Badge count={counter}>
-    //                 <LikeFilled style={{ color: 'blue' }} />
-    //             </Badge>
-    //             case 1: return <Badge count={counter}>
-    //                 <HeartFilled style={{ color: 'red' }} />
-    //             </Badge>
-    //             case 2: return <Badge count={counter}>
-    //                 <HahaF style={{ color: 'red' }} />
-    //             </Badge>
-    //             case 3: return <Badge count={counter}>
-    //                 <HeartFilled style={{ color: 'red' }} />
-    //             </Badge>
-    //             default: return <></>
-    //         }
-    //     }
-    //     const list = []
-    //     reacts.map(cur => {
-    //         list.push(getReact(cur))
-    //     }, [])
-
-    //     return list;
-    // }
 
     return (
         <Wrapper>
@@ -76,20 +67,21 @@ function FriendChat({ avatar, message, status, handleReaction }) {
             </ItemContent>
             {/* Mesage */}
             <MessageContainer>
+                <span>{getNameBySeederId(message?.senderId)}</span>
                 <MessageContent>
                     <MessageItem onMouseEnter={() => { setHover(true) }} onMouseLeave={() => { setHover(false) }}>
                         <MessageText >
-                            {message?.type === 1 ? <MessageTypFile id={message?.id} /> :
-                                message?.content[0]}
+                            {message.type === 1 ? <MessageTypeIMG /> :
+                                message.type === 2 ? <MessageTypeFile /> :
+                                    message.content[0]}
                         </MessageText>
                         <Reaction onClick={handleReactionChange}>
-                            {
-                                message?.reactList ? <Heart><HeartFilled className='icon' style={{ color: '#f23', marginRight: '2px', fontSize: 20 }} /><span className='center'>{message?.reactList.length}</span></Heart> :
-                                    <HeartOutlined style={{ color: '#f23', marginRight: '10px', fontSize: 20 }} />
+                            {isLoading ? <Spin /> :
+                                ('Tin nhắn đã được thu hồi' !== message?.content[0]) &&
+                                (message?.reactList ? <Heart><HeartFilled className='icon' style={{ color: '#f23', marginRight: '2px', fontSize: 20 }} /><span className='center'>{message?.reactList.length}</span></Heart> :
+                                    <HeartOutlined style={{ color: '#f23', marginRight: '10px', fontSize: 20 }} />)
                             }
                         </Reaction>
-
-
                     </MessageItem>
                 </MessageContent>
             </MessageContainer>
@@ -118,6 +110,9 @@ const Reaction = styled.div`
     padding: 0 10px;
     > div {
 
+    }
+    :hover {
+        cursor: pointer;
     }
 `
 

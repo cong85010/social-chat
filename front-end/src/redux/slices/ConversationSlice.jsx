@@ -43,7 +43,7 @@ const ConversationSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder.addCase(getConversationAllByToken.fulfilled, (state, { payload }) => {
-            state.conversations = payload.data.filter(x => x.listMember.length >= 2);
+            state.conversations = payload.data.filter(x => x.listMember.length >= 2 || x.name === 'Hệ thống');
             state.isLoading = false;
             state.isSuccess = true;
             state.isError = false;

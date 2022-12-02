@@ -39,6 +39,7 @@ function AvatarItem({ name, listMember = [], avatar, type, userIdCurrent, id, la
         }
         alt={avatar}
         title={getNameConversation()}
+        tp
         subtitle={lastMessage?.content[0]}
         date={new Date(lastMessage?.timeSend)}
         unread={0}
