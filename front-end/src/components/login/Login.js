@@ -25,7 +25,6 @@ import background from '../img/background.jpg';
 import logo from '../img/Logo1.PNG';
 import title from '../img/Logo.png';
 
-
 import OtpInput from 'react-otp-input';
 
 function Login() {
@@ -269,7 +268,7 @@ function Login() {
                                     name="basic"
                                     labelCol={{ span: 8 }}
                                     wrapperCol={{ span: 16 }}
-                                    initialValues={{ phoneNumber: '0123456789' }}
+                                    initialValues={{ phoneNumber: '0368795600' }}
                                     onFinish={handleCheckPhone}
                                     autoComplete="off"
                                     form={formPhone}
@@ -289,9 +288,13 @@ function Login() {
                                     </Form.Item>
 
                                     <p style={{ textAlign: 'center' }}>
-                                        Bằng việc đăng kí, bạn đã đồng ý với Bing Chiling về <a href=""> <br/>
-                                        Điều khoản dịch vụ</a> &
-                                        <a href=""> Chính sách bảo mật</a>
+                                        Bằng việc đăng kí, bạn đã đồng ý với Bing Chiling về{' '}
+                                        <a href="">
+                                            {' '}
+                                            <br />
+                                            Điều khoản dịch vụ
+                                        </a>{' '}
+                                        &<a href=""> Chính sách bảo mật</a>
                                     </p>
                                     <br />
                                     <Row justify="center">

@@ -141,7 +141,10 @@ function MenuBar() {
                 },
             })
 
-            setFindMyFriends(data?.data)
+            if (data?.data || data?.code === 200) {
+                setFindMyFriends(data?.data)
+            }
+
         } catch (error) {
             setFindMyFriends({
                 code: 404,
@@ -202,7 +205,7 @@ function MenuBar() {
                 return;
             }
             setIsLoadingCreate(true)
-            const listUser = findMyFriends.filter(x => listChecked.includes(x.id))
+            const listUser = findMyFriends?.filter(x => listChecked.includes(x.id))
             console.log(listUser);
             const nameGroupTemp = listUser.reduce((sum, cur) => sum += cur.name + ", ", "") + ' và bạn'
             const { data } = await axios.post(`${URL}/api/conversation/create-group`, {
@@ -375,6 +378,11 @@ function MenuBar() {
                     <MenuIcon>
                         <Tooltip title="Làm mới">
                             <ReloadOutlined onClick={() => setReloadFlag(!reloadFlag)} />
+                        </Tooltip>
+                    </MenuIcon>
+                    <MenuIcon>
+                        <Tooltip title="Kết nối">
+                            <CloudOutlined />
                         </Tooltip>
                     </MenuIcon>
                     {/* <MenuIcon>
