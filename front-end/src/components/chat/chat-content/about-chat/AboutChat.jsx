@@ -3,16 +3,16 @@ import { border, borderInfor, text } from '~/utils/color';
 import styled from 'styled-components';
 import { Header, Content } from 'antd/lib/layout/layout';
 import { EditOutlined, BellOutlined, UsergroupAddOutlined, PushpinOutlined, SettingOutlined, PlusOutlined, CaretRightOutlined } from '@ant-design/icons';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Modal from 'antd/lib/modal/Modal';
-import { Button, Collapse, Divider, Form, Menu, Radio, Upload, message, Checkbox, Space, Row, Popconfirm } from 'antd';
+import { Button, Collapse, Divider, Form, Menu, Radio, Upload, message, Checkbox, Space, Row, Popconfirm, Image, Spin } from 'antd';
 import Input from 'antd/lib/input/Input';
 import MenuItem from 'antd/lib/menu/MenuItem';
 import AvatarItemListCheckedUsers from '~/components/menu/content/AvatarItemListCheckedUsers';
 import AvatarMember from '~/components/menu/content/AvatarMember';
 import { type } from '@testing-library/user-event/dist/type';
 import { useSelector, useDispatch } from 'react-redux';
-import { AvatarDefault, URL } from '~/utils/constant';
+import { AvatarDefault, beforeUpload, getBase64, URL } from '~/utils/constant';
 import { getToken } from '~/utils/function';
 import axios from 'axios';
 import { updateUserChat } from '~/redux/slices/UserChatSlice';
@@ -33,6 +33,12 @@ function AboutChat() {
     const [findMyFriends, setFindMyFriends] = useState([]);
     const [listChecked, setListChecked] = useState([]);
     const dispatch = useDispatch();
+    const [imageUrl, setImageUrl] = useState(null);
+    const [nameGroup, setNameGroup] = useState("");
+    const [formInfo] = Form.useForm();
+    const [isLoadingCreate, setIsLoadingCreate] = useState(false);
+    const { conversations, isLoading: isLoadingConversations } = useSelector(state => state.conversation)
+    const [isLoadingRemove, setIsLoadingRemove] = useState(false);
 
     const getMyFriends = async () => {
         try {
@@ -44,7 +50,10 @@ function AboutChat() {
                 },
             })
 
-            setFindMyFriends(data?.data)
+            if (data?.data) {
+                setFindMyFriends(data?.data)
+            }
+
         } catch (error) {
             setFindMyFriends({
                 code: 404,
@@ -132,6 +141,7 @@ function AboutChat() {
 
     const handleRemoveConversation = async (user_id_remove) => {
         try {
+            setIsLoadingRemove(true)
             const { data } = await axios.post(`${URL}/api/conversation/remove-member-conversation-group`, {
                 conversationId: userChat.id,
                 memberId: user_id_remove,
@@ -146,13 +156,16 @@ function AboutChat() {
             handleCancelModalMember()
             message.success('Đuổi thành công')
             handleCancelModalMember()
+            setIsLoadingRemove(false)
         } catch (error) {
             message.error('Đuổi thất bại')
+            setIsLoadingRemove(false)
         }
     }
 
     const handleUpdateAdminGroup = async (user_id_admin) => {
         try {
+            setIsLoadingRemove(true)
             const { data } = await axios.post(`${URL}/api/conversation/change-admin-conversation-group`, {
                 conversationId: userChat.id,
                 adminId: user_id_admin,
@@ -164,9 +177,11 @@ function AboutChat() {
             })
             dispatch(updateUserChat(data.data))
             dispatch(getConversationAllByToken(getToken()))
+            setIsLoadingRemove(false)
 
             message.success('Cập nhật trưởng nhóm thành công')
         } catch (error) {
+            setIsLoadingRemove(false)
             message.error('Cập nhật trưởng nhóm thất bại')
         }
     }
@@ -178,6 +193,7 @@ function AboutChat() {
         }
 
         try {
+            setIsLoadingRemove(true)
             const { data } = await axios.post(`${URL}/api/conversation/out-conversation-group/${userChat.id}`, {}, {
                 headers: {
                     Authorization: `Bearer ${getToken()}`,
@@ -188,11 +204,70 @@ function AboutChat() {
             dispatch(getConversationAllByToken(getToken()))
             handleCancelModalMember()
             message.success('Rời nhóm thành công')
+            setIsLoadingRemove(false)
         } catch (error) {
             message.error('Rời nhóm thất bại')
             handleCancelModalMember()
+            setIsLoadingRemove(false)
         }
     };
+
+    const onFinish = async () => {
+        try {
+            setIsLoadingCreate(true)
+            const { data } = await axios.post(`${URL}/api/conversation/update`, {
+                avatar: imageUrl,
+                name: nameGroup,
+                id: userChat.id
+            }, {
+                headers: {
+                    Authorization: `Bearer ${getToken()}`,
+                    Accept: 'application/json',
+                },
+            })
+
+            if (data?.code === 200) {
+                dispatch(getConversationAllByToken(getToken()))
+                setImageUrl(null)
+                handleCancelModalRename()
+                formInfo.resetFields()
+            }
+
+            setIsLoadingCreate(false)
+        } catch (error) {
+            setIsLoadingCreate(false)
+            setImageUrl(null)
+        }
+    }
+
+    const handleChange = (info) => {
+        if (info.file.status === 'uploading') {
+            setIsLoading(true);
+            return;
+        }
+
+        if (info.file.status === 'removed') {
+            setImageUrl(null)
+            return;
+        }
+
+        // Get this url from response in real world.
+        getBase64(info.file.originFileObj, (url) => {
+            setIsLoading(false);
+            setImageUrl(url);
+        });
+    };
+
+
+    const handleChangeNameGroup = (text) => {
+        setNameGroup(text.target.value)
+    }
+
+    useEffect(() => {
+        formInfo.setFieldValue('avatar', userChat.avatar)
+        setImageUrl(userChat.avatar);
+        formInfo.setFieldValue('name', userChat.name)
+    }, [formInfo, userChat])
 
 
     return (<StyledSection>
@@ -200,15 +275,29 @@ function AboutChat() {
             <h3>Thông tin hội thoại</h3>
         </StyledHeader>
         <StyledContent>
-            <StyledAvatar onClick={handleShowModalInfor}
-                src={userChat?.avatar || AvatarDefault}
+            {isLoadingConversations ? <Spin /> :
+                <>
+                    <StyledAvatar
+                        src={userChat?.avatar || AvatarDefault}
 
-            ></StyledAvatar>
-            <StyledNameEdit className='name-user-about-chat'>
-                <StyledName style={{ textAlign: 'center' }}>{userChat.name}</StyledName>
-                <EditOutlined className='icon-edit' onClick={handleShowModalRename} />
-            </StyledNameEdit>
-            <StyledFunction>
+                    ></StyledAvatar>
+                    <StyledNameEdit className='name-user-about-chat'>
+                        <StyledName style={{ textAlign: 'center' }}>{userChat.name}</StyledName>
+                        {userChat.type === 1 && <EditOutlined className='icon-edit' onClick={handleShowModalRename} />}
+                    </StyledNameEdit></>
+            }
+
+            {
+                userChat.type === 1 && <StyledFunctionIcon>
+                    <StyledFunctionTurnOff onClick={handleShowModalMember}>
+                        <SettingOutlined />
+                        <StyledFunctionName>Quản lí nhóm</StyledFunctionName>
+                    </StyledFunctionTurnOff>
+
+                </StyledFunctionIcon>
+
+            }
+            {/* <StyledFunction>
                 <StyledFunctionIcon>
                     <StyledFunctionTurnOff onClick={handleShowModalTurnOffMess}>
                         <BellOutlined />
@@ -221,15 +310,8 @@ function AboutChat() {
                         <StyledFunctionName>Ghim hội thoại</StyledFunctionName>
                     </StyledFunctionTurnOff>
                 </StyledFunctionIcon>
-                <StyledFunctionIcon>
-                    <StyledFunctionTurnOff onClick={handleShowModalMember}>
-                        <SettingOutlined />
-                        <StyledFunctionName>Quản lí nhóm</StyledFunctionName>
-                    </StyledFunctionTurnOff>
-
-                </StyledFunctionIcon>
-
-            </StyledFunction>
+        
+            </StyledFunction> */}
             <StyledCollapse
                 bordered={false}
                 defaultActiveKey={['0']}
@@ -329,19 +411,35 @@ function AboutChat() {
                 </Form.Item>
             </StyledForm>
         </StyledModal>
-        <StyledModal centered title="Đặt tên gợi nhớ" open={isOpenRename} onCancel={handleCancelModalRename} onOk={handleOKModalRename}
+        <StyledModal centered title="Cập nhật" open={isOpenRename} onCancel={handleCancelModalRename}
+            destroyOnClose
             footer={[
                 <Button loading={isLoading} key="back" style={{ fontWeight: 700 }} onClick={handleCancelModalRename}>Hủy</Button>,
-                <Button loading={isLoading} key="submit" style={{ fontWeight: 700 }} onClick={handleOKModalRename} type="primary">Đồng ý</Button>
+                <Button loading={isLoadingCreate} key="submit" style={{ fontWeight: 700 }} onClick={onFinish} type="primary">Đồng ý</Button>
 
             ]}>
-            <StyledForm name="basic" labelCol={{ span: 8 }} wrapperCol={{ span: 24 }} initialValues={{ remember: false }}
-                // onFinish={onFinish} onFinishFailed={onFinishFailed} 
-                autoComplete="off">
-                <Form.Item>
-                    <StyledAvatar style={{ position: 'relative', left: '42%' }}></StyledAvatar>
-                    <StyledText style={{ display: 'flex', justifyContent: 'center', margin: '6px 0', fontSize: '16px', fontWeight: 500 }}>Hãy đặt một cái tên dễ nhớ</StyledText>
-                    <Input />
+            <StyledForm
+                form={formInfo}
+                name="basic"
+                wrapperCol={{ span: 24 }}
+                // onFinish={onFinish}
+                autoComplete="off"
+                layout="vertical"
+            >
+                <Form.Item name="avatar" style={{ display: 'flex', justifyContent: 'center' }}>
+                    <Upload action="/" listType="picture-card"
+                        beforeUpload={beforeUpload}
+                        onChange={handleChange}
+                        maxCount={1}
+                    >
+                        {!imageUrl ? <div>
+                            <PlusOutlined />
+                            <div style={{ marginTop: 8 }}>Upload</div>
+                        </div> : <img src={imageUrl} width={100} alt="avatar" />}
+                    </Upload>
+                </Form.Item>
+                <Form.Item label="Tên nhóm" name="name">
+                    <Input placeholder='Nhập tên nhóm' onChange={handleChangeNameGroup} />
                 </Form.Item>
             </StyledForm>
         </StyledModal>
@@ -371,6 +469,7 @@ function AboutChat() {
 
             </Row>
             <Divider />
+            {isLoadingRemove && <Row justify='center'><Spin /></Row>}
             <StyledResultAddFriend>
                 {userChat?.listMember?.map((userMember, index) => (
                     <AvatarMember
@@ -384,6 +483,7 @@ function AboutChat() {
                         adminId={userChat.adminId}
                         handleRemoveConversation={handleRemoveConversation}
                         handleUpdateAdminGroup={handleUpdateAdminGroup}
+                        isLoading={isLoadingRemove}
                     ></AvatarMember>
                 ))}
             </StyledResultAddFriend>
@@ -406,7 +506,7 @@ function AboutChat() {
                     <Form.Item>
                         <Menu>
                             <CheckboxGroup onChange={onChangeAddToGroup}>
-                                {findMyFriends.filter(u => !userChat?.listMember.find(x => x.id === u.id))?.map((user, index) => (
+                                {findMyFriends?.filter(u => !userChat?.listMember.find(x => x.id === u.id))?.map((user, index) => (
                                     <Checkbox value={user.id}>
                                         <AvatarItemListCheckedUsers key={index}
                                             index={user.id}
@@ -422,7 +522,7 @@ function AboutChat() {
                 </StyledListRecentlyChat>
             </StyledForm>
         </StyledModal>
-    </StyledSection>);
+    </StyledSection >);
 }
 
 export default AboutChat;
@@ -466,9 +566,6 @@ const StyledContent = styled(Content)`
 `
 
 const StyledAvatar = styled.img`
-    background-image: url('https://img4.thuthuatphanmem.vn/uploads/2021/06/04/hinh-nen-chu-cho-cory-chan-ngan-tren-duong-ray_032045111.jpg');
-    background-position: center;
-    background-repeat: no-repeat;
     background-size: cover;
     width: 64px;
     height: 64px;

@@ -24,6 +24,7 @@ import FriendChat from './frient-chat/FriendChat';
 import MyChat from './my-chat/MyChat';
 import ScrollToBottom, { useScrollToBottom, useSticky } from 'react-scroll-to-bottom';
 import { getToken } from '~/utils/function';
+import { saveUserChat } from '~/redux/slices/UserChatSlice';
 
 const CheckboxGroup = Checkbox.Group;
 
@@ -47,6 +48,7 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, stompClient }) {
     const [isLoadingCreate, setIsLoadingCreate] = useState(false);
     const [imageUrl, setImageUrl] = useState(null);
     const [nameGroup, setNameGroup] = useState("");
+    const { conversations, isLoading: isLoadingConversations } = useSelector(state => state.conversation)
 
     const users = [{
         _id: '1',
@@ -111,7 +113,7 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, stompClient }) {
     }
 
     const handleShowModalInfor = () => {
-        setIsOpenInFor(true)
+        // setIsOpenInFor(true)
     }
 
     const handleOKModalInfor = () => {
@@ -187,11 +189,11 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, stompClient }) {
             }).then(({ data }) => {
                 const type = (/\.(gif|jpe?g|tiff?|png|webp|bmp)$/i).test(fileList[0]?.name) ? 1 : 2;
                 console.log(data.data);
-                dispatch(updateContentChat({
-                    ...data.data,
-                    senderId: user.id,
-                    type,
-                }))
+                // dispatch(updateContentChat({
+                //     ...data.data,
+                //     senderId: user.id,
+                //     type,
+                // }))
                 const chatMessage = {
                     conversationId: userChat.id,
                     content: [data.data.url],
@@ -283,8 +285,21 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, stompClient }) {
         }
     }, [])
 
+    useEffect(() => {
+        if (conversations.length && !isLoadingConversations) {
+            console.log('====================================');
+            console.log(conversations);
+            console.log('====================================');
+            dispatch(saveUserChat({ userChat: conversations[0] }))
+        }
+    }, [isLoadingConversations])
+
     const getNameBySeederId = (seederID) => {
         return userChat?.listMember?.find(x => x.id === seederID)?.name || "Chưa xác định"
+    }
+
+    const getAvatarBySeederId = (seederID) => {
+        return userChat?.listMember?.find(x => x.id === seederID)?.avatar || "Chưa xác định"
     }
 
     return (
@@ -293,14 +308,16 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, stompClient }) {
                 <ItemContent onClick={handleShowModalInfor}>
                     <Avatar
                         size={48}
-                        src={userChat.avatar || AvatarDefault}
+                        src={userChat?.avatar || AvatarDefault}
                     />
                 </ItemContent>
                 <ContentHeaderChat>
-                    <UserContent>
-                        <ContentName>{userChat.name}</ContentName>
-                        <ContentAbout>{userChat.timeConnect}</ContentAbout>
-                    </UserContent>
+                    {
+                        isLoadingConversations ? <Spin /> : <UserContent>
+                            <ContentName>{userChat?.name}</ContentName>
+                            <ContentAbout>{userChat?.timeConnect}</ContentAbout>
+                        </UserContent>
+                    }
 
                     <IconContent>
                         <HeaderIcon >
@@ -325,10 +342,10 @@ function MainChat({ isShowAbout, setIsShowAbout, selectedUser, stompClient }) {
             {/* Body Chat */}
 
             <BodyChat ref={messageEl}>
-                {isLoadingChat ? <Row justify='center'><Spin /> </Row> :
+                {(isLoadingChat || isLoadingConversations) ? <Row justify='center'><Spin /> </Row> :
                     chat.content?.map(message =>
                         message.senderId === user.id ?
-                            <MyChat message={message} revertChat={revertChat} /> : <FriendChat getNameBySeederId={getNameBySeederId} handleReaction={handleReaction} message={message} revertChat={revertChat} />
+                            <MyChat message={message} revertChat={revertChat} /> : <FriendChat avatar={getAvatarBySeederId(message?.senderId)} getNameBySeederId={getNameBySeederId} handleReaction={handleReaction} message={message} revertChat={revertChat} />
                     )
                 }
             </BodyChat>

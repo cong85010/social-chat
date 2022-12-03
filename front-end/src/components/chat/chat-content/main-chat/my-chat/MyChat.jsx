@@ -1,4 +1,4 @@
-import { DownloadOutlined, EllipsisOutlined, FileOutlined, HeartFilled } from '@ant-design/icons';
+import { DownloadOutlined, EllipsisOutlined, EyeOutlined, FileOutlined, HeartFilled } from '@ant-design/icons';
 import { Avatar, Button, Image, Popconfirm, Popover } from 'antd';
 import React from 'react';
 import { useSelector } from 'react-redux';
@@ -36,13 +36,13 @@ function MyChat({ message, revertChat }) {
 
     const MessageTypeFile = () => {
 
-        if (message.content[0] == 'Tin nhắn đã được thu hồi') {
+        if (message?.content && message.content[0] == 'Tin nhắn đã được thu hồi') {
             return 'Tin nhắn đã được thu hồi'
         }
 
         return <div>Tên: {getFileName}<br />
             <img alt="hinhaanh" src="https://play-lh.googleusercontent.com/58sr3IvX1wiE8ei_BICqPgywKgZ5DPpmRL_2YuZINnFlz_9D2os9PmueeZPPtZno0zk" width={50} />
-            <a onClick={() => window.open(message.content && message.content[0])} href={message.content[0]} download target="_blank" rel="noreferrer"><DownloadOutlined style={{ fontSize: 25, marginLeft: 30 }} /></a>
+            <a href={message?.content && message.content[0]} target="_blank" rel="noreferrer"><EyeOutlined style={{ fontSize: 25, marginLeft: 30 }} /></a>
         </div>
     }
 

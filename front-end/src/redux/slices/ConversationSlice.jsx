@@ -1,6 +1,6 @@
 import { URL } from '~/utils/constant';
 
-const { createSlice, createAsyncThunk } = require('@reduxjs/toolkit');
+const { createSlice, createAsyncThunk, current } = require('@reduxjs/toolkit');
 const { default: axios } = require('axios');
 
 export const getConversationAllByToken = createAsyncThunk('conversation/getAll', async (accessToken, thunkAPI) => {
@@ -27,6 +27,7 @@ const initialState = {
     isLoading: false,
     isSuccess: false,
     isError: false,
+    // isFirst: true,
 };
 
 const ConversationSlice = createSlice({
@@ -45,11 +46,16 @@ const ConversationSlice = createSlice({
         builder.addCase(getConversationAllByToken.fulfilled, (state, { payload }) => {
             state.conversations = payload.data.filter(x => x.listMember.length >= 2 || x.name === 'Hệ thống');
             state.isLoading = false;
+            state.isFirst = false;
             state.isSuccess = true;
             state.isError = false;
             state.message = 'Đăng nhập thành công';
         });
         builder.addCase(getConversationAllByToken.pending, (state, { payload }) => {
+            // const cur = current(state)
+            // if (cur.isFirst) {
+            //     state.isLoading = true;
+            // }
             state.isLoading = true;
             state.isSuccess = false;
             state.isError = false;

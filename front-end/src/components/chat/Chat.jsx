@@ -10,28 +10,33 @@ import Stomp from 'stompjs';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateContentChat } from '~/redux/slices/ChatSlice';
 import { URL } from '~/utils/constant';
-//use your link here
-const sock = new SockJS(`${URL}/ws`);
-const stompClient = Stomp.over(sock);
 
 function Chat() {
     const [isShowAbout, setIsShowAbout] = useState(false);
     const { user } = useSelector(state => state.user)
     const dispatch = useDispatch()
+    const [isConnected, setIsConnected] = useState(false);
+
+    //use your link here
+    const sock = new SockJS(`${URL}/ws`);
+    const stompClient = Stomp.over(sock);
 
     useEffect(() => {
-        sock.onopen = function () {
-            console.log('open');
+        if (!isConnected) {
+            sock.onopen = function () {
+                console.log('open');
+            }
+            stompClient.connect({}, function (frame) {
+                stompClient.subscribe(`/user/${user.id}/chat`, function (chat) {
+                    const message = JSON.parse(chat.body)
+                    dispatch(updateContentChat(message))
+                });
+                setIsConnected(true)
+            });
         }
 
-        stompClient.connect({}, function (frame) {
-            stompClient.subscribe(`/user/${user.id}/chat`, function (chat) {
-                const message = JSON.parse(chat.body)
-                dispatch(updateContentChat(message))
-            });
-        });
 
-    }, [stompClient, user?.id])
+    }, [dispatch, isConnected, sock, stompClient, user.id])
 
     return (
         <Wrapper>

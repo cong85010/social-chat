@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { bgColor } from '~/utils/color';
 import { URL } from '~/utils/constant';
 import { AvatarDefault } from '~/utils/constant';
-import { DeleteOutlined, DownloadOutlined, HeartFilled, HeartOutlined, LikeFilled } from '@ant-design/icons';
+import { DeleteOutlined, DownloadOutlined, HeartFilled, HeartOutlined, LikeFilled, EyeOutlined } from '@ant-design/icons';
 import { FacebookSelector } from 'react-reactions/lib/components/facebook/FacebookSelector';
 import { FacebookCounter, GithubCounter } from 'react-reactions';
 
@@ -51,7 +51,7 @@ function FriendChat({ avatar, message, status, handleReaction, getNameBySeederId
 
         return <div>Tên: {getFileName}<br />
             <img alt="hinhaanh" src="https://play-lh.googleusercontent.com/58sr3IvX1wiE8ei_BICqPgywKgZ5DPpmRL_2YuZINnFlz_9D2os9PmueeZPPtZno0zk" width={50} />
-            <a onClick={() => window.open(message.content && message.content[0])} href={message.url} download target="_blank" rel="noreferrer"><DownloadOutlined style={{ fontSize: 25, marginLeft: 30 }} /></a>
+            <a onClick={() => window.open(message.content && message.content[0])} href={message.url} target="_blank" rel="noreferrer"><EyeOutlined style={{ fontSize: 25, marginLeft: 30 }} /></a>
         </div>
     }
 

@@ -1,4 +1,4 @@
-import { Avatar, Button } from "antd";
+import { Avatar, Button, Spin } from "antd";
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { AvatarDefault } from '~/utils/constant';
@@ -6,8 +6,7 @@ import { itemHover, textTitle } from '../../../utils/color';
 import { ContentName, ItemContent } from '../../../utils/Layout';
 
 
-function AvatarAddFriend({ name, content, avatar, userCurrentId, id, isAdmin, adminId, handleRemoveConversation, handleUpdateAdminGroup }) {
-    const [isLoading, setIsLoading] = useState(false);
+function AvatarAddFriend({ isLoading, name, content, avatar, userCurrentId, id, isAdmin, adminId, handleRemoveConversation, handleUpdateAdminGroup }) {
 
     return (
         <Wrapper>
@@ -24,12 +23,12 @@ function AvatarAddFriend({ name, content, avatar, userCurrentId, id, isAdmin, ad
                 </TitleContent>
                 {
                     isAdmin && id !== userCurrentId && <MoreContent>
-                        <Button loading={isLoading} type='primary' onClick={() => handleUpdateAdminGroup(id)}>Thay TN</Button>
+                        <Button disabled={isLoading} type='primary' onClick={() => handleUpdateAdminGroup(id)}>Thay TN</Button>
                     </MoreContent>
                 }
                 {
                     isAdmin && id !== userCurrentId && <MoreContent style={{ marginLeft: '10px' }}>
-                        <Button loading={isLoading} type='default' onClick={() => handleRemoveConversation(id)}>Mời rời nhóm</Button>
+                        <Button disabled={isLoading} type='default' onClick={() => handleRemoveConversation(id)}>Mời rời nhóm</Button>
                     </MoreContent>
                 }
             </Content>

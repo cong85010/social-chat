@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Avatar, Skeleton } from 'antd';
 import { textAbout, itemHover, border, textTitle } from '../../../utils/color';
 import { ItemContent, ContentName, ContentAbout } from '../../../utils/Layout';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { getChatByConversationID } from '~/redux/slices/ChatSlice';
 import { saveUserChat } from '~/redux/slices/UserChatSlice';
 import { ChatItem } from 'react-chat-elements';
@@ -33,10 +33,17 @@ function AvatarItem({ name, listMember = [], avatar, type, userIdCurrent, id, la
             }
         }))
     }
+    console.log('====================================');
+    console.log(avatar);
+    console.log('====================================');
+
+    const getAvatarUser = () => {
+        if (listMember.length === 2)
+            return listMember.find(m => m.id !== userIdCurrent)?.avatar;
+    }
 
     return < ChatItem
-        avatar={avatar || AvatarDefault
-        }
+        avatar={avatar || getAvatarUser() || AvatarDefault}
         alt={avatar}
         title={getNameConversation()}
         tp
