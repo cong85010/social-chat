@@ -4,10 +4,10 @@ import { Button } from 'antd';
 import { primaryColor } from '~/utils/color';
 
 
-function MenuIcon({ children }) {
+function MenuIcon({ children, onClick }) {
     const [isLoading, setIsLoading] = useState(false);
     return (
-        <Wrapper>
+        <Wrapper onClick={onClick}>
             <Button loading={isLoading} type="primary">{children}</Button>
         </Wrapper>
     );

@@ -54,9 +54,9 @@ function MenuBar() {
     const [q, setQ] = useState("");
 
     useEffect(() => {
+        console.log(q);
         if (q) {
-            const data = conversations.filter(conv => conv?.name?.toLowerCase().includes(q?.toLowerCase())
-                || conv.listMember.find(mem => mem?.name?.toLowerCase().includes(q?.toLowerCase())))
+            const data = conversations.filter(conv => conv?.name?.toLowerCase().includes(q?.toLowerCase()))
             setConversationsFilleter(data)
         } else {
             setConversationsFilleter(conversations)
@@ -259,13 +259,6 @@ function MenuBar() {
         getMyFriends()
     }, [reloadFlag])
 
-    useEffect(() => {
-        if (conversations.length) {
-            if (!userChat)
-                dispatch(saveUserChat(conversations[0]))
-        }
-    }, [conversations, dispatch, userChat, isLoadingConversations])
-
     //  Search
     const { Search } = Input;
     //  Tab Menu
@@ -369,21 +362,14 @@ function MenuBar() {
             <StartWrapper>
                 <AvatarImg />
                 <TopMenuICon>
-                    <MenuIcon>
-                        <MessageOutlined onClick={() => setOption('chat')} />
+                    <MenuIcon onClick={() => setOption('chat')} >
+                        <MessageOutlined />
                     </MenuIcon>
-                    <MenuIcon>
-                        <ContactsOutlined onClick={() => setOption('contact')} />
+                    <MenuIcon onClick={() => setOption('contact')} >
+                        <ContactsOutlined />
                     </MenuIcon>
-                    <MenuIcon>
-                        <Tooltip title="Làm mới">
-                            <ReloadOutlined onClick={() => setReloadFlag(!reloadFlag)} />
-                        </Tooltip>
-                    </MenuIcon>
-                    <MenuIcon>
-                        <Tooltip title="Kết nối">
-                            <CloudOutlined />
-                        </Tooltip>
+                    <MenuIcon onClick={() => setReloadFlag(!reloadFlag)} >
+                        <ReloadOutlined />
                     </MenuIcon>
                     {/* <MenuIcon>
                         <CheckSquareOutlined onClick={() => setOption('check')} />
@@ -457,16 +443,17 @@ function MenuBar() {
                 ]}>
 
                 <StyledResultAddFriend>
-                    {friendInvited?.code === 200 ? friendInvited.data.length === 0 ? <Empty /> :
-                        friendInvited.data?.map((user, index) => (
-                            <AvatarItemListAddFriend
-                                key={index}
-                                index={user._id}
-                                idFriend={user.id}
-                                closeModal={handleShowModalCancelListAdd}
-                                {...user.fromUser}
-                            ></AvatarItemListAddFriend>
-                        )) : friendInvited?.message}
+                    {isLoading ? <Row justify='center'><Spin /></Row>
+                        : friendInvited?.code === 200 ? friendInvited.data.length === 0 ? <Empty /> :
+                            friendInvited.data?.map((user, index) => (
+                                <AvatarItemListAddFriend
+                                    key={index}
+                                    index={user._id}
+                                    idFriend={user.id}
+                                    closeModal={handleShowModalCancelListAdd}
+                                    {...user.fromUser}
+                                ></AvatarItemListAddFriend>
+                            )) : friendInvited?.message}
                 </StyledResultAddFriend>
             </StyledModal>
 

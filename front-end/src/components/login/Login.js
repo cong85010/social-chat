@@ -26,6 +26,7 @@ import logo from '../img/Logo1.PNG';
 import title from '../img/Logo.png';
 
 import OtpInput from 'react-otp-input';
+import { getToken } from '~/utils/function';
 
 function Login() {
     const navigate = useNavigate();
@@ -37,6 +38,8 @@ function Login() {
     const [isLoadingRegister, setIsLoadingRegister] = useState(false);
     const [form] = Form.useForm();
     const [formPhone] = Form.useForm();
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const [isReset, setIsReset] = useState(false);
 
     const onFinish = async (values) => {
         dispatch(SignInUser({ user: values }));
@@ -72,8 +75,37 @@ function Login() {
         setIsShowModalNewPassword(true);
     };
 
-    const handleOkModalNewPassword = () => {
-        setIsShowModalNewPassword(false);
+    const handleOkModalNewPassword = async ({ newPassword }) => {
+        try {
+            const { data } = await axios.post(
+                `${URL}/api/user/forget-password`,
+                {
+                    password: newPassword,
+                    phoneNumber,
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${getToken()}`,
+                        Accept: 'application/json',
+                    },
+                },
+            );
+            if (data?.data) {
+                setIsShowModalNewPassword(false);
+                message.success('Thay đổi mật khẩu thành công');
+                setIsOpenModalRegisterOTP(false);
+            } else {
+                message.error('OTP không đúng');
+                setCode('');
+                setIsOpenModalRegisterOTP(false);
+            }
+        } catch (error) {
+            setIsShowModalNewPassword(false);
+            message.error('OTP không đúng');
+            console.log('====================================');
+            console.log(error);
+            console.log('====================================');
+        }
     };
 
     const handleCancelModalNewPassword = () => {
@@ -93,8 +125,18 @@ function Login() {
     // Reset mk OTP
     const [isOpenModalResetPasswordOTP, setIsOpenModalResetPasswordOTP] = useState(false);
 
-    const handleShowModalResetPasswordOTP = () => {
-        setIsOpenModalResetPasswordOTP(true);
+    const handleShowModalResetPasswordOTP = async ({ phoneNumber }) => {
+        try {
+            await axios.post(`${URL}/api/auth/send-otp-verify-phone-number/${phoneNumber}`);
+            message.warning('Vui lòng kiểm tra OTP');
+            setPhoneNumber(phoneNumber);
+            setIsOpenModalResetPasswordOTP(true);
+            setIsReset(true);
+        } catch (error) {
+            console.log('====================================');
+            console.log(error);
+            console.log('====================================');
+        }
     };
 
     const handleCancelModalResetPasswordOTP = () => {
@@ -126,24 +168,76 @@ function Login() {
     const handleCheckPhone = async ({ phoneNumber }) => {
         try {
             setIsLoadingRegister(true);
-            const { data } = await fetch(`${URL}/api/user/existed/${phoneNumber}`);
-            if (data.data) {
+            const { data } = await axios.get(`${URL}/api/user/existed/${phoneNumber}`);
+            if (data?.data) {
                 message.error('Số điện thoại đã được sử dụng');
+                setIsLoadingRegister(false);
             } else {
+                await axios.post(`${URL}/api/auth/send-otp-verify-phone-number/${phoneNumber}`);
+                message.warning('Vui lòng kiểm tra OTP');
+                setPhoneNumber(phoneNumber);
+
                 setIsShowModalOTP(true);
+                setIsOpenModalRegisterOTP(true);
+                setIsReset(false);
+
+                setIsLoadingRegister(false);
             }
         } catch (error) {
+            setIsLoadingRegister(false);
             message.error('Oh Nooo!!! Có lỗi xảy ra.');
+            console.log('====================================');
+            console.log(error);
+            console.log('====================================');
         }
         // setIsShowModalOTP(true)
-        setIsLoadingRegister(false);
-        setIsOpenModalRegisterOTP(true);
     };
 
     //OTP
     const [code, setCode] = useState('');
 
-    const handleChange = (code) => setCode(code);
+    useEffect(() => {
+        const handleChange = async () => {
+            // const code = e.target.value;
+            try {
+                const { data } = await axios.post(
+                    `${URL}/api/auth/verify-otp-phone-number`,
+                    {
+                        otp: code,
+                        phoneNumber,
+                    },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${getToken()}`,
+                            Accept: 'application/json',
+                        },
+                    },
+                );
+                if (data?.data) {
+                    setIsShowModalOTP(false);
+                    if (isReset) {
+                        handleShowModalNewPassword();
+                    } else {
+                        handleShowModal();
+                    }
+                } else {
+                    message.error('OTP không đúng');
+                    setCode('');
+                }
+            } catch (error) {
+                setIsLoadingRegister(false);
+                message.error('OTP không đúng');
+                console.log('====================================');
+                console.log(error);
+                console.log('====================================');
+            }
+        };
+
+        if (code?.length === 6) {
+            handleChange();
+        }
+    }, [code]);
+
     return (
         <StyledContainer>
             <StyledHeader>
@@ -284,7 +378,7 @@ function Login() {
                                             },
                                         ]}
                                     >
-                                        <Input defaultValue={'0368795645'} />
+                                        <Input defaultValue={'0368795600'} />
                                     </Form.Item>
 
                                     <p style={{ textAlign: 'center' }}>
@@ -315,15 +409,16 @@ function Login() {
                             title="Xác nhận OTP"
                             open={isOpenModalRegisterOTP}
                             onCancel={handleCancelModalRegisterOTP}
-                            onOk={handleShowModal}
-                            footer={[
-                                <Button loading={isLoading} key="back" onClick={handleCancelModalRegisterOTP}>
-                                    Hủy
-                                </Button>,
-                                <Button loading={isLoading} key="submit" onClick={handleShowModal} type="primary">
-                                    Đồng ý
-                                </Button>,
-                            ]}
+                            // onOk={handleShowModal}
+                            // footer={[
+                            //     <Button loading={isLoading} key="back" onClick={handleCancelModalRegisterOTP}>
+                            //         Hủy
+                            //     </Button>,
+                            //     <Button loading={isLoading} key="submit" onClick={handleShowModal} type="primary">
+                            //         Đồng ý
+                            //     </Button>,
+                            // ]}
+                            footer={null}
                         >
                             <StyledForm
                                 name="basic"
@@ -346,8 +441,9 @@ function Login() {
                                     </StyledText>
                                     <StyledOtpInput
                                         value={code}
-                                        onChange={handleChange}
+                                        onChange={(e) => setCode(e)}
                                         numInputs={6}
+                                        on
                                         separator={<span style={{ width: '8px' }}></span>}
                                     />
                                     <StyledText
@@ -367,22 +463,9 @@ function Login() {
                         {/* Xác nhận OTP rest mật khẩu*/}
                         <StyledModal
                             title="Xác nhận OTP"
-                            open={isOpenModalResetPasswordOTP}
                             onCancel={handleCancelModalResetPasswordOTP}
-                            onOk={handleShowModalNewPassword}
-                            footer={[
-                                <Button loading={isLoading} key="back" onClick={handleCancelModalResetPasswordOTP}>
-                                    Hủy
-                                </Button>,
-                                <Button
-                                    loading={isLoading}
-                                    key="submit"
-                                    onClick={handleShowModalNewPassword}
-                                    type="primary"
-                                >
-                                    Đồng ý
-                                </Button>,
-                            ]}
+                            open={isOpenModalResetPasswordOTP}
+                            footer={null}
                         >
                             <StyledForm
                                 name="basic"
@@ -405,7 +488,7 @@ function Login() {
                                     </StyledText>
                                     <StyledOtpInput
                                         value={code}
-                                        onChange={handleChange}
+                                        onChange={(e) => setCode(e)}
                                         numInputs={6}
                                         separator={<span style={{ width: '8px' }}></span>}
                                     />
@@ -501,26 +584,14 @@ function Login() {
                             title="Quên mật khẩu"
                             open={isOpenModalForgetPassword}
                             onCancel={handleCancelModalForgetPassword}
-                            onOk={handleShowModalResetPasswordOTP}
-                            footer={[
-                                <Button loading={isLoading} key="back" onClick={handleCancelModalForgetPassword}>
-                                    Hủy
-                                </Button>,
-                                <Button
-                                    loading={isLoading}
-                                    key="submit"
-                                    onClick={handleShowModalResetPasswordOTP}
-                                    type="primary"
-                                >
-                                    Đồng ý
-                                </Button>,
-                            ]}
+                            footer={null}
                         >
                             <StyledForm
                                 name="basic"
                                 labelCol={{ span: 8 }}
                                 wrapperCol={{ span: 24 }}
                                 initialValues={{ remember: false }}
+                                onFinish={handleShowModalResetPasswordOTP}
                                 autoComplete="off"
                             >
                                 <Form.Item
@@ -537,33 +608,21 @@ function Login() {
                                 >
                                     <Input />
                                 </Form.Item>
+                                <Row justify="end" style={{ marginTop: 20 }}>
+                                    <Button loading={isLoading} htmlType="submit" key="submit" type="primary">
+                                        Tiếp tục
+                                    </Button>
+                                </Row>
                             </StyledForm>
                         </StyledModal>
                         {/* Xác nhận mật khẩu mới */}
-                        <StyledModal
-                            title="Xác nhận mật khẩu mới"
-                            open={isShowModalNewPassword}
-                            onCancel={handleCancelModalNewPassword}
-                            onOk={handleOkModalNewPassword}
-                            footer={[
-                                <Button loading={isLoading} key="back" onClick={handleCancelModalNewPassword}>
-                                    Hủy
-                                </Button>,
-                                <Button
-                                    loading={isLoading}
-                                    key="submit"
-                                    onClick={handleOkModalNewPassword}
-                                    type="primary"
-                                >
-                                    Đồng ý
-                                </Button>,
-                            ]}
-                        >
+                        <StyledModal title="Xác nhận mật khẩu mới" open={isShowModalNewPassword} footer={null}>
                             <StyledForm
                                 name="basic"
                                 labelCol={{ span: 12 }}
                                 wrapperCol={{ span: 12 }}
                                 initialValues={{ remember: false }}
+                                onFinish={handleOkModalNewPassword}
                                 autoComplete="off"
                             >
                                 <Form.Item
@@ -573,6 +632,10 @@ function Login() {
                                         {
                                             required: true,
                                             message: 'Nhập mật khẩu hiện tại của bạn!',
+                                        },
+                                        {
+                                            min: 8,
+                                            message: 'Độ dài ít nhất 8 kí tự',
                                         },
                                     ]}
                                 >
@@ -588,6 +651,10 @@ function Login() {
                                             required: true,
                                             message: 'Nhập mật khẩu xác nhận của bạn!',
                                         },
+                                        {
+                                            min: 8,
+                                            message: 'Độ dài ít nhất 8 kí tự',
+                                        },
                                         ({ getFieldValue }) => ({
                                             validator(_, value) {
                                                 if (!value || getFieldValue('newPassword') === value) {
@@ -600,6 +667,9 @@ function Login() {
                                 >
                                     <Input.Password />
                                 </Form.Item>
+                                <Button loading={isLoading} key="submit" type="primary" htmlType="submit">
+                                    Thay Đổi
+                                </Button>
                             </StyledForm>
                         </StyledModal>
                     </BodyContentRightForm>
